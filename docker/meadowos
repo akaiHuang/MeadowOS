@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+# One private session bus is shared by native Shell, applications and Agent.
+exec dbus-run-session -- /usr/bin/python3 /usr/local/lib/meadowos/container_session.py
