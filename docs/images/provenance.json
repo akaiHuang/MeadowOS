@@ -1,0 +1,31 @@
+{
+  "source_commit": "d4477c88ba6ac8c593b3fa671bf31f6a822db0b8",
+  "ci_run": "https://github.com/akaiHuang/MeadowOS/actions/runs/40124109231",
+  "architecture": "arm64",
+  "geometry": [
+    1920,
+    1080
+  ],
+  "provider_configured": false,
+  "real_model_task": false,
+  "images": [
+    {
+      "file": "desktop.png",
+      "sha256": "27d6d89599ae581f6e2b4153040f1e717022cac20152858b086015ba1cbb4e07",
+      "bytes": 1363331,
+      "source_artifact_file": "native-desktop.png"
+    },
+    {
+      "file": "chat.png",
+      "sha256": "e4cff42b8779f46e700ea9b5b58a72c2e8ad7430b68033bdf4c71174a4c702bc",
+      "bytes": 1619385,
+      "source_artifact_file": "native-chat.png"
+    },
+    {
+      "file": "settings.png",
+      "sha256": "236f0a8d539389c534156d171f87e79ad6511d277bb6c08615e31e0c7d0399a0",
+      "bytes": 1469501,
+      "source_artifact_file": "native-settings.png"
+    }
+  ]
+}

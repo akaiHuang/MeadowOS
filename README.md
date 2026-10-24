@@ -31,6 +31,10 @@ Mercury 3 API key** for AI. There is no bundled key or Meadow account requiremen
 Mercury 3 accepts text and tools. Image drafts can be retained and previewed,
 but the chat explicitly reports that this model cannot understand images.
 
+The native chat before API setup, with no private history or simulated replies:
+
+![Native MeadowOS chat](docs/images/chat.png)
+
 ## Run locally
 
 Install Docker with Compose, then:
@@ -121,6 +125,7 @@ Files, Terminal and Settings windows, and checks restart persistence. Native
 API setup is tested against a local mock provider, without a real API key.
 A compile/smoke pass is separate from a real model task or VM boot.
 Screenshots are captured from the clean desktop, not a maintainer's private session.
+See the [verification record](docs/VERIFICATION.md) for exact evidence boundaries.
 
 **Container limitation:** GNOME Web and the optional Wails Code Desktop use
 WebKit. Hosts that deny nested user/mount namespaces can prevent WebKit's
