@@ -120,10 +120,12 @@ def main():
                 continue
         return sorted(result)
 
-    def probe_webkit(name, command, title, geometry, screenshot):
+    def probe_webkit(name, command, title, geometry, screenshot, *, settle_seconds=0):
         child = start(name, command)
         try:
             wait_windows([title], watched=[(name, child)])
+            if settle_seconds:
+                time.sleep(settle_seconds)
             arrange(title, *geometry)
             capture(screenshot)
             if child.poll() not in (None, 0):
@@ -133,7 +135,7 @@ def main():
                 raise RuntimeError(f"{name} reported the known namespace restriction")
             minimize(title)
             return {"status": "mapped_requires_visual_review", "window_mapped": True,
-                    "screenshot": screenshot}
+                    "rendered_content_verified": False, "screenshot": screenshot}
         except (RuntimeError, StopIteration, subprocess.SubprocessError) as error:
             log = (output / (name + ".log")).read_text(errors="replace")
             if not known_namespace_restriction(log):
@@ -207,7 +209,7 @@ No model, remote page or API credentials are used for this check.</p></html>""")
         result["capabilities"] = capabilities
         capabilities["wails_desktop"] = probe_webkit("native-desktop",
             ["/opt/meadow/share/meadow-os/bin/meadow-session", "desktop"],
-            "MeadowOS · 開發版", (370, 115, 1180, 780), "native-api-desktop.png")
+            "MeadowOS · 開發版", (370, 115, 1180, 780), "native-api-desktop.png", settle_seconds=4)
         current_agents = agent_pids()
         if current_agents != original_agents:
             raise RuntimeError(f"Managed Desktop changed the sole Agent: {original_agents} -> {current_agents}")

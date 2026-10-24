@@ -1150,7 +1150,7 @@ def main() -> int:
             self.error.set_text(self.notices.error or "")
             if not self.model_ready:
                 self.show_service_error("model_unavailable", str(status.get("model", {}).get("error") or "模型尚未就緒。"),
-                    "模型尚未就緒；請在 Meadow Code 設定模型，或開啟「工作紀錄」查看詳細資訊。")
+                    "模型尚未就緒；請依 Inception API 設定教學完成連線，再從聊天選單選擇「重新連線」。")
             # Resume may replay only pending requests; hydrate task history from
             # the authoritative snapshot independently, without historical push.
             task_event = {"id": 0, "type": "background_tasks", "data": status.get("tasks") or {}}

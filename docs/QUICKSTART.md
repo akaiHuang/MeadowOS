@@ -130,6 +130,12 @@ Docker hosts, Bubblewrap can be denied the nested namespaces and mounts needed
 by WebKit, with `No permissions to create a new namespace` followed by
 `Failed to fully launch dbus-proxy`.
 
+In the ARM64 preflight of source `9bcb5305`, the Wails window mapped but its
+captured content was black. Its content rendering remains unverified; window
+mapping is not rendering success. The separate GNOME Web failure below is a
+measured namespace restriction, not an assumed explanation for the black Wails
+capture.
+
 That exact observed failure is reported as an **unsupported container capability**,
 not a successful browser or Go Desktop rendering check. The native core can still
 pass its own checks. Container security and browser sandbox settings remain

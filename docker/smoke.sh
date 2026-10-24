@@ -21,6 +21,11 @@ cleanup() {
   trap - EXIT
   "${task_compose[@]}" logs --no-color > "$task_artifacts/container.log" 2>&1 || true
   "${task_compose[@]}" cp meadowos:/home/meadow/.local/state/meadow-os/smoke/. "$task_artifacts/" >/dev/null 2>&1 || true
+  mkdir -p -- "$task_artifacts/runtime-logs/lab"
+  for task_log in desktop-lab.log session-bus.log session.log companion.log companion-proxy.log; do
+    "${task_compose[@]}" cp "meadowos:/home/meadow/.local/state/meadow-os/$task_log" "$task_artifacts/runtime-logs/$task_log" >/dev/null 2>&1 || true
+  done
+  "${task_compose[@]}" cp meadowos:/home/meadow/.local/state/meadow-os/lab/. "$task_artifacts/runtime-logs/lab/" >/dev/null 2>&1 || true
   "${task_compose[@]}" down --volumes --remove-orphans || true
   exit "$task_status"
 }
@@ -36,7 +41,7 @@ task_source_commit="${SOURCE_COMMIT:-$(git rev-parse HEAD)}"
 # Check persistence and native recovery after a normal container restart.
 task_ready=0
 for task_attempt in $(seq 1 60); do
-  if "${task_compose[@]}" exec -T meadowos /usr/local/bin/meadowos-healthcheck > "$task_artifacts/restart-health.json" 2>/dev/null; then
+  if "${task_compose[@]}" exec -T meadowos /usr/local/bin/meadowos-healthcheck > "$task_artifacts/restart-health.json" 2> "$task_artifacts/restart-error.txt"; then
     task_ready=1
     break
   fi
