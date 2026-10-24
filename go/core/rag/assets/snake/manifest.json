@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "title": "Snake / 貪食蛇",
+  "description": "Complete offline single HTML Snake game. Food, growth, score, wall/self collision, pause/restart, keyboard and mobile swipe/buttons, fullscreen. Deterministic stepping and visible state hooks. Emits game-score CustomEvent so an external scoreboard can attach without replacing game logic.",
+  "tags": [
+    "snake",
+    "貪食蛇",
+    "game",
+    "html",
+    "離線",
+    "手機",
+    "leaderboard",
+    "排行榜"
+  ],
+  "kind": "application",
+  "entrypoint": "index.html",
+  "usage": "Copy index.html. To add a leaderboard copy scoreboard.js beside it, add <script src=\"scoreboard.js\"></script> after the game script, then Scoreboard.attach({selector:\"main\",key:\"snake-scores\"}).",
+  "license": "MIT; authored for Meadow, 2026",
+  "source": "Meadow curated examples, locally authored 2026-10-02",
+  "verification": "Chromium fixture acceptance 2026-10-02: controls/persistence/offline and canonical game captures exercised. Full-board wins and physical Safari unverified. Fixture evidence is not future model-delivery evidence.",
+  "files": [
+    {
+      "path": "index.html",
+      "sha256": "ae69d12f29be8bb61bad8bc96298e7404b2fb3423123a1c3ada58f7f518039c7",
+      "bytes": 6516
+    }
+  ],
+  "key": "snake",
+  "related": [
+    "scoreboard"
+  ]
+}

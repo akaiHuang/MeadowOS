@@ -1,0 +1,18 @@
+[Unit]
+Description=MeadowOS development Agent (private local IPC)
+After=graphical-session-pre.target
+PartOf=graphical-session.target
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=exec
+ExecStart=/opt/meadow/share/meadow-os/bin/meadow-session agent
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=30
+KillMode=control-group
+UMask=0077
+
+[Install]
+WantedBy=graphical-session.target

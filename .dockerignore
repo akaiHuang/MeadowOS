@@ -1,0 +1,18 @@
+# Never send Git credentials or history into a build context.
+.git
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/.DS_Store
+**/node_modules
+.env
+.env.*
+**/*.key
+**/*.pem
+.qwen
+dist
+artifacts
+
+**/model-connections-v1.json
+**/model-connections-v1.json.credentials
+**/agent-api-token

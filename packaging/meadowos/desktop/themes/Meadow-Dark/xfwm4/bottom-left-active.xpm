@@ -1,0 +1,10 @@
+/* XPM */
+/* Original Meadow native frame; fixed opaque geometry. */
+static char * meadow_frame[] = {
+"6 3 2 2",
+"aa c #242d35",
+"ab c #3a4650",
+"abaaaaaaaaaa",
+"abaaaaaaaaaa",
+"abababababab"
+};

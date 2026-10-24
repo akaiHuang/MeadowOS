@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=MeadowOS
+Comment=Meadow desktop with the persistent Meadow Agent
+Exec=/opt/meadow/share/meadow-os/bin/meadow-os-session
+TryExec=/opt/meadow/share/meadow-os/bin/meadow-os-session
+Type=Application
+DesktopNames=Meadow;XFCE;

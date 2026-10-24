@@ -1,0 +1,22 @@
+{
+  "assets": [
+    {
+      "file": "wallpaper.png",
+      "source": "OpenAI image generation; original wallpaper asset, no UI baked in",
+      "generation_id": "exec-c948e922-01e1-464b-a7a0-b7fa8af69170",
+      "width": 1672,
+      "height": 941,
+      "sha256": "6368884e8cd8382e1c1ed1df5d6a2e179bce3fe0e7d386c1df46e91518157bc6",
+      "use": "Native GTK cover-scaled wallpaper on actual 1920x1080 desktop"
+    },
+    {
+      "file": "wallpaper-light.png",
+      "source": "OpenAI image generation; original wallpaper asset, no UI baked in",
+      "generation_id": "exec-30c70233-943d-4c8d-8b77-5cd56cccc3e3",
+      "width": 1672,
+      "height": 941,
+      "sha256": "764a76f07ec4b6dd0c7d48eb42f85f522c4586a84b4a5b4cb383b2dcb013865c",
+      "use": "Native GTK cover-scaled wallpaper on actual 1920x1080 desktop"
+    }
+  ]
+}

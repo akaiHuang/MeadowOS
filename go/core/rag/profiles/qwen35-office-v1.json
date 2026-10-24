@@ -1,0 +1,304 @@
+[
+  {
+    "id": "qwen35-grounded-spec-recovery-v1",
+    "profile": "qwen35-office-v1",
+    "phases": ["recovery"],
+    "type": "procedure_recovery",
+    "title": "Qwen 35B grounded specification recovery",
+    "keywords": [
+      "mutation_without_failing_fact",
+      "post_pass",
+      "semantic_wandering",
+      "unsupported assumption",
+      "blocked",
+      "規格",
+      "驗證"
+    ],
+    "source": "meadow-qwen35-observed-procedure",
+    "version": "4",
+    "updated_at": "2026-08-02",
+    "execution": "Resume from observable facts, not a newly imagined business rule. Exact names, fields, units, paths, formulas, numeric examples, and explicit invalid-input behavior in the user request or authoritative workspace input outrank inferred synonyms, labels, hints, and familiar conventions. Before proposing an edit, predict its observable result for one authoritative example; discard the edit if it contradicts that example. Use one native read or executable check to distinguish genuine alternatives. Never damage a passing artifact merely to manufacture a failure: a failure must come from checking the current artifact. Mutate only after that check exits non-zero and identifies a concrete gap.",
+    "quality_rubric": [
+      "Uses exact contract terms instead of substituting a familiar synonym",
+      "Obtains a falsifiable observation before any new mutation",
+      "Preserves a passing artifact when no concrete gap exists",
+      "Never creates an intentional defect to manufacture recovery evidence",
+      "Does not encode or assume a task-specific answer"
+    ]
+  },
+  {
+    "id": "qwen35-independent-validator-recovery-v1",
+    "profile": "qwen35-office-v1",
+    "phases": ["recovery"],
+    "type": "procedure_recovery",
+    "title": "Qwen 35B independent validator recovery",
+    "keywords": [
+      "validator_no_progress",
+      "invalid_executable_evidence",
+      "validation failed",
+      "requirement_audit",
+      "requirement_audit_started",
+      "acceptance",
+      "audit",
+      "exit code"
+    ],
+    "source": "meadow-qwen35-observed-procedure",
+    "version": "6",
+    "updated_at": "2026-08-04",
+    "execution": "Use Qwen's native action shape: one run_shell_command with command exactly `python3`, purpose `validation`, and a plain-assert `script` no longer than 1200 characters. Do not use unittest classes, comments, a workspace checker file, heredoc, or interpreter `-c`. Cover all explicit clauses with 4 to 10 compact cases and an unmasked exit status. Make every counterexample causal: for a container-type clause, use an empty wrong-type container such as `{}`, `()`, or an empty string so element access cannot accidentally raise the expected exception; accept only the contract's exact exception class. For nested types, use the smallest sentinel and ensure the observed exception comes from the clause under test rather than a later operation. Every printed FAIL must assert, raise, or exit non-zero. After exit 0, the next response is one record_requirement_audit call whose single requirements array contains every listed atomic ID; Meadow binds those IDs to authoritative quotes, so omit repetitive contract_quote fields. Each covered item may cite that same fresh passing call ID. Do not submit one clause per turn. After non-zero, either record one proven clause as uncovered with that failing ID, or run one shorter corrected checker if the fixture or expected value was wrong. Never repeat the same script or explain instead of acting.",
+    "quality_rubric": [
+      "Checker has an unmasked meaningful exit status",
+      "Checker source uses temporary script mode and does not alter workspace files",
+      "Expected relationships come from authoritative inputs rather than the artifact under test",
+      "A passing check is recorded instead of repeated",
+      "A failing check leads to a targeted repair rather than a rewritten task interpretation"
+    ]
+  },
+  {
+    "id": "qwen35-quantifier-scope-recovery-v1",
+    "profile": "qwen35-office-v1",
+    "phases": ["recovery"],
+    "type": "procedure_recovery",
+    "title": "Qwen 35B quantified validation scope",
+    "keywords": [
+      "all records",
+      "every item",
+      "before filtering",
+      "validate first",
+      "所有紀錄",
+      "每筆",
+      "先驗證",
+      "過濾"
+    ],
+    "source": "meadow-qwen35-observed-procedure",
+    "version": "3",
+    "updated_at": "2026-08-02",
+    "execution": "Preserve the contract's quantifier and order. If all/every input is validated before an eligibility filter, implement two stages: validate the complete collection, then select entries for calculation. `Not counted` never means `not validated`. Check one invalid excluded item that must still raise and one valid excluded item that contributes nothing. Apply this only when the authoritative contract states that order; do not assume task-specific names or values.",
+    "quality_rubric": [
+      "All-record obligations are not narrowed by a later filter",
+      "Validation and eligibility are represented as separate ordered stages",
+      "Checker includes an invalid excluded record and a valid excluded record",
+      "No task-specific field name, threshold, or answer is encoded"
+    ]
+  },
+  {
+    "id": "qwen35-contract-polarity-recovery-v1",
+    "profile": "qwen35-office-v1",
+    "phases": ["recovery"],
+    "type": "procedure_recovery",
+    "title": "Qwen 35B contract polarity grounding",
+    "keywords": [
+      "requirement_audit",
+      "independent_acceptance",
+      "invalid input",
+      "boundary",
+      "polarity",
+      "規格",
+      "無效輸入"
+    ],
+    "source": "meadow-qwen35-observed-procedure",
+    "version": "2",
+    "updated_at": "2026-08-02",
+    "execution": "Translate each clause into `WHEN condition -> MUST outcome` and preserve its polarity. A token explicitly normalized by trim/casefold remains valid when spacing or case differs; never use that valid variant as a rejection case. Distinguish an invalid input from a valid derived result that happens to be negative. Check one valid boundary and one truly invalid example. Every mismatch must assert or exit non-zero; never print FAIL and continue, and never invent an unstated rule.",
+    "quality_rubric": [
+      "Every explicit clause keeps its original condition and outcome polarity",
+      "Input validity is not confused with a derived calculation result",
+      "A failed expectation necessarily produces a non-zero checker exit",
+      "No task-specific field name, value, or expected answer is encoded"
+    ]
+  },
+  {
+    "id": "qwen35-strategy-switch-recovery-v1",
+    "profile": "qwen35-office-v1",
+    "phases": ["recovery"],
+    "type": "procedure_recovery",
+    "title": "Qwen 35B strategy switch after no progress",
+    "keywords": [
+      "consecutive_identical_tool_calls",
+      "failure_episode_started",
+      "same_failure_without_coverage_gain",
+      "validator_no_progress",
+      "unchanged_failed_validator_replay",
+      "unchanged_failed_replay",
+      "stagnation",
+      "fresh_context",
+      "repeated",
+      "loop"
+    ],
+    "source": "meadow-qwen35-observed-procedure",
+    "version": "3",
+    "updated_at": "2026-08-02",
+    "execution": "Classify the latest observed result before acting. If a relevant validator exited non-zero and the authoritative task plus current artifact were already read, the next native call should make one targeted edit/write that addresses the observed mismatch; do not reread unchanged inputs, rerun that validator, or draft the patch in prose. If the failure is genuinely ambiguous, allow exactly one materially different bounded diagnostic instead. After a successful mutation, rerun the selected validator once. If validation already passed, preserve the artifact and finish the bounded independent audit instead of restarting solve work.",
+    "quality_rubric": [
+      "Next action differs materially from the failed action",
+      "Uses the latest tool evidence and preserves successful work",
+      "Produces either new evidence, a targeted mutation, or an honest blocker",
+      "Avoids protocol narration and repeated no-op calls"
+    ]
+  },
+  {
+    "id": "qwen35-native-tool-recovery-v1",
+    "profile": "qwen35-office-v1",
+    "phases": ["recovery"],
+    "type": "procedure_recovery",
+    "title": "Qwen 35B native tool envelope recovery",
+    "keywords": [
+      "malformed_tool_call",
+      "uncommitted_mutation_narration",
+      "native_write_required",
+      "nothing was saved",
+      "protocol",
+      "native_tool",
+      "tool call",
+      "output_truncated"
+    ],
+    "source": "meadow-qwen35-observed-procedure",
+    "version": "2",
+    "updated_at": "2026-08-02",
+    "execution": "Send exactly one complete API function call through the native tool channel with the smallest sufficient argument object. When recovery says a narrated write was not saved, send the intended patch as one native edit or write_file call; do not print `[Writing file with content: ...]`, `[Calling tool ...]`, XML, fenced JSON, or an imitation transcript. Do not send a validator in that same response. After the mutation tool confirms a real workspace change, run the relevant validator once on the next turn. For long diagnostic logic, use run_shell_command script mode instead of a giant interpreter `-c` argument.",
+    "quality_rubric": [
+      "Native function-call channel contains a complete schema-valid argument object",
+      "No protocol narration appears in user-visible content",
+      "Long logic uses a script-capable path",
+      "The next turn consumes the actual tool result"
+    ]
+  },
+  {
+    "id": "qwen35-strict-representation-validation-v1",
+    "profile": "qwen35-office-v1",
+    "phases": ["recovery"],
+    "type": "procedure_recovery",
+    "title": "Qwen 35B strict representation validation",
+    "keywords": [
+      "strict format",
+      "strict representation",
+      "fixed-width",
+      "canonical format",
+      "calendar date",
+      "嚴格",
+      "格式",
+      "日曆日期"
+    ],
+    "source": "meadow-qwen35-observed-procedure",
+    "version": "1",
+    "updated_at": "2026-08-02",
+    "execution": "When a contract requires both strict representation and semantic validity, verify them as two separate obligations. A permissive parser accepting text does not prove the required lexical shape. First assert the exact full-string shape, width, separators, alphabet, and padding; then parse or round-trip it to prove the represented value exists. Include one valid boundary and one deceptively parseable but noncanonical form. Apply this procedure to any canonical date, time, identifier, decimal, or enum representation without importing task-specific names or answers.",
+    "quality_rubric": [
+      "Lexical shape and semantic validity are checked separately",
+      "Validation consumes the entire input rather than a matching prefix",
+      "A parseable noncanonical form is rejected",
+      "No task-specific identifier, field, value, or answer is encoded"
+    ]
+  },
+  {
+    "id": "qwen35-unresolved-failure-resolution-v1",
+    "profile": "qwen35-office-v1",
+    "phases": ["recovery"],
+    "type": "procedure_recovery",
+    "title": "Qwen 35B unresolved failure resolution",
+    "keywords": [
+      "failure_episode_started",
+      "non-zero",
+      "validation failed",
+      "uncovered",
+      "failing check",
+      "false complete",
+      "independent audit",
+      "驗收失敗",
+      "未覆蓋"
+    ],
+    "source": "meadow-qwen35-observed-procedure",
+    "version": "1",
+    "updated_at": "2026-08-02",
+    "execution": "Treat every fresh independent checker exit that is non-zero as an unresolved evidence item. Before running a different checker or finishing, classify it exactly once: artifact gap or invalid checker. For an artifact gap, record the proven clause as uncovered with the failing call ID, make one targeted repair, and rerun a checker for that same clause. For an invalid checker, state the fixture or expected-value defect and run one smaller corrected checker that still covers the same clause. A later passing checker cannot erase an earlier relevant failure unless this resolution chain is visible.",
+    "quality_rubric": [
+      "Every relevant non-zero result has an explicit disposition",
+      "A real artifact gap produces a targeted mutation and recheck",
+      "A checker defect is replaced by a smaller check of the same clause",
+      "A weaker later pass never silently replaces stronger failing evidence"
+    ]
+  },
+  {
+    "id": "qwen35-atomic-requirement-coverage-v1",
+    "profile": "qwen35-office-v1",
+    "phases": ["recovery"],
+    "type": "procedure_recovery",
+    "title": "Qwen 35B atomic requirement coverage",
+    "keywords": [
+      "requirement_audit",
+      "atomic clause",
+      "every explicit clause",
+      "acceptance coverage",
+      "independent acceptance",
+      "coverage matrix",
+      "每條明示規格",
+      "獨立驗收"
+    ],
+    "source": "meadow-qwen35-observed-procedure",
+    "version": "1",
+    "updated_at": "2026-08-02",
+    "execution": "Before final acceptance, form a compact `WHEN condition -> MUST outcome -> check` coverage matrix from the authoritative request. Give every explicit atomic clause at least one falsifiable assertion, including stated types, bounds, normalization, ordering, output shape, full-collection-before-filter order, immutability, and edge behavior. One passing call may support several clauses only when its source visibly asserts each clause. Do not mark a clause covered because the public test passed or because a nearby clause was checked.",
+    "quality_rubric": [
+      "Every explicit atomic clause maps to visible executable evidence",
+      "Boundary and negative cases are present where the contract states them",
+      "Coverage is not inferred from a public smoke test",
+      "No task-specific field name, threshold, fixture, or answer is encoded"
+    ]
+  },
+  {
+    "id": "qwen35-targeted-gap-repair-v1",
+    "profile": "qwen35-office-v1",
+    "phases": ["recovery"],
+    "type": "procedure_recovery",
+    "title": "Qwen 35B targeted evidence gap repair",
+    "keywords": [
+      "independent acceptance",
+      "uncovered clause",
+      "targeted acceptance",
+      "strict representation",
+      "獨立驗收",
+      "未證明條款"
+    ],
+    "source": "meadow-qwen35-observed-procedure",
+    "version": "1",
+    "updated_at": "2026-08-02",
+    "execution": "Use the authoritative request and latest real validator result. Select at most three explicit clauses that still lack executable evidence, prioritizing a stated boundary, strict representation, type distinction, ordering rule, or validation-before-filter rule that the public test did not visibly assert. Write only those clauses inline as `WHEN -> MUST`. Run one temporary checker of at most five assertions and 600 characters; do not create a test file, repeat already-passing clauses, or generate a full acceptance suite. If it fails, make one targeted artifact mutation and rerun that same bounded check. Once the selected validator and these checks pass after the latest mutation, stop generating checks and finish.",
+    "quality_rubric": [
+      "At most three currently uncovered clauses are selected",
+      "The checker has at most five assertions and 600 characters",
+      "No workspace test file or full acceptance suite is created",
+      "Passing evidence leads directly to completion without more checks"
+    ]
+  },
+  {
+    "id": "qwen35-native-iterative-repair-v1",
+    "profile": "qwen35-office-v1",
+    "phases": ["recovery"],
+    "type": "procedure_recovery",
+    "title": "Qwen 35B native iterative repair loop",
+    "keywords": [
+      "independent acceptance",
+      "failure episode",
+      "validator failed",
+      "uncovered requirement",
+      "iterative repair",
+      "自我迭代",
+      "獨立驗收",
+      "修正後重跑"
+    ],
+    "source": "meadow-qwen35-observed-procedure",
+    "version": "3",
+    "updated_at": "2026-08-02",
+    "execution": "Stay in Qwen's native inspect -> mutate -> selected-test loop, with action size determined by observed state. Read the authoritative request, current artifact, and public validator once. If the task requests a failing pre-change baseline, run the real selected validator with expected_exit_codes=[0]; preserve its observed non-zero result instead of whitelisting failure. Before the first successful artifact mutation, a complete native write is allowed when the seeded artifact is only a stub; never narrate a file mutation. After a mutation, a non-zero selected-validator result has priority: use its exact traceback or mismatch for the smallest relevant native edit. Do not rewrite the whole artifact, start an independent audit, or finish while the selected validator is failing. Once the selected validator passes, stop this recovery procedure and let Meadow's standard independent-audit phase issue the checker contract; do not start a second checker or replay the selected validator. During that audit, treat the checker as a fallible hypothesis: before any artifact repair, compare its asserted exception type, ordering rule, and expected value with the exact authoritative clause and fixture inputs. If they conflict, correct only the checker. Record an uncovered artifact requirement only when the checker faithfully represents that clause and its non-zero output directly proves the mismatch. After a passing checker, cite only the eligible passing call ID in exactly one native record_requirement_audit call with no prose. If the audit call is malformed, shorten and resend only that call. After acceptance, finish. Do not reopen solved clauses, invent rules, or replace action with prose.",
+    "quality_rubric": [
+      "Uses the model's native inspect-write-test action sequence",
+      "Every repair is caused by a concrete non-zero observation",
+      "A selected-validator failure after mutation produces a minimal edit rather than a full rewrite",
+      "A repair is followed by a fresh selected-validator result",
+      "A selected-validator pass hands control to the standard independent audit instead of duplicating it",
+      "Checker expectations are compared with the authoritative clause before artifact repair",
+      "A malformed audit is retried as a smaller audit rather than a new checker",
+      "No task-specific field, fixture, threshold, or answer is encoded"
+    ]
+  }
+]

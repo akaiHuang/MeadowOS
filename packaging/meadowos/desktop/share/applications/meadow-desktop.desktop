@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Meadow Code
+Name[zh_TW]=Meadow Code
+Comment=Open the native Meadow development workspace
+Comment[zh_TW]=開啟 Meadow 原生開發工作區
+Exec=/opt/meadow/share/meadow-os/bin/meadow-session desktop
+Icon=meadow-desktop
+Terminal=false
+Categories=Development;
+StartupNotify=true

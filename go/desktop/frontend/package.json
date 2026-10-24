@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:membership": "node --test js/membership_contract.test.mjs"
+  }
+}

@@ -1,0 +1,351 @@
+/* Inset onboarding card. Scoped to leave login/settings unchanged. */
+#meadowOnboarding[data-tour='benefits'] {
+  --tour-bg: #141414;
+  --tour-fg: #f2f0e7;
+  --tour-muted: #aaa9a4;
+  --tour-accent: #59df95;
+  --tour-rule: #353535;
+  --tour-button: #272727;
+  --tour-mark: #69e6ad;
+  box-sizing: border-box;
+  background: rgb(4 4 4 / 0.78);
+  padding: 50px 0 24px;
+  backdrop-filter: blur(12px);
+}
+#meadowOnboarding[data-tour='benefits'][data-theme='light'] {
+  --tour-bg: #f4f0e7;
+  --tour-fg: #252822;
+  --tour-muted: #5c6155;
+  --tour-accent: #d0ed35;
+  --tour-rule: #d6d2c7;
+  --tour-button: #e8e4d9;
+  --tour-mark: #617a19;
+  background: rgb(218 215 206 / 0.8);
+}
+#meadowOnboarding[data-tour='benefits'] * {
+  box-sizing: border-box;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-card {
+  --tour-inset: 24px;
+  width: min(1080px, 95%);
+  height: min(860px, calc(100dvh - 90px));
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 44px minmax(0, 1fr) 52px;
+  gap: 24px;
+  padding: var(--tour-inset);
+  border: 1px solid var(--tour-rule);
+  border-radius: 28px;
+  background: var(--tour-bg);
+  color: var(--tour-fg);
+  box-shadow: 0 20px 70px rgb(0 0 0 / 0.3);
+  overflow: hidden;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0;
+  color: var(--tour-fg);
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-masthead strong {
+  font: 700 27px/1 var(--sans, sans-serif);
+  letter-spacing: -0.045em;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-header-actions {
+  display: flex;
+  gap: 6px;
+}
+#meadowOnboarding[data-tour='benefits']
+  .meadow-onboarding-header-actions
+  button {
+  position: relative;
+  inset: auto;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--tour-rule);
+  border-radius: 50%;
+  background: var(--tour-button);
+  color: var(--tour-fg);
+  font: 400 23px/1 sans-serif;
+}
+#meadowOnboarding[data-tour='benefits'] #onboardingThemeToggle {
+  border-color: transparent;
+  background: transparent;
+  color: var(--tour-muted);
+}
+#meadowOnboarding[data-tour='benefits'] #onboardingThemeToggle span {
+  font: 400 23px/1 sans-serif;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-close::before,
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-close::after {
+  width: 17px;
+  height: 1.5px;
+  top: calc(50% - 0.75px);
+  left: calc(50% - 8.5px);
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-slides {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  touch-action: pan-y pinch-zoom;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-slide {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  grid-template-rows: 1fr auto 1fr;
+  grid-template-areas: 'heading art' 'description art' '. art';
+  gap: 24px 30px;
+  height: 100%;
+  min-height: 320px;
+  padding: 8px 0;
+}
+#meadowOnboarding[data-tour='benefits']
+  .meadow-onboarding-slide[aria-hidden='true'] {
+  display: none;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-copy {
+  grid-area: heading;
+  align-self: end;
+  display: block;
+  width: auto;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  animation: none;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-copy > p {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0 0 18px;
+  color: var(--tour-muted);
+  font: 500 13px/1.5 var(--sans, sans-serif);
+  letter-spacing: 0;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-number {
+  flex: none;
+  opacity: 1;
+  margin: 0;
+  font-family: var(--mono, monospace);
+  letter-spacing: -0.05em;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-number b {
+  color: var(--tour-mark);
+  font-weight: 600;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-copy h2 {
+  margin: 0;
+  font: 700 clamp(32px, 3.8vw, 47px) / 1.24 var(--sans, sans-serif);
+  letter-spacing: -0.045em;
+  color: var(--tour-fg);
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-visual {
+  grid-area: art;
+  align-self: stretch;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-width: none;
+  aspect-ratio: auto;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-visual canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-description {
+  grid-area: description;
+  margin: 0;
+  max-width: 35em;
+  color: var(--tour-muted);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-dots {
+  display: flex;
+  flex: none;
+  gap: 0;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-dots button {
+  position: relative;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  outline-offset: -2px;
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-dots button::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  top: calc(50% - 3.5px);
+  left: calc(50% - 3.5px);
+  background: #66665f;
+}
+#meadowOnboarding[data-tour='benefits']
+  .meadow-onboarding-dots
+  button.active::after {
+  background: var(--tour-mark);
+}
+#meadowOnboarding[data-tour='benefits'] .meadow-onboarding-next {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  width: max-content;
+  flex: none;
+  min-width: 0;
+  min-height: 48px;
+  margin: 0 0 0 auto;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--tour-accent);
+  color: #10251a;
+  font: 650 16px/1.2 var(--sans, sans-serif);
+  white-space: nowrap;
+}
+#meadowOnboarding[data-tour='benefits']
+  .meadow-onboarding-next
+  span:last-child {
+  font: 400 25px/1 sans-serif;
+}
+#meadowOnboarding[data-tour='benefits'] button {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.15s,
+    transform 0.15s;
+}
+#meadowOnboarding[data-tour='benefits'] button:active {
+  transform: scale(0.97);
+}
+#meadowOnboarding[data-tour='benefits'] button:focus-visible {
+  outline: 2px solid var(--tour-mark);
+  outline-offset: 2px;
+}
+@media (max-width: 767px), (max-width: 1024px) and (pointer: coarse) {
+  #meadowOnboarding[data-tour='benefits'] {
+    top: var(--mobile-vv-top, 0px);
+    bottom: auto;
+    height: var(--mobile-vv-height, 100dvh);
+    padding: max(12px, env(safe-area-inset-top, 0px)) 0
+      max(12px, env(safe-area-inset-bottom, 0px));
+  }
+  #meadowOnboarding[data-tour='benefits'] .meadow-onboarding-card {
+    --tour-inset: 20px;
+    width: 95%;
+    height: 100%;
+    grid-template-rows: 44px minmax(0, 1fr) 52px;
+    gap: 18px;
+    border-radius: 26px;
+  }
+  #meadowOnboarding[data-tour='benefits'] .meadow-onboarding-slide {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(160px, 1fr) auto;
+    grid-template-areas: 'heading' 'art' 'description';
+    min-height: 370px;
+    gap: 16px;
+    padding: 0;
+  }
+  #meadowOnboarding[data-tour='benefits'] .meadow-onboarding-copy > p {
+    margin-bottom: 12px;
+    font-size: 12px;
+    gap: 10px;
+  }
+  #meadowOnboarding[data-tour='benefits'] .meadow-onboarding-copy h2 {
+    font-size: clamp(29px, 9vw, 38px);
+  }
+  #meadowOnboarding[data-tour='benefits'] .meadow-onboarding-description {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+}
+@media (max-width: 767px) and (max-height: 720px) {
+  #meadowOnboarding[data-tour='benefits'] .meadow-onboarding-card {
+    --tour-inset: 16px;
+    gap: 14px;
+  }
+  #meadowOnboarding[data-tour='benefits'] .meadow-onboarding-slide {
+    min-height: 345px;
+    gap: 12px;
+    grid-template-rows: auto minmax(155px, 1fr) auto;
+  }
+  #meadowOnboarding[data-tour='benefits'] .meadow-onboarding-copy > p {
+    margin-bottom: 8px;
+  }
+  #meadowOnboarding[data-tour='benefits'] .meadow-onboarding-copy h2 {
+    font-size: 29px;
+  }
+  #meadowOnboarding[data-tour='benefits'] .meadow-onboarding-next {
+    padding-inline: 18px;
+    font-size: 15px;
+  }
+  #meadowOnboarding[data-tour='benefits'] .meadow-onboarding-nav {
+    gap: 12px;
+  }
+}
+@media (orientation: landscape) and (max-height: 540px) {
+  #meadowOnboarding[data-tour='benefits'] {
+    padding: 10px 0;
+  }
+  #meadowOnboarding[data-tour='benefits'] .meadow-onboarding-card {
+    --tour-inset: 16px;
+    width: 95%;
+    height: 100%;
+    gap: 10px;
+  }
+  #meadowOnboarding[data-tour='benefits'] .meadow-onboarding-slide {
+    min-height: 225px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr auto;
+    grid-template-areas: 'heading art' 'description art';
+    gap: 10px 24px;
+  }
+  #meadowOnboarding[data-tour='benefits'] .meadow-onboarding-copy h2 {
+    font-size: 28px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #meadowOnboarding[data-tour='benefits'] button {
+    transition: none;
+  }
+}

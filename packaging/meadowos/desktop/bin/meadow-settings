@@ -1,0 +1,10 @@
+#!/usr/bin/python3
+"""Resolve the installed native Settings payload through its symlink."""
+from pathlib import Path
+import runpy
+import sys
+
+if "--prefix" not in sys.argv:
+    sys.argv.extend(["--prefix", str(Path(__file__).resolve().parents[4])])
+
+runpy.run_path(str(Path(__file__).resolve().parents[1] / "meadow_settings.py"), run_name="__main__")

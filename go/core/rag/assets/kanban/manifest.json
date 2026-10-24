@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "title": "Offline task board / 離線待辦看板",
+  "description": "Runnable single HTML task manager: add/edit/delete tasks, move between todo/doing/done, search, localStorage persistence, JSON import/export. Safe text rendering, keyboard form, responsive. No backend, network or dependencies.",
+  "tags": [
+    "kanban",
+    "todo",
+    "task board",
+    "待辦",
+    "看板",
+    "任務",
+    "html",
+    "offline",
+    "localStorage",
+    "匯出",
+    "搜尋"
+  ],
+  "kind": "application",
+  "entrypoint": "index.html",
+  "usage": "Copy index.html. All state is local to the browser and can be exported/imported as JSON. Change labels/styles with normal edit tools.",
+  "license": "MIT; authored for Meadow, 2026",
+  "source": "Meadow curated examples, locally authored 2026-10-02",
+  "verification": "Chromium fixture acceptance 2026-10-02: controls/persistence/offline and canonical game captures exercised. Full-board wins and physical Safari unverified. Fixture evidence is not future model-delivery evidence.",
+  "files": [
+    {
+      "path": "index.html",
+      "sha256": "1e21ee9429b6a61b9b7b835a345091f7992c83e94eb5454e7aa75ad98a363dda",
+      "bytes": 5330
+    }
+  ],
+  "key": "kanban"
+}

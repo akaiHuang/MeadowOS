@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "title": "Editable HTML deck / HTML 簡報",
+  "description": "Offline HTML slide deck: title/body/source editing, navigation, add page, localStorage, fullscreen, keyboard, standalone HTML download and print/PDF. Clean typography. Provides meadowDeck.getSlides/exportHTML. Content-ready alternative to regenerating a slide renderer; not PPTX export.",
+  "tags": [
+    "ppt",
+    "ptt",
+    "presentation",
+    "slides",
+    "簡報",
+    "HTML",
+    "來源",
+    "研究",
+    "下載",
+    "editable"
+  ],
+  "kind": "application",
+  "entrypoint": "index.html",
+  "usage": "Copy index.html. Change defaultSlides array with researched titles/body/source. Keep citations in source fields. User can edit and download a standalone HTML or print PDF. This fixture does not generate PPTX.",
+  "license": "MIT; authored for Meadow, 2026",
+  "source": "Meadow curated examples, locally authored 2026-10-02",
+  "verification": "Chromium fixture acceptance 2026-10-02: controls/persistence/offline and canonical game captures exercised. Full-board wins and physical Safari unverified. Fixture evidence is not future model-delivery evidence.",
+  "files": [
+    {
+      "path": "index.html",
+      "sha256": "a799b71acb8902c3bee190fbb795e6223c74a3a833c7877a360b9a59b08543fd",
+      "bytes": 6569
+    }
+  ],
+  "key": "slides"
+}

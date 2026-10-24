@@ -1,0 +1,33 @@
+# Local build and development artifacts
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+dist/
+build/
+artifacts/
+.cache/
+.qwen/
+.idea/
+.vscode/
+# Runtime state and credentials never belong in source control
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.log
+.meadow/
+**/model-connections-v1.json
+**/model-connections-v1.json.credentials/
+**/agent-api-token
+**/agent.sock
+**/shell-conversation.json
+**/shell-draft.json
+**/chat-attachment-draft.json

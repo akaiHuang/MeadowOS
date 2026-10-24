@@ -1,0 +1,79 @@
+"use strict";(()=>{var g=document.querySelector("[data-presentation-root]"),b=window.MEADOW_PRESENTATION;if(!g)throw new Error("Missing presentation root");!b||!Array.isArray(b.slides)||b.slides.length===0?g.innerHTML=`
+    <main class="deck-state" role="status">
+      <p class="deck-state__label">\u7121\u6CD5\u986F\u793A\u7C21\u5831</p>
+      <h1>\u6C92\u6709\u53EF\u7528\u7684\u6295\u5F71\u7247\u8CC7\u6599</h1>
+      <p>\u8ACB\u91CD\u65B0\u7522\u751F\u7C21\u5831\uFF0C\u6216\u6AA2\u67E5 presentation.json\u3002</p>
+    </main>
+  `:h(g,b);function h(t,e){let r=0,m=new Map((e.sources??[]).map(n=>[n.url,n]));t.innerHTML=`
+    <main class="deck-shell">
+      <header class="deck-header">
+        <div class="deck-brand">
+          <strong>${a(e.title)}</strong>
+          ${e.subtitle?`<span>${a(e.subtitle)}</span>`:""}
+        </div>
+        <div class="deck-header__actions">
+          <button type="button" class="deck-button deck-button--quiet" data-action="overview">\u6295\u5F71\u7247\u7E3D\u89BD</button>
+          <button type="button" class="deck-button deck-button--quiet" data-action="print">\u5217\u5370\u6216\u532F\u51FA PDF</button>
+        </div>
+      </header>
+      <section class="deck-stage" aria-live="polite">
+        <div class="deck-track"></div>
+      </section>
+      <footer class="deck-footer">
+        <div class="deck-progress" aria-label="\u7C21\u5831\u9032\u5EA6">
+          <span data-current>1</span>
+          <span aria-hidden="true">/</span>
+          <span>${e.slides.length}</span>
+        </div>
+        <nav class="deck-nav" aria-label="\u6295\u5F71\u7247\u5C0E\u89BD">
+          <button type="button" class="deck-button" data-action="previous">\u4E0A\u4E00\u9801</button>
+          <button type="button" class="deck-button deck-button--primary" data-action="next">\u4E0B\u4E00\u9801</button>
+        </nav>
+      </footer>
+      <dialog class="deck-overview">
+        <div class="deck-overview__header">
+          <div>
+            <p>\u6295\u5F71\u7247\u7E3D\u89BD</p>
+            <h2>${a(e.title)}</h2>
+          </div>
+          <button type="button" class="deck-button deck-button--quiet" data-action="close-overview">\u95DC\u9589</button>
+        </div>
+        <div class="deck-overview__grid"></div>
+      </dialog>
+    </main>
+  `;let u=d(t,".deck-track"),o=d(t,".deck-overview"),l=d(t,".deck-overview__grid"),f=d(t,"[data-current]"),k=d(t,'[data-action="previous"]'),$=d(t,'[data-action="next"]');e.slides.forEach((n,s)=>{u.insertAdjacentHTML("beforeend",y(n,s,e.slides.length,m)),l.insertAdjacentHTML("beforeend",`<button type="button" class="deck-overview__item" data-slide="${s}">
+        <span>${String(s+1).padStart(2,"0")}</span>
+        <strong>${a(n.title)}</strong>
+      </button>`)});let p=Array.from(u.querySelectorAll(".deck-slide")),i=n=>{r=Math.max(0,Math.min(n,p.length-1)),p.forEach((s,c)=>{let v=c===r;s.hidden=!v,s.classList.toggle("is-active",v),s.setAttribute("aria-hidden",String(!v))}),f.textContent=String(r+1),k.disabled=r===0,$.disabled=r===p.length-1,document.title=`${e.slides[r].title} | ${e.title}`};t.addEventListener("click",n=>{let s=n.target.closest("button");if(!s)return;let c=s.dataset.action;c==="previous"&&i(r-1),c==="next"&&i(r+1),c==="overview"&&o.showModal(),c==="close-overview"&&o.close(),c==="print"&&window.print(),s.dataset.slide&&(i(Number(s.dataset.slide)),o.close())}),window.addEventListener("keydown",n=>{if(o.open&&n.key==="Escape"){o.close();return}(n.key==="ArrowLeft"||n.key==="PageUp")&&i(r-1),(n.key==="ArrowRight"||n.key==="PageDown"||n.key===" ")&&i(r+1),n.key==="Home"&&i(0),n.key==="End"&&i(p.length-1)}),i(0)}function y(t,e,r,m){let u=t.layout??w(t),o=(t.sourceUrls??[]).map(l=>m.get(l)??{title:l,url:l}).filter(l=>l.url);return`
+    <article class="deck-slide deck-slide--${u}" data-slide-id="${a(t.id)}" ${e===0?"":"hidden"}>
+      <div class="deck-slide__number" aria-label="\u7B2C ${e+1} \u9801\uFF0C\u5171 ${r} \u9801">
+        ${String(e+1).padStart(2,"0")}
+      </div>
+      <div class="deck-slide__content">
+        ${t.eyebrow?`<p class="deck-slide__eyebrow">${a(t.eyebrow)}</p>`:""}
+        <h1>${a(t.title)}</h1>
+        ${t.summary?`<p class="deck-slide__summary">${a(t.summary)}</p>`:""}
+        ${M(t)}
+        ${E(t)}
+        ${T(t)}
+        ${t.quote?`<blockquote>${a(t.quote)}</blockquote>`:""}
+      </div>
+      ${L(o)}
+    </article>
+  `}function w(t){return t.table?"table":t.metrics?.length?"metrics":t.quote?"quote":"statement"}function M(t){return t.metrics?.length?`<div class="deck-metrics">
+    ${t.metrics.map(e=>`<div class="deck-metric">
+          <span>${a(e.label)}</span>
+          <strong>${a(e.value)}</strong>
+          ${e.note?`<p>${a(e.note)}</p>`:""}
+        </div>`).join("")}
+  </div>`:""}function E(t){return t.bullets?.length?`<ul class="deck-points">
+    ${t.bullets.map(e=>`<li>${a(e)}</li>`).join("")}
+  </ul>`:""}function T(t){return t.table?`<div class="deck-table-wrap">
+    <table>
+      <thead><tr>${t.table.columns.map(e=>`<th scope="col">${a(e)}</th>`).join("")}</tr></thead>
+      <tbody>${t.table.rows.map(e=>`<tr>${e.map(r=>`<td>${a(r)}</td>`).join("")}</tr>`).join("")}</tbody>
+    </table>
+  </div>`:""}function L(t){return t.length===0?"":`<aside class="deck-sources" aria-label="\u672C\u9801\u8CC7\u6599\u4F86\u6E90">
+    <strong>\u8CC7\u6599\u4F86\u6E90</strong>
+    ${t.slice(0,4).map(e=>`<a href="${S(e.url)}" target="_blank" rel="noreferrer">${a(e.title)}</a>`).join("")}
+  </aside>`}function d(t,e){let r=t.querySelector(e);if(!r)throw new Error(`Missing element: ${e}`);return r}function a(t){let e=document.createElement("span");return e.textContent=t,e.innerHTML}function S(t){return a(t).replaceAll("`","&#96;")}})();

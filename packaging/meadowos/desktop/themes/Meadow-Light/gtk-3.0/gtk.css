@@ -1,0 +1,849 @@
+/* Meadow native widgets: cool silver/graphite surfaces, compact toolbars. */
+@import url("resource:///org/gtk/libgtk/theme/Adwaita/gtk-contained.css");
+@define-color meadow_bg #f6f8fa;
+@define-color meadow_card #fcfdfe;
+@define-color meadow_chrome #f0f4f6;
+@define-color meadow_view #ffffff;
+@define-color meadow_hover #e8eff0;
+@define-color meadow_fg #293731;
+@define-color meadow_muted #6e7e79;
+@define-color meadow_rule #dce5e5;
+@define-color meadow_action #10855f;
+@define-color meadow_action_hover #0c7452;
+@define-color meadow_action_fg #ffffff;
+@define-color meadow_accent #159b70;
+@define-color meadow_selected #e0f0e9;
+@define-color meadow_selected_fg #245d48;
+@define-color meadow_disabled #a1acb5;
+@define-color meadow_disabled_bg #eef2f4;
+@define-color meadow_disabled_rule #e0e6eb;
+@define-color meadow_slider #c1cbd3;
+@define-color meadow_primary_disabled #dce8e1;
+@define-color meadow_primary_disabled_fg #8a9e92;
+
+@define-color theme_bg_color @meadow_bg;
+@define-color theme_fg_color @meadow_fg;
+@define-color theme_base_color @meadow_view;
+@define-color theme_text_color @meadow_fg;
+@define-color theme_selected_bg_color @meadow_selected;
+@define-color theme_selected_fg_color @meadow_selected_fg;
+
+window.background, .background {
+  background-color: @meadow_bg;
+  color: @meadow_fg;
+}
+headerbar, toolbar, .toolbar, menubar, .menubar {
+  background-image: none;
+  background-color: @meadow_chrome;
+  color: @meadow_fg;
+  border-color: @meadow_rule;
+  box-shadow: none;
+}
+headerbar {
+  min-height: 30px;
+  padding: 2px 6px;
+  border-bottom: 1px solid @meadow_rule;
+}
+toolbar, .toolbar {
+  padding: 2px 5px;
+  border-bottom: 1px solid @meadow_rule;
+}
+button {
+  min-height: 26px;
+  min-width: 26px;
+  padding: 3px 9px;
+  background-image: none;
+  background-color: @meadow_card;
+  color: @meadow_fg;
+  border: 1px solid @meadow_rule;
+  border-radius: 8px;
+  box-shadow: none;
+  text-shadow: none;
+}
+button:hover { background-color: @meadow_hover; }
+button:checked, button:active {
+  background-image: none;
+  background-color: @meadow_selected;
+  color: @meadow_selected_fg;
+}
+button:disabled {
+  background-image: none;
+  color: @meadow_disabled;
+  background-color: @meadow_disabled_bg;
+  border-color: @meadow_disabled_rule;
+}
+button:focus {
+  outline-color: @meadow_accent;
+  outline-width: 1px;
+  outline-style: solid;
+  outline-offset: 1px;
+}
+/* Native toolbar controls stay compact without shrinking dialog action buttons.
+   Icon transforms change paint, while padding/minimums control the extra space. */
+toolbar button, .toolbar button, headerbar button {
+  min-width: 26px;
+  min-height: 26px;
+  padding: 0 2px;
+  margin: 0 1px;
+  background-color: transparent;
+  border-color: transparent;
+  border-radius: 5px;
+}
+toolbar button:hover, .toolbar button:hover, headerbar button:hover {
+  background-color: @meadow_hover;
+  border-color: @meadow_rule;
+}
+toolbar button:checked, .toolbar button:checked, headerbar button:checked {
+  background-color: @meadow_selected;
+  color: @meadow_selected_fg;
+  border-color: @meadow_rule;
+}
+toolbar button image, .toolbar button image {
+  -gtk-icon-style: symbolic;
+  -gtk-icon-transform: scale(0.72);
+  color: @meadow_muted;
+}
+headerbar button image {
+  -gtk-icon-style: symbolic;
+  -gtk-icon-transform: scale(0.88);
+}
+toolbar button:disabled image, .toolbar button:disabled image {
+  color: @meadow_disabled;
+}
+.linked > button, .path-bar button { padding: 2px 7px; }
+button.primary, button.suggested-action {
+  background-color: @meadow_action;
+  border-color: @meadow_action;
+  color: @meadow_action_fg;
+  font-weight: 600;
+}
+button.primary:hover, button.suggested-action:hover {
+  background-color: @meadow_action_hover;
+  border-color: @meadow_action_hover;
+}
+button.primary:disabled, button.suggested-action:disabled {
+  background-image: none;
+  background-color: @meadow_primary_disabled;
+  color: @meadow_primary_disabled_fg;
+  border-color: @meadow_disabled_rule;
+}
+entry, spinbutton, combobox button {
+  min-height: 26px;
+  padding: 2px 8px;
+  background-image: none;
+  background-color: @meadow_card;
+  color: @meadow_fg;
+  border: 1px solid @meadow_rule;
+  border-radius: 8px;
+  box-shadow: none;
+}
+entry:focus, spinbutton:focus { border-color: @meadow_accent; }
+entry:disabled, spinbutton:disabled { color: @meadow_disabled; }
+.view, treeview.view, iconview, textview, textview text {
+  background-color: @meadow_view;
+  color: @meadow_fg;
+}
+.sidebar, .sidebar .view, .sidebar treeview, .sidebar viewport {
+  background-color: @meadow_chrome;
+  color: @meadow_fg;
+}
+selection, .view:selected, .view:selected:focus, .view:selected:backdrop,
+treeview.view:selected, treeview.view:selected:focus,
+treeview.view:selected:backdrop, iconview:selected, iconview:selected:focus,
+iconview:selected:backdrop, row:selected, row:selected:focus,
+row:selected:backdrop {
+  background-image: none;
+  background-color: @meadow_selected;
+  color: @meadow_selected_fg;
+  border-color: @meadow_selected;
+}
+row:selected label, row:selected image { color: @meadow_selected_fg; }
+/* GtkListBox has an extra list ancestor in Adwaita's inactive rules. Match it
+   explicitly so native lists retain Meadow selection after opening a dialog. */
+list row:selected, list row:selected:focus, list row:selected:hover,
+list row:selected:backdrop, list row:selected:backdrop:hover,
+list row.activatable:selected, list row.activatable:selected:focus,
+list row.activatable:selected:hover, list row.activatable:selected:active,
+list row.activatable:selected:backdrop,
+list row.activatable:selected:backdrop:hover,
+list row.activatable:selected.has-open-popup {
+  background-image: none;
+  background-color: @meadow_selected;
+  color: @meadow_selected_fg;
+  border-color: @meadow_selected;
+  box-shadow: none;
+}
+list row:selected label, list row:selected image,
+list row:selected:backdrop label, list row:selected:backdrop image,
+list row.activatable:selected label, list row.activatable:selected image,
+list row.activatable:selected:backdrop label, list row.activatable:selected:backdrop image {
+  color: @meadow_selected_fg;
+}
+
+separator, paned > separator {
+  background-color: @meadow_rule;
+  min-width: 1px;
+  min-height: 1px;
+}
+/* Popup shape and content spacing are shared by main menus, submenus and
+   combobox menus. Opaque material is the safe default without a valid capture. */
+menu, .menu, .context-menu,
+popover, popover.background, .csd popover.background,
+popover.background:backdrop {
+  background-image: none;
+  background-color: @meadow_card;
+  color: @meadow_fg;
+  padding: 4px;
+  border: 1px solid alpha(@meadow_rule, .8);
+  border-radius: 12px;
+  box-shadow: 0 5px 16px alpha(black, .12), inset 0 1px alpha(white, .14);
+  text-shadow: none;
+  -gtk-icon-shadow: none;
+}
+menu menuitem, .menu menuitem, .context-menu menuitem,
+popover modelbutton.flat, popover .menuitem.button.flat {
+  min-height: 20px;
+  padding: 4px 8px;
+  margin: 0;
+  border: 0;
+  border-radius: 6px;
+  background-image: none;
+  background-color: transparent;
+  color: @meadow_fg;
+  box-shadow: none;
+  text-shadow: none;
+  -gtk-icon-shadow: none;
+}
+menu menuitem:hover, .menu menuitem:hover, .context-menu menuitem:hover,
+menu menuitem:backdrop:hover, .menu menuitem:backdrop:hover,
+.context-menu menuitem:backdrop:hover,
+popover modelbutton.flat:hover, popover modelbutton.flat:checked,
+popover modelbutton.flat:selected, popover modelbutton.flat:selected:backdrop,
+popover .menuitem.button.flat:hover, popover .menuitem.button.flat:checked,
+popover .menuitem.button.flat:selected, popover .menuitem.button.flat:selected:backdrop {
+  background-image: none;
+  background-color: @meadow_selected;
+  color: @meadow_selected_fg;
+  box-shadow: none;
+}
+menu menuitem:disabled, .menu menuitem:disabled,
+.context-menu menuitem:disabled,
+menu menuitem:disabled:backdrop, .menu menuitem:disabled:backdrop,
+.context-menu menuitem:disabled:backdrop,
+popover modelbutton.flat:disabled, popover .menuitem.button.flat:disabled {
+  background-image: none;
+  background-color: transparent;
+  color: @meadow_disabled;
+  text-shadow: none;
+  -gtk-icon-shadow: none;
+}
+menu menuitem accelerator, .menu menuitem accelerator,
+.context-menu menuitem accelerator { color: @meadow_muted; }
+menu menuitem:disabled accelerator, .menu menuitem:disabled accelerator,
+.context-menu menuitem:disabled accelerator { color: @meadow_disabled; }
+menu menuitem arrow, .menu menuitem arrow, .context-menu menuitem arrow {
+  min-width: 12px;
+  min-height: 12px;
+  color: inherit;
+}
+menu separator, .menu separator, .context-menu separator {
+  min-height: 1px;
+  margin: 4px 6px;
+  background-image: none;
+  background-color: alpha(@meadow_rule, .75);
+  border: 0;
+  box-shadow: none;
+}
+menubar > menuitem, .menubar > menuitem { padding: 3px 8px; }
+menubar > menuitem:hover, .menubar > menuitem:hover,
+menubar > menuitem:backdrop:hover, .menubar > menuitem:backdrop:hover {
+  background-image: none;
+  background-color: @meadow_selected;
+  color: @meadow_selected_fg;
+  border-radius: 8px;
+  box-shadow: none;
+}
+tooltip, tooltip.background {
+  background-image: none;
+  background-color: @meadow_card;
+  color: @meadow_fg;
+  padding: 6px 8px;
+  border: 1px solid alpha(@meadow_rule, .8);
+  border-radius: 8px;
+  box-shadow: 0 3px 10px alpha(black, .1);
+}
+tooltip label, tooltip image {
+  background-color: transparent;
+  color: @meadow_fg;
+  text-shadow: none;
+  -gtk-icon-shadow: none;
+}
+/* Only the native adapter adds these after a complete cached capture. It
+   removes them on failure/unmap. Never clear menuitem selection or foreground. */
+window.meadow-native-glass-popup-window,
+tooltip.meadow-native-glass-popup-window,
+window.meadow-native-glass-popup-window decoration,
+menu.meadow-native-glass-popup,
+.meadow-popup-content.meadow-native-glass-popup {
+  background-image: none;
+  background-color: transparent;
+}
+window.meadow-native-glass-popup-window decoration {
+  border-color: transparent;
+  box-shadow: none;
+}
+statusbar { background-color: @meadow_chrome; padding: 2px 6px; }
+statusbar label { color: @meadow_muted; font-size: 11px; }
+scrollbar { background-color: transparent; }
+scrollbar slider {
+  min-width: 6px;
+  min-height: 28px;
+  margin: 2px;
+  border: none;
+  border-radius: 8px;
+  background-color: @meadow_slider;
+}
+scrollbar.horizontal slider { min-width: 28px; min-height: 6px; }
+scrollbar slider:hover { background-color: @meadow_muted; }
+notebook > header {
+  background-color: @meadow_chrome;
+  border-color: @meadow_rule;
+}
+notebook > header tabs > tab { min-height: 24px; padding: 3px 10px; }
+notebook > header tabs > tab:checked {
+  background-color: @meadow_card;
+  box-shadow: inset 0 -2px @meadow_accent;
+}
+/* A native CSD window owns one outline. HeaderBar is the actual titlebar;
+   Thunar reparents its existing location toolbar here when native CSD is on. */
+window.csd decoration {
+  margin: 10px;
+  border: 1px solid alpha(@meadow_rule, .75);
+  border-radius: 16px;
+  background-color: transparent;
+  box-shadow: 0 6px 20px alpha(@meadow_fg, .16);
+}
+window.csd { border-radius: 0 0 16px 16px; }
+window.csd.maximized, window.csd.fullscreen,
+window.csd.maximized decoration, window.csd.fullscreen decoration {
+  margin: 0;
+  border-radius: 0;
+  border-width: 0;
+  box-shadow: none;
+}
+headerbar.titlebar {
+  -GtkWidget-window-dragging: true;
+  min-height: 30px;
+  padding: 3px 7px;
+  background-image: none;
+  background-color: @meadow_chrome;
+  border-width: 0 0 1px;
+  border-color: @meadow_rule;
+  border-radius: 16px 16px 0 0;
+  box-shadow: none;
+}
+.maximized headerbar.titlebar, .fullscreen headerbar.titlebar { border-radius: 0; }
+headerbar.titlebar .title { font-size: 13px; font-weight: 500; }
+.thunar headerbar.titlebar toolbar {
+  min-height: 30px;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+.thunar headerbar.titlebar toolbar entry {
+  min-height: 24px;
+  padding: 1px 8px;
+}
+/* Native GtkHeaderBar buttons keep their Gtk actions, accessibility, and a
+   20x24 minimum hit canvas. The 12px dots are paint only, not fake controls. */
+headerbar.titlebar button.titlebutton {
+  min-width: 20px;
+  min-height: 24px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  background-size: 12px 12px;
+  background-repeat: no-repeat;
+  background-position: center;
+  box-shadow: none;
+}
+headerbar.titlebar button.titlebutton.close {
+  background-image: url("assets/window-close.svg");
+}
+headerbar.titlebar button.titlebutton.minimize {
+  background-image: url("assets/window-minimize.svg");
+}
+headerbar.titlebar button.titlebutton.maximize {
+  background-image: url("assets/window-maximize.svg");
+}
+headerbar.titlebar button.titlebutton:backdrop {
+  background-image: url("assets/window-inactive.svg");
+}
+headerbar.titlebar button.titlebutton image {
+  opacity: 0;
+  -gtk-icon-transform: scale(.65);
+  color: #17372d;
+}
+headerbar.titlebar button.titlebutton:hover image,
+headerbar.titlebar button.titlebutton:focus image { opacity: .75; }
+headerbar.titlebar button.titlebutton:active { opacity: .65; }
+headerbar.titlebar button.titlebutton:disabled { opacity: .4; }
+
+/* Shared native settings retain their real controls and keyboard focus. */
+.inline-toolbar, actionbar, actionbar > revealer > box {
+  background-image: none;
+  background-color: @meadow_chrome;
+  border-color: @meadow_rule;
+  box-shadow: none;
+}
+notebook > header tabs > tab:checked,
+notebook > header tabs > tab:checked:hover {
+  background-image: none;
+  border-color: @meadow_rule;
+  box-shadow: inset 0 -2px @meadow_accent;
+}
+notebook > header tabs > tab:checked label { color: @meadow_selected_fg; }
+notebook > header tab:hover { color: @meadow_fg; background-color: @meadow_hover; }
+notebook > header.top > tabs > tab:hover,
+notebook > header.bottom > tabs > tab:hover,
+notebook > header.left > tabs > tab:hover,
+notebook > header.right > tabs > tab:hover { box-shadow: none; }
+notebook > header.top > tabs > tab:checked { box-shadow: inset 0 -2px @meadow_accent; }
+notebook > header.bottom > tabs > tab:checked { box-shadow: inset 0 2px @meadow_accent; }
+notebook > header.left > tabs > tab:checked { box-shadow: inset -2px 0 @meadow_accent; }
+notebook > header.right > tabs > tab:checked { box-shadow: inset 2px 0 @meadow_accent; }
+button:link, button:visited, button:link label, button:visited label { color: @meadow_action; }
+check, radio {
+  background-image: none;
+  background-color: @meadow_card;
+  color: @meadow_fg;
+  border-color: @meadow_rule;
+  box-shadow: none;
+}
+check:checked, radio:checked {
+  background-image: none;
+  background-color: @meadow_action;
+  border-color: @meadow_action;
+  color: @meadow_action_fg;
+}
+check:hover, radio:hover { border-color: @meadow_accent; }
+check:disabled, radio:disabled { opacity: .55; }
+switch {
+  background-image: none;
+  background-color: @meadow_disabled_rule;
+  border-color: @meadow_rule;
+  box-shadow: none;
+}
+switch:checked {
+  background-image: none;
+  background-color: @meadow_action;
+  border-color: @meadow_action;
+}
+switch slider {
+  background-image: none;
+  background-color: @meadow_card;
+  border-color: @meadow_rule;
+  box-shadow: 0 1px 2px alpha(@meadow_fg, .12);
+}
+scale trough { background-color: @meadow_disabled_rule; border-color: @meadow_rule; }
+scale highlight { background-color: @meadow_action; border-color: @meadow_action; }
+progressbar progress { background-image: none; background-color: @meadow_action; border-color: @meadow_action; }
+
+/* Thunar remains a native file manager. Its main grid is ExoIconView (.view),
+   so use that real style class as well as GtkTreeView for selection states.
+   Row spacing is deliberately scoped here, never applied to Settings trees. */
+.thunar toolbar, .thunar .toolbar {
+  padding: 4px 7px;
+  background-color: @meadow_chrome;
+}
+.thunar toolbar entry, .thunar .toolbar entry {
+  min-height: 26px;
+  padding: 1px 9px;
+  border-radius: 8px;
+  background-color: @meadow_card;
+}
+.thunar .sidebar, .thunar .sidebar .view, .thunar .sidebar viewport,
+.thunar treeview.sidebar {
+  background-color: @meadow_chrome;
+  color: @meadow_muted;
+}
+.thunar .sidebar treeview.view, .thunar treeview.sidebar {
+  font-size: 14px;
+}
+.thunar treeview.view {
+  -GtkTreeView-vertical-separator: 10;
+  font-size: 13px;
+}
+.thunar headerbar.titlebar button image { color: @meadow_muted; }
+.thunar headerbar.titlebar button:disabled image { color: @meadow_disabled; }
+.thunar .view:selected, .thunar .view:selected:focus,
+.thunar .view:selected:backdrop {
+  background-image: none;
+  background-color: @meadow_selected;
+  color: @meadow_selected_fg;
+  border-radius: 6px;
+}
+.thunar treeview.view > header > button {
+  min-height: 24px;
+  padding: 2px 9px;
+  background-color: @meadow_chrome;
+  border-radius: 0;
+  border-width: 0 0 1px;
+  color: @meadow_muted;
+}
+.thunar statusbar { background-color: @meadow_chrome; padding: 2px 7px; }
+
+/* Match native state nodes explicitly: Adwaita's state gradients must not
+   cover Meadow colors. Toolbar/titlebutton allocation remains unchanged. */
+button:hover, button:active, button:checked, button:disabled, button:backdrop,
+button:backdrop:hover, button:backdrop:active, button:backdrop:checked {
+  background-image: none;
+  box-shadow: none;
+  text-shadow: none;
+  -gtk-icon-shadow: none;
+}
+button:backdrop {
+  background-color: @meadow_card;
+  color: @meadow_muted;
+  border-color: @meadow_rule;
+}
+button:backdrop:active, button:backdrop:checked {
+  background-color: @meadow_selected;
+  color: @meadow_selected_fg;
+}
+button:disabled:backdrop {
+  background-image: none;
+  background-color: @meadow_disabled_bg;
+  border-color: @meadow_disabled_rule;
+  color: @meadow_disabled;
+}
+toolbar button:backdrop, .toolbar button:backdrop, headerbar button:backdrop {
+  background-color: transparent;
+  border-color: transparent;
+}
+toolbar button:backdrop:hover, .toolbar button:backdrop:hover,
+headerbar button:backdrop:hover {
+  background-color: @meadow_hover;
+  border-color: @meadow_rule;
+}
+toolbar button:backdrop:checked, .toolbar button:backdrop:checked,
+headerbar button:backdrop:checked {
+  background-color: @meadow_selected;
+  color: @meadow_selected_fg;
+  border-color: @meadow_rule;
+}
+toolbar button:disabled:backdrop, .toolbar button:disabled:backdrop,
+headerbar button:disabled:backdrop { color: @meadow_disabled; }
+button.flat, button.flat:backdrop { background-color: transparent; border-color: transparent; }
+button.flat:hover { background-color: @meadow_hover; }
+button.flat:active, button.flat:checked { background-color: @meadow_selected; color: @meadow_selected_fg; }
+button.primary, button.suggested-action,
+button.primary:backdrop, button.suggested-action:backdrop {
+  background-image: none;
+  background-color: @meadow_action;
+  border-color: @meadow_action;
+  color: @meadow_action_fg;
+  text-shadow: none;
+  -gtk-icon-shadow: none;
+}
+button.primary:hover, button.suggested-action:hover,
+button.primary:active, button.suggested-action:active,
+button.primary:checked, button.suggested-action:checked {
+  background-image: none;
+  background-color: @meadow_action_hover;
+  border-color: @meadow_action_hover;
+  color: @meadow_action_fg;
+}
+button.primary:disabled, button.suggested-action:disabled,
+button.primary:disabled:backdrop, button.suggested-action:disabled:backdrop {
+  background-image: none;
+  box-shadow: none;
+  text-shadow: none;
+  -gtk-icon-shadow: none;
+  background-color: @meadow_primary_disabled;
+  color: @meadow_primary_disabled_fg;
+  border-color: @meadow_disabled_rule;
+}
+button.destructive-action, button.destructive-action:backdrop {
+  background-image: none;
+  background-color: @error_color;
+  border-color: @error_color;
+  color: @meadow_action_fg;
+  text-shadow: none;
+  -gtk-icon-shadow: none;
+}
+button.destructive-action:hover, button.destructive-action:active {
+  background-image: none;
+  background-color: shade(@error_color, .9);
+  border-color: shade(@error_color, .9);
+  color: @meadow_action_fg;
+}
+button.destructive-action:disabled, button.destructive-action:disabled:backdrop {
+  background-image: none;
+  box-shadow: none;
+  text-shadow: none;
+  -gtk-icon-shadow: none;
+  background-color: @meadow_disabled_bg;
+  border-color: @meadow_disabled_rule;
+  color: @meadow_disabled;
+}
+entry:focus, entry:backdrop, entry:disabled,
+spinbutton:not(.vertical), spinbutton:focus:not(.vertical),
+spinbutton:backdrop:not(.vertical), spinbutton:disabled:not(.vertical) {
+  background-image: none;
+  background-color: @meadow_card;
+  color: @meadow_fg;
+  border-color: @meadow_rule;
+  border-radius: 8px;
+  box-shadow: none;
+  text-shadow: none;
+}
+entry:focus, spinbutton:focus:not(.vertical) {
+  border-color: @meadow_accent;
+  box-shadow: 0 0 0 1px alpha(@meadow_accent, .2);
+}
+entry:disabled, spinbutton:disabled:not(.vertical) {
+  background-color: @meadow_disabled_bg;
+  color: @meadow_disabled;
+  border-color: @meadow_disabled_rule;
+}
+spinbutton:not(.vertical) button {
+  background-image: none;
+  background-color: transparent;
+  color: @meadow_muted;
+  border-color: @meadow_rule;
+  box-shadow: none;
+}
+spinbutton:not(.vertical) button:hover { background-color: @meadow_hover; color: @meadow_fg; }
+spinbutton:not(.vertical) button:disabled { color: @meadow_disabled; }
+combobox > box > button.combo,
+combobox > box > button.combo:backdrop {
+  background-image: none;
+  background-color: @meadow_card;
+  color: @meadow_fg;
+  border-color: @meadow_rule;
+  box-shadow: none;
+}
+combobox > box > button.combo:hover { background-color: @meadow_hover; }
+combobox > box > button.combo:checked { background-color: @meadow_selected; color: @meadow_selected_fg; }
+combobox > box > button.combo:disabled { background-color: @meadow_disabled_bg; color: @meadow_disabled; }
+entry selection, entry:focus selection,
+textview text selection, textview text:focus selection,
+spinbutton:not(.vertical) selection {
+  background-color: @meadow_selected;
+  color: @meadow_selected_fg;
+}
+check, radio { min-width: 16px; min-height: 16px; }
+check { border-radius: 4px; }
+radio { border-radius: 100%; }
+check:checked:hover, check:checked:backdrop, check:indeterminate,
+check:indeterminate:hover, check:indeterminate:backdrop,
+radio:checked:hover, radio:checked:backdrop, radio:indeterminate,
+radio:indeterminate:hover, radio:indeterminate:backdrop {
+  background-image: none;
+  background-color: @meadow_action;
+  border-color: @meadow_action;
+  color: @meadow_action_fg;
+  box-shadow: none;
+  -gtk-icon-shadow: none;
+}
+check:backdrop, radio:backdrop { background-image: none; border-color: @meadow_rule; }
+switch, switch:backdrop {
+  border-radius: 14px;
+  background-image: none;
+  background-color: @meadow_disabled_rule;
+  border-color: @meadow_rule;
+}
+switch:checked, switch:checked:backdrop { background-color: @meadow_action; border-color: @meadow_action; }
+switch > slider, switch:checked > slider,
+switch:backdrop > slider, switch:checked:backdrop > slider {
+  border-radius: 12px;
+  background-image: none;
+  background-color: @meadow_card;
+  border-color: @meadow_rule;
+}
+switch:disabled { opacity: .55; }
+scale trough, scale fill, progressbar trough,
+scale:backdrop trough, progressbar:backdrop trough {
+  background-image: none;
+  background-color: @meadow_disabled_rule;
+  border-color: @meadow_rule;
+  border-radius: 8px;
+  box-shadow: none;
+}
+scale slider, scale:backdrop slider {
+  background-image: none;
+  background-color: @meadow_card;
+  border-color: @meadow_rule;
+  box-shadow: 0 1px 3px alpha(black, .1);
+}
+scale slider:hover { border-color: @meadow_accent; }
+scale highlight, scale:backdrop highlight,
+progressbar progress, progressbar:backdrop progress {
+  background-image: none;
+  background-color: @meadow_action;
+  border-color: @meadow_action;
+  border-radius: 8px;
+  box-shadow: none;
+}
+scale:disabled highlight, progressbar:disabled progress { background-color: @meadow_disabled; border-color: @meadow_disabled; }
+scale:disabled slider { background-color: @meadow_disabled_bg; border-color: @meadow_disabled_rule; }
+/* Dialog actions stay comfortably spaced; their actual widget hierarchy and
+   native file chooser behavior are retained. No child transparency is implied. */
+messagedialog.background, window.dialog { background-color: @meadow_bg; border-radius: 16px; }
+messagedialog .titlebar { border-radius: 16px 16px 0 0; }
+messagedialog .dialog-action-area ,
+messagedialog.csd .dialog-action-area {
+  margin: 0;
+  padding: 8px 12px 12px;
+  border: 0;
+  background-color: transparent;
+}
+messagedialog .dialog-action-area button ,
+messagedialog.csd .dialog-action-area button {
+  min-height: 28px;
+  padding: 4px 12px;
+  margin: 0 4px;
+  border: 1px solid @meadow_rule;
+  border-radius: 8px;
+}
+messagedialog .dialog-action-area button:first-child,
+messagedialog.csd .dialog-action-area button:first-child,
+messagedialog .dialog-action-area button:last-child,
+messagedialog.csd .dialog-action-area button:last-child,
+messagedialog .dialog-action-area button:only-child ,
+messagedialog.csd .dialog-action-area button:only-child { border-radius: 8px; }
+messagedialog .dialog-action-area button:first-child ,
+messagedialog.csd .dialog-action-area button:first-child { border-left-style: solid; }
+messagedialog .dialog-action-area button.suggested-action ,
+messagedialog.csd .dialog-action-area button.suggested-action { border-color: @meadow_action; }
+messagedialog .dialog-action-area button.suggested-action:hover,
+messagedialog.csd .dialog-action-area button.suggested-action:hover,
+messagedialog .dialog-action-area button.suggested-action:active ,
+messagedialog.csd .dialog-action-area button.suggested-action:active { border-color: @meadow_action_hover; }
+messagedialog .dialog-action-area button.destructive-action ,
+messagedialog.csd .dialog-action-area button.destructive-action { border-color: @error_color; }
+messagedialog .dialog-action-area button.destructive-action:hover,
+messagedialog.csd .dialog-action-area button.destructive-action:hover,
+messagedialog .dialog-action-area button.destructive-action:active ,
+messagedialog.csd .dialog-action-area button.destructive-action:active { border-color: shade(@error_color, .9); }
+messagedialog .dialog-action-area button.suggested-action:disabled,
+messagedialog.csd .dialog-action-area button.suggested-action:disabled,
+messagedialog .dialog-action-area button.destructive-action:disabled ,
+messagedialog.csd .dialog-action-area button.destructive-action:disabled { border-color: @meadow_disabled_rule; }
+filechooser #pathbarbox { padding: 4px 8px; }
+filechooser .dialog-action-box { padding: 8px 12px; border-top: 1px solid @meadow_rule; }
+filechooser .path-bar.linked > button { min-height: 26px; padding: 2px 8px; }
+
+/* GtkDialog keeps its real window/header and original content/actions. Only
+   a valid body capture enables this class; removing it restores theme fills.
+   FileChooser selectors follow GTK3's original widget template deliberately:
+   its custom preview box is a sibling of the main stack.view, not inside it.
+   GtkTreeView saves a transient child copy of its CSS node when drawing .cell
+   rows and the unused tail. Clear that specific child as well as the paint
+   root; selected/hover/drop cell states keep their native theme backgrounds. */
+.meadow-native-glass-dialog,
+.meadow-native-glass-dialog > box:not(.view):not(.paper),
+.meadow-native-glass-dialog .dialog-action-box,
+.meadow-native-glass-dialog .dialog-action-area,
+.meadow-native-glass-dialog filechooser,
+.meadow-native-glass-dialog filechooser > box,
+.meadow-native-glass-dialog filechooser > box > paned,
+.meadow-native-glass-dialog filechooser > box > paned > box,
+.meadow-native-glass-dialog filechooser > box > paned > box > revealer,
+.meadow-native-glass-dialog filechooser > box > paned > box > revealer > box#pathbarbox.view,
+.meadow-native-glass-dialog filechooser > box > paned > box > revealer > box#pathbarbox.view > stack,
+.meadow-native-glass-dialog filechooser > box > paned > box > box,
+.meadow-native-glass-dialog filechooser > box > paned > box > box > stack.view,
+.meadow-native-glass-dialog filechooser > box > paned > box > box > stack.view > box,
+.meadow-native-glass-dialog filechooser > box > paned > box > box > stack.view > box > scrolledwindow,
+.meadow-native-glass-dialog filechooser > box > paned > box > box > stack.view > box > scrolledwindow > treeview.view,
+.meadow-native-glass-dialog filechooser > box > paned > box > box > stack.view > box > scrolledwindow > treeview.view > treeview.view.cell:not(:selected):not(:hover):not(:drop(active)),
+.meadow-native-glass-dialog filechooser > box > paned > placessidebar.sidebar,
+.meadow-native-glass-dialog filechooser > box > paned > placessidebar.sidebar > viewport,
+.meadow-native-glass-dialog filechooser > box > paned > placessidebar.sidebar > viewport > list,
+.meadow-native-glass-dialog filechooser > box > paned > placessidebar.sidebar > viewport > list > row.sidebar-row:not(:selected):not(:hover):not(:active):not(:drop(active)),
+.meadow-native-glass-dialog filechooser > actionbar,
+.meadow-native-glass-dialog filechooser > actionbar > revealer > box,
+.meadow-native-glass-dialog filechooser > box > paned > box > box > stack.view > box > actionbar,
+.meadow-native-glass-dialog filechooser > box > paned > box > box > stack.view > box > actionbar > revealer > box {
+  background-image: none;
+  background-color: transparent;
+}
+
+/* Native MessageDialog responses may live in its hover HeaderBar. Keep the
+   original message below the measured 42px toolbar even when focus reveals
+   it; GtkDialog/FileChooser and dialogs without Meadow hover are unchanged. */
+messagedialog.meadow-hover-window .dialog-vbox.meadow-dialog-content {
+  padding-top: 40px;
+}
+
+label { font-family: "Noto Sans", sans-serif; font-size: 13px; }
+.brand { font-size: 29px; font-weight: 600; letter-spacing: -0.8px; }
+.headline { font-size: 27px; font-weight: 600; }
+.section-title { font-size: 15px; font-weight: 600; }
+.muted, .rail-copy, .footnote { color: @meadow_muted; }
+.rail-copy { font-size: 13px; }
+.footnote { font-size: 11px; }
+.url { font-size: 13px; color: @meadow_muted; }
+.status-copy { font-size: 12px; }
+.status-on { color: @meadow_accent; font-size: 10px; }
+.status-off { color: @meadow_muted; font-size: 10px; }
+
+/* Files: allocated hover toolbar, bottom native location/status and view controls. */
+.meadow-files-toolbar { min-height: 36px; padding: 4px 12px; }
+.meadow-files-toolbar toolbar { padding: 0 8px; border: 0; background: transparent; }
+.meadow-files-toolbar toolbar button { min-width: 28px; min-height: 28px; padding: 0 4px; margin: 0 2px; border-radius: 8px; }
+.meadow-files-toolbar .titlebutton { min-width: 20px; min-height: 24px; padding: 0; margin: 0 1px; }
+.meadow-files-path { min-height: 28px; padding: 4px 24px; border-top: 1px solid alpha(@meadow_rule,.55); background-color: alpha(@meadow_chrome,.72); }
+.meadow-files-path button { min-height: 24px; padding: 0 4px; margin: 0; background: transparent; border: 0; }
+.meadow-files-path entry { min-height: 24px; padding: 0 6px; }
+.meadow-files-status { min-height: 26px; padding: 3px 24px; background-color: alpha(@meadow_chrome,.64); }
+.meadow-files-status statusbar { padding: 0; background: transparent; }
+.meadow-files-status scale { padding: 4px 0; margin: 0 4px; }
+/* Match Thunar's native selectors, including backdrop; the generic sidebar
+   rule loses to its application-specific muted color over a dark lower window. */
+.thunar .meadow-glass-sidebar,
+.thunar .meadow-glass-sidebar treeview.view,
+.thunar .meadow-glass-sidebar treeview.view:backdrop,
+.thunar treeview.sidebar,
+.thunar treeview.sidebar:backdrop { color: @meadow_fg; -gtk-icon-shadow: none; }
+/* Dialog headers now allocate their own row; no compensating overlay inset. */
+messagedialog.meadow-hover-window .dialog-vbox.meadow-dialog-content { padding-top: 0; }
+
+/* One OS traffic-light geometry, including native GtkHeaderBar specificity. */
+headerbar.titlebar.meadow-hover-toolbar,
+headerbar.titlebar.meadow-files-toolbar { min-height: 30px; padding: 0 14px; }
+headerbar.titlebar.meadow-hover-toolbar button.titlebutton,
+headerbar.titlebar.meadow-files-toolbar button.titlebutton {
+  min-width: 18px; min-height: 26px; padding: 0; margin: 0;
+}
+
+headerbar.titlebar.meadow-hover-toolbar button.titlebutton,
+headerbar.titlebar.meadow-files-toolbar button.titlebutton {border:0;box-shadow:none;}
+
+/* Identical vector controls in GTK and Python windows; no font baseline. */
+headerbar.titlebar button.titlebutton:hover image,
+headerbar.titlebar button.titlebutton:focus image { opacity: 0; }
+headerbar.titlebar button.titlebutton.close:hover, headerbar.titlebar button.titlebutton.close:focus { background-image: url("assets/window-close-hover.svg"); }
+headerbar.titlebar button.titlebutton.minimize:hover, headerbar.titlebar button.titlebutton.minimize:focus { background-image: url("assets/window-minimize-hover.svg"); }
+headerbar.titlebar button.titlebutton.maximize:hover, headerbar.titlebar button.titlebutton.maximize:focus { background-image: url("assets/window-maximize-hover.svg"); }
+
+/* Files shares its sidebar boundary with the native two-column toolbar. */
+.thunar .meadow-files-split-toolbar { min-height: 52px; padding: 0; background: transparent; }
+.thunar headerbar.titlebar.meadow-files-sidebar-header { min-height: 52px; padding: 0 14px; border: 0; border-radius: 16px 0 0 0; background-color: alpha(@meadow_chrome,.80); box-shadow: none; }
+.thunar .meadow-files-main-toolbar { padding: 8px 12px; background-color: alpha(@meadow_chrome,.52); border-radius: 0 16px 0 0; }
+.thunar .meadow-files-main-toolbar toolbar { padding: 0; min-height: 36px; border: 0; background: transparent; }
+.thunar .meadow-files-main-toolbar toolbar button { min-width: 28px; min-height: 28px; padding: 4px; margin: 0 2px; border-radius: 8px; }
+
+/* Insets belong to the native viewport; the outer pane still defines glass. */
+.thunar scrolledwindow.meadow-glass-sidebar { padding: 12px; }
+.thunar treeview.meadow-files-details {
+  -GtkTreeView-horizontal-separator: 20;
+  -GtkTreeView-vertical-separator: 12;
+}
+
+/* All native navigation surfaces share one generated state contract. */
+@import url("sidebar-states.css");

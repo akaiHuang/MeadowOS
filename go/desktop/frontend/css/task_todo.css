@@ -1,0 +1,94 @@
+/* Native Meadow foreground checklist: inherit the existing product tokens. */
+#taskTodo {
+  width: min(804px, calc(100% - 28px));
+  min-width: 0;
+  margin: 0 auto 8px;
+  border: 1px solid var(--border2);
+  border-radius: 15px;
+  background: var(--card2);
+  color: var(--fg);
+  overflow: hidden;
+}
+#taskTodo[hidden], .task-todo-card-body[hidden] { display: none; }
+.task-todo-card-head { min-width: 0; }
+.task-todo-card-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.task-todo-card-titles { display: grid; min-width: 0; gap: 3px; flex: 1; }
+.task-todo-card-name { font-size: 12.5px; font-weight: 550; line-height: 1.45; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.task-todo-card-counts { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.task-todo-card-chevron { flex: none; color: var(--muted); font-size: 17px; line-height: 1; }
+.task-todo-card-body { max-height: min(28vh, 220px); overflow: auto; padding: 0 14px 10px; overscroll-behavior: contain; }
+.task-todo-card-list { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+.task-todo-card-item { display: grid; grid-template-columns: 14px 20px minmax(0, 1fr); align-items: baseline; gap: 7px; min-width: 0; }
+.task-todo-card-status { align-self: start; display: grid; place-items: center; width: 12px; height: 12px; margin-top: 3px; border: 1px solid var(--muted); border-radius: 50%; color: var(--muted); font-size: 9px; line-height: 1; }
+.task-todo-card-order, .task-todo-card-content { font-size: 12px; line-height: 1.55; overflow-wrap: anywhere; }
+.task-todo-card-order { color: var(--muted); font-variant-numeric: tabular-nums; }
+.task-todo-card-item[data-status='completed'] .task-todo-card-content { text-decoration: line-through; color: var(--muted); }
+.task-todo-card-item[data-status='in_progress'] .task-todo-card-status { border-color: var(--primary); background: var(--primary); box-shadow: inset 0 0 0 3px var(--card2); }
+.task-todo-card-item[data-status='in_progress'] .task-todo-card-content { color: var(--primary); }
+.task-todo-card-item[data-status='cancelled'] .task-todo-card-content { color: var(--muted); }
+.task-todo-card-note { margin: 0 0 7px; font-size: 10.5px; line-height: 1.4; color: var(--muted); overflow-wrap: anywhere; }
+.task-todo-card-error { color: var(--warning, #eab308); }
+.task-todo-card-inspect { margin-top: 9px; padding: 2px 0; background: transparent; border: 0; color: var(--muted); font-family: inherit; font-size: 10.5px; line-height: 1.5; cursor: pointer; }
+.task-todo-card-inspect:hover, .task-todo-card-toggle:hover .task-todo-card-chevron { color: var(--fg); }
+.task-todo-card-toggle:focus-visible, .task-todo-card-inspect:focus-visible { outline: 2px solid var(--primary); outline-offset: -3px; border-radius: 4px; }
+/* Two scrollable lists share the input area; keep Send reachable even on a
+   short window instead of stacking both lists at their independent maxima. */
+#taskQueue:not([hidden]):has(+ #taskTodo:not([hidden])) { max-height: min(14vh, 112px); }
+#taskQueue:not([hidden]) + #taskTodo:not([hidden]) .task-todo-card-body { max-height: min(18vh, 140px); }
+@media (max-height: 650px) { .task-todo-card-body { max-height: min(22vh, 145px); } }
+@media (max-width: 760px) {
+  #taskTodo { width: min(804px, calc(100% - 8px)); margin-bottom: 6px; }
+  .task-todo-card-toggle { padding: 9px 11px; min-height: 44px; }
+  .task-todo-card-body { max-height: min(22dvh, 150px); padding-inline: 11px; }
+  .task-todo-card-inspect { min-height: 35px; }
+}
+#rpTaskTodo { min-width: 0; }
+.task-todo-heading { display: grid; gap: 4px; margin-bottom: 10px; }
+.task-todo-goal { margin: 0; color: var(--fg); font-size: 13px; font-weight: 550; line-height: 1.5; overflow-wrap: anywhere; }
+.task-todo-counts, .task-todo-revision, .task-todo-note { margin: 0; color: var(--muted); font-size: 10.5px; line-height: 1.5; }
+.task-todo-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.task-todo-item { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 7px; padding: 7px 0; }
+.task-todo-order { display: grid; place-items: center; width: 19px; height: 19px; margin-top: 1px; border: 1px solid var(--border2); border-radius: 5px; color: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; }
+.task-todo-item[data-status='in_progress'] .task-todo-order { border-color: var(--primary); color: var(--primary); }
+.task-todo-copy { min-width: 0; }
+.task-todo-item-head { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; margin-bottom: 4px; }
+.task-todo-content { color: var(--fg); font-size: 12px; font-weight: 500; line-height: 1.5; overflow-wrap: anywhere; }
+.task-todo-status { color: var(--muted); font-size: 10px; white-space: nowrap; }
+.task-todo-item[data-status='in_progress'] .task-todo-status { color: var(--primary); }
+.task-todo-item[data-status='cancelled'] .task-todo-content { color: var(--muted); }
+.task-todo-item[data-status='completed'] .task-todo-content { color: var(--muted); text-decoration: line-through; }
+.task-todo-fact { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1px; margin: 4px 0; color: var(--fg); font-size: 10.5px; line-height: 1.5; overflow-wrap: anywhere; }
+.task-todo-fact-label { color: var(--muted); font-size: 10px; }
+.task-todo-current, .task-todo-stopped, .task-todo-dependency { margin: 0 0 10px; padding: 7px 9px; border-left: 2px solid var(--primary); color: var(--fg); background: var(--accent); font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
+.task-todo-stopped { border-color: var(--warning, #eab308); }
+.task-todo-dependency { padding: 0; margin: 5px 0; border: 0; background: transparent; color: var(--muted); font-size: 10.5px; }
+.task-todo-details { margin-top: 6px; }
+.task-todo-details > summary { width: fit-content; color: var(--muted); font-size: 10.5px; cursor: pointer; }
+.task-todo-details > summary:hover { color: var(--fg); }
+.task-todo-details > summary:focus-visible, .task-todo-retry:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+.task-todo-detail-body { margin-top: 8px; padding-left: 9px; border-left: 1px solid var(--border2); }
+.task-todo-artifacts { display: grid; gap: 3px; margin-top: 6px; }
+.task-todo-artifacts code, .task-todo-receipt code { font-family: var(--mono, ui-monospace, monospace); font-size: 10px; color: var(--fg); overflow-wrap: anywhere; }
+.task-todo-artifact-open { display: block; width: fit-content; max-width: 100%; padding: 0; border: 0; background: transparent; color: var(--fg); text-align: left; font: 10px/1.5 var(--mono, ui-monospace, monospace); overflow-wrap: anywhere; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.task-todo-artifact-open:hover { color: var(--primary); }
+.task-todo-artifact-open:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+.task-todo-evidence-title { color: var(--muted); margin: 9px 0 4px; font-size: 10px; }
+.task-todo-receipt { padding: 6px 0; }
+.task-todo-receipt-head { display: flex; flex-wrap: wrap; gap: 4px 7px; align-items: baseline; }
+.task-todo-receipt-status { color: var(--muted); font-size: 10px; }
+.task-todo-footer { margin-top: 12px; }
+.task-todo-error { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--warning, #eab308); font-size: 11px; line-height: 1.5; margin-bottom: 10px; }
+.task-todo-retry { padding: 3px 7px; color: var(--fg); border: 1px solid var(--border2); background: transparent; border-radius: var(--r-sm, 5px); font: inherit; cursor: pointer; }

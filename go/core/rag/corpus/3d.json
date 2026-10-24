@@ -1,0 +1,2165 @@
+[
+  {
+    "type": "3d_web_artifact",
+    "title": "3D產品展示",
+    "keywords": [
+      "three.js",
+      "3d",
+      "product showcase",
+      "GLTFLoader",
+      "PBR",
+      "展示"
+    ],
+    "execution": "場景骨架:new THREE.Scene();PerspectiveCamera(45, w/h, 0.1, 100) 置於 (0,1,4);WebGLRenderer({antialias:true}),設 renderer.setPixelRatio(min(devicePixelRatio,2))、setSize、outputColorSpace=SRGBColorSpace、toneMapping=ACESFilmicToneMapping。光照:HemisphereLight 補底光 + DirectionalLight(主光,castShadow) + 用 RGBELoader 載 .hdr 並 PMREMGenerator.fromEquirectangular() 設 scene.environment 做 PBR 反射。模型:GLTFLoader 載入,traverse 開 mesh.castShadow/receiveShadow,計算 Box3 置中並自動框景(camera 距離由 bounding sphere 推)。控制:OrbitControls,enableDamping=true、enablePan=false、min/maxDistance、maxPolarAngle 限制。迴圈:renderer.setAnimationLoop(()=>{controls.update();renderer.render(scene,camera)})。離開時 dispose geometry/material/texture/renderer/controls。",
+    "quality_rubric": [
+      "首次載入顯示進度或 skeleton(LoadingManager.onProgress),模型就緒前不露黑屏",
+      "OrbitControls 必開 enableDamping 並在迴圈 controls.update(),旋轉有慣性阻尼不生硬",
+      "用 HDRI environment 提供 PBR 反射,金屬/塑料材質有正確高光,非純色死光",
+      "resize 監聽:更新 camera.aspect、updateProjectionMatrix()、renderer.setSize(),不變形",
+      "卸載時 dispose 所有 geometry/material/texture 與 renderer,避免 WebGL 記憶體洩漏",
+      "pixelRatio 上限 2,陰影用 PCFSoftShadowMap 且解析度適中,維持 60fps",
+      "模型自動置中且初始相機框景完整,主體佔畫面合理比例不偏移出鏡"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "商品360檢視器",
+    "keywords": [
+      "three.js",
+      "3d",
+      "360 viewer",
+      "OrbitControls",
+      "turntable",
+      "檢視器"
+    ],
+    "execution": "場景骨架同標準三件套(Scene/PerspectiveCamera/WebGLRenderer,SRGB+ACES tone map)。核心=受控環繞:OrbitControls 設 enableDamping、enablePan=false、enableZoom 可選、autoRotate=true + autoRotateSpeed,使用者拖曳時暫停 autoRotate,放開後 setTimeout 恢復。限制 minPolarAngle/maxPolarAngle 避免看到底部穿幫。若為相片式 360:也可用 36~72 張序列圖,依拖曳 deltaX 換 texture index(map=frames[i],needsUpdate),這時其實不需 3D 旋轉只切貼圖。光照:environment(RGBELoader/PMREM)主導反射 + 一盞補光。迴圈 setAnimationLoop 內 controls.update()。指標互動用 pointerdown/move/up 計算拖曳量。dispose 序列圖所有 texture。",
+    "quality_rubric": [
+      "載入態:序列圖需預載全部幀(或顯示百分比),避免拖曳時跳幀閃爍",
+      "拖曳阻尼自然:enableDamping 或對序列 index 做插值/慣性,放手後平滑停止",
+      "閒置自動旋轉(autoRotate),使用者互動立即接管、停手後延遲恢復",
+      "光照均勻環繞,任一角度都無死黑面,環境反射一致",
+      "響應式:resize 更新 aspect 與 renderer 尺寸,容器比例維持",
+      "效能:序列圖控制解析度與張數,texture 用後 dispose 不堆積",
+      "極角限制得當,不會旋到看見模型底部破面或內部"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "產品配置器",
+    "keywords": [
+      "three.js",
+      "3d",
+      "configurator",
+      "material swap",
+      "traverse",
+      "配置器"
+    ],
+    "execution": "標準場景三件套 + HDRI environment 做 PBR。模型:GLTFLoader(+DRACOLoader setDRACOLoader 解壓)。核心=部件改材質:對 gltf.scene.traverse((o)=>{if(o.isMesh) parts[o.name]=o}) 建名稱→mesh 索引;UI 改色時取對應 mesh,直接改 mesh.material.color.set(hex) 或換整個 MeshStandardMaterial(設 metalness/roughness/map);若共享材質要先 material.clone() 避免連動其他部件。換貼圖:loader 載 texture 設 colorSpace=SRGBColorSpace、texture.flipY 視來源、material.map=tex、material.needsUpdate=true。狀態用一個 config 物件集中管理,變更→套用→可序列化分享。控制 OrbitControls+damping。迴圈 setAnimationLoop。dispose 舊 material/texture 當被替換時。",
+    "quality_rubric": [
+      "載入態:模型與貼圖載入有進度提示,配置 UI 在資源就緒後才可互動",
+      "改材質前 clone 共享 material,避免一改全變;切換即時反映無延遲",
+      "PBR 正確:metalness/roughness 配合 environment,改色後高光與反射合理",
+      "OrbitControls 阻尼開啟,update() 在迴圈,操作順滑",
+      "resize 響應式,UI 面板與 canvas 並存不重疊、行動裝置可用",
+      "替換掉的 texture/material 即時 dispose,連續切換不洩漏記憶體",
+      "config 狀態集中且可重設/分享(序列化),視覺切換無材質殘留"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "汽車展示廳",
+    "keywords": [
+      "three.js",
+      "3d",
+      "car showroom",
+      "clearcoat",
+      "RGBELoader",
+      "展示廳"
+    ],
+    "execution": "場景三件套,toneMapping=ACESFilmic、toneMappingExposure 微調。重點打光=展廳氛圍:RGBELoader 載車用 studio .hdr → PMREMGenerator 設 environment(車漆反射靈魂);加多盞 RectAreaLight(需 RectAreaLightUniformsLib.init())當燈箱,+ DirectionalLight 主光 castShadow。地面用大 PlaneGeometry + MeshStandardMaterial(可反射或用 reflector)。車身材質:MeshPhysicalMaterial 開 clearcoat=1、clearcoatRoughness 模擬車漆,metalness/roughness 分區。玻璃:transmission + transparent。GLTFLoader(DRACO)載車,traverse 設陰影、依部件名套漆色。OrbitControls 限 maxPolarAngle≈Math.PI/2 不穿地、min/maxDistance 環車。迴圈 controls.update()。dispose 完整。",
+    "quality_rubric": [
+      "載入態:大模型顯示進度條,展廳環境就緒前不露半成品",
+      "車漆用 clearcoat + HDRI environment,反射呈現流動高光而非平塗",
+      "展廳打光分層(環境+RectAreaLight 燈箱+主光陰影),地面接觸陰影/反射可信",
+      "OrbitControls 阻尼順滑、限極角不穿地板、距離限制環繞車身",
+      "resize 響應式,曝光與比例在各尺寸一致",
+      "效能:RectAreaLight 數量克制、陰影解析度與 pixelRatio≤2,維持流暢",
+      "玻璃透射、輪圈金屬、烤漆三種材質區分明確,整體質感如展間"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "傢俱擺放預覽",
+    "keywords": ["three.js", "3d", "furniture", "raycaster", "drag", "擺放"],
+    "execution": "場景三件套 + 房間環境(environment 柔光 + DirectionalLight 主光 castShadow)。地板大 Plane(receiveShadow)。核心=放置與拖移:Raycaster + pointer NDC 座標,raycaster.setFromCamera(pointer,camera),對地板 intersectObject 取交點 → 把選中傢俱 mesh.position 設到交點(grid 對齊可 Math.round)。選取:對傢俱群 intersectObjects 取最近;拖移時暫停 OrbitControls(controls.enabled=false)。旋轉用鍵盤或 UI 改 rotation.y。多件用陣列管理,GLTFLoader 逐件載入並 traverse 開陰影。可加半透明 ghost 預覽+碰撞/邊界檢查(Box3 相交)。OrbitControls 平時 enableDamping、maxPolarAngle 限制。迴圈 controls.update()。dispose 移除的傢俱資源。",
+    "quality_rubric": [
+      "載入態:每件傢俱載入有提示,放置前 ghost/輪廓顯示落點",
+      "拖移時禁用 OrbitControls 避免鏡頭與物件搶控,放手恢復、阻尼順滑",
+      "光照含落地接觸陰影(receiveShadow 地板),物件貼地不漂浮",
+      "Raycaster 命中精準,grid 對齊或邊界限制讓擺放整齊不重疊出界",
+      "resize 響應式,pointer NDC 換算用最新 canvas 矩形,點選不偏移",
+      "移除的傢俱 dispose geometry/material/texture,反覆增刪不洩漏",
+      "比例真實(尺寸對照房間),陰影與透視讓擺放具空間說服力"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "珠寶展示",
+    "keywords": [
+      "three.js",
+      "3d",
+      "jewelry",
+      "gem",
+      "transmission",
+      "environment"
+    ],
+    "execution": "場景三件套,toneMapping=ACESFilmic、exposure 偏亮。核心=寶石與貴金屬材質,環境貼圖是關鍵:RGBELoader 載高品質 studio/jewelry .hdr → PMREM → environment。寶石:MeshPhysicalMaterial,transmission=1、ior≈2.4(鑽石)、thickness、roughness≈0、metalness=0,可加 dispersion(新版)做色散;金屬底座:metalness=1、低 roughness。GLTFLoader 載模型,traverse 套材質。打光:除 environment 外加數盞點/方向光製造火光閃爍。可加 autoRotate 慢轉展示折射變化。後製可選 UnrealBloomPass(EffectComposer)讓高光發亮。OrbitControls enableDamping、近距離 min/maxDistance、可 enableZoom 觀察細節。迴圈 controls.update()(有 composer 則 composer.render())。dispose 完整含 composer。",
+    "quality_rubric": [
+      "載入態:HDRI 與模型載入有進度,環境就緒前不顯示無反射的死寶石",
+      "寶石用 transmission/ior 折射 + HDRI environment,轉動時有火光與色散變化",
+      "金屬與寶石材質分明,bloom(若用)僅強化高光不過曝糊成一團",
+      "OrbitControls 阻尼細膩、可近觀細節、autoRotate 展示折射",
+      "resize 響應式,曝光與後製在各尺寸一致",
+      "效能:transmission 與 bloom 成本高,控制解析度/取樣維持流暢,資源含 composer 全 dispose",
+      "整體呈現精品質感:高光乾淨、反射華麗、背景襯托不搶主體"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "球鞋客製化",
+    "keywords": [
+      "three.js",
+      "3d",
+      "sneaker",
+      "customizer",
+      "material swap",
+      "客製"
+    ],
+    "execution": "標準場景 + HDRI environment(PBR 反射)。模型:GLTFLoader(DRACO),鞋款依設計拆部件(鞋面/鞋帶/中底/logo/縫線),traverse 建 parts[name]=mesh。核心=分區改色/換材質:點 UI 取部件 mesh,改 mesh.material.color.set(hex) 或換整顆 MeshStandardMaterial(皮革低 metalness 高 roughness、漆皮高光、麂皮高 roughness);共享材質先 clone()。可貼圖案:載 texture 設 SRGBColorSpace、設 material.map、needsUpdate。狀態 config 物件集中,支援重置/截圖(renderer.domElement.toDataURL)/分享。OrbitControls enableDamping、限距離環繞鞋。迴圈 controls.update()。被替換的 material/texture dispose。",
+    "quality_rubric": [
+      "載入態:模型/貼圖載入進度,客製 UI 在就緒後啟用",
+      "分區改色前 clone 共享 material 避免連動,點選部件即時變色無延遲",
+      "材質差異真實(皮革/漆皮/麂皮 roughness 不同)+ HDRI 反射,非平塗純色",
+      "OrbitControls 阻尼順滑、距離限制可環繞檢視鞋側鞋底",
+      "resize 響應式,UI 與 canvas 並存、行動端可操作",
+      "替換掉的材質/貼圖即時 dispose,連續客製不洩漏;支援截圖/重置",
+      "整體可信為實鞋:接觸陰影、材質層次、配色切換乾淨無殘留"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "3D包裝展示",
+    "keywords": ["three.js", "3d", "packaging", "box", "UV texture", "包裝"],
+    "execution": "標準場景三件套,SRGB + ACES。核心=盒型 + 平面圖貼圖對位:用 BoxGeometry 或匯入 GLTF 盒模型;包裝視覺=載 dieline/平面設計圖 texture(setColorSpace SRGB、flipY 視需求),貼到對應面。BoxGeometry 六面共用一材質時用 materials 陣列(每面一個 MeshStandardMaterial)分別給正/反/側面貼圖,或在外部把展開圖做成單張 UV 對齊貼圖。材質:紙盒 roughness 高、霧膜/亮膜調 roughness、燙金部分用 metalness map。環境 environment 提供柔反射。光照 DirectionalLight 主光 castShadow + 補光。OrbitControls enableDamping 環繞看各面。迴圈 controls.update()。dispose texture/material。",
+    "quality_rubric": [
+      "載入態:設計圖貼圖載入完成前以底色佔位,避免無圖空盒",
+      "六面貼圖對位正確(materials 陣列或 UV 對齊),文字/logo 不歪不鏡像",
+      "材質呈現紙質/膜面/燙金差異,environment 柔反射讓表面有質感非全霧",
+      "OrbitControls 阻尼順滑,可環繞檢視每一面與盒角",
+      "resize 響應式,貼圖比例與盒型在各尺寸不變形",
+      "texture 解析度足夠看清設計又不過大,材質/貼圖用後 dispose",
+      "整體如實體包裝:接觸陰影、邊角高光、印刷清晰"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "建材展示",
+    "keywords": [
+      "three.js",
+      "3d",
+      "material sample",
+      "PBR maps",
+      "tiling",
+      "建材"
+    ],
+    "execution": "標準場景 + HDRI environment(室內/室外光)。核心=PBR 貼圖材質與平鋪:對展示樣板(Plane 或 GLTF 牆/地塊)套完整 PBR map 組:map(albedo,SRGB)、normalMap、roughnessMap、aoMap(需 geometry 有第二組 uv2)、可選 displacementMap(配 segments)。平鋪:每張 texture 設 wrapS/wrapT=RepeatWrapping、repeat.set(x,y),UI 可調重複數模擬不同尺寸。可切換多種建材=換整組 map 並 dispose 舊組。光照 DirectionalLight + environment 凸顯凹凸與 AO。OrbitControls enableDamping、可近觀紋理、enableZoom。迴圈 controls.update()。dispose 切換掉的所有 texture map。",
+    "quality_rubric": [
+      "載入態:整組 PBR maps 載入有進度,就緒前以底色佔位不顯示半套貼圖",
+      "切換建材時阻尼互動順滑,OrbitControls update() 在迴圈、可近觀紋理",
+      "normalMap/roughnessMap/aoMap 生效,斜光下凹凸與粗糙質感真實(非平面貼圖感)",
+      "平鋪 RepeatWrapping + repeat 正確,接縫自然、比例可調對應實際尺寸",
+      "resize 響應式,材質與光照在各尺寸表現一致",
+      "切換建材時整組舊 texture dispose,反覆比對不堆積記憶體",
+      "多建材並排或切換對比清晰,反射/凹凸/色彩忠實呈現材料特性"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "3D名片",
+    "keywords": [
+      "three.js",
+      "3d",
+      "business card",
+      "text",
+      "interactive",
+      "名片"
+    ],
+    "execution": "標準場景三件套,可透明背景(WebGLRenderer alpha:true、setClearAlpha(0))。核心=卡片+文字+互動翻轉:卡片用薄 BoxGeometry,正反面貼圖(materials 陣列)放姓名/logo,或用 TextGeometry(FontLoader 載 typeface json)做立體字。材質金屬名片用 metalness/roughness + environment 反射。互動:OrbitControls enableDamping 讓使用者轉看,或自寫 pointer 拖曳改 card.rotation 翻面;閒置 autoRotate 或用簡單 tween 緩動。可加細微浮動動畫(迴圈內 position.y = sin(t))。光照 DirectionalLight + environment 高光。連結/聯絡資訊用 HTML overlay(CSS2DRenderer 或絕對定位 div)。迴圈 controls.update()。dispose 字型/貼圖/材質。",
+    "quality_rubric": [
+      "載入態:字型(FontLoader)與貼圖載入完成前不顯示空白卡,平滑淡入",
+      "互動阻尼:翻轉/旋轉有慣性(enableDamping 或 tween),不生硬",
+      "光照含 environment 反射讓金屬/燙金字有高光,正反面皆有打光不死黑",
+      "resize 響應式,卡片置中、文字清晰,透明背景可嵌入任意頁面",
+      "效能輕量:幾何/貼圖精簡,微動畫不掉幀,離開 dispose 字型與材質",
+      "視覺精緻:文字銳利對齊、邊角倒角(可選)、整體質感像實體名片"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "產品爆炸圖",
+    "keywords": [
+      "three.js",
+      "3d",
+      "exploded view",
+      "animation",
+      "lerp",
+      "爆炸圖"
+    ],
+    "execution": "標準場景 + environment。模型:GLTFLoader 載分件模型,traverse 收集各部件 mesh,記錄每件 originalPos 與爆炸方向(可由 part.position 相對中心的向量正規化 × 距離,或設計師預設 offset)。核心=展開動畫:用 0→1 的 progress(slider 或 tween/GSAP),每件 mesh.position.lerpVectors(originalPos, explodedPos, progress);可同步淡出外殼或顯示標註線。標註:CSS2DRenderer 的 CSS2DObject 掛在部件上顯示名稱,隨展開出現。光照主光 castShadow + environment。OrbitControls enableDamping 環繞觀察內部。迴圈 controls.update() 並(若用 CSS2D)labelRenderer.render()。dispose 模型資源。",
+    "quality_rubric": [
+      "載入態:分件模型載入有進度,就緒前不顯示半套零件",
+      "展開/收合用 lerp 或 tween 平滑過渡,進度可雙向控制不跳動",
+      "互動阻尼:OrbitControls update() 在迴圈,可環繞看內部結構順滑",
+      "光照讓內部零件在展開後仍清晰(environment + 主光),無深處死黑",
+      "標註(CSS2D)隨展開出現且定位跟隨部件,resize 時 label 與 3D 同步更新",
+      "resize 響應式:同時更新 renderer 與 labelRenderer 尺寸",
+      "效能:部件數多時控制陰影/draw call,離開 dispose;結構展示清楚有層次"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "互動型錄",
+    "keywords": ["three.js", "3d", "catalog", "scroll", "raycaster", "型錄"],
+    "execution": "標準場景三件套 + environment。核心=多商品瀏覽+點選詳情:用陣列管理多個 GLTF 模型,排成輪播/網格;切換用相機或群組位移配 tween(camera.position/lerp 到目標,或旋轉一個 carousel group)。捲動驅動:監聽 scroll/wheel 映射到 progress → 控制目前展示項與鏡頭。點選:Raycaster + pointer NDC → intersectObjects 命中商品 → 開 HTML 詳情面板(規格/價格)。每項可獨立 autoRotate。光照 environment + 主光。延遲載入:可只載入當前與相鄰項(LoadingManager)。OrbitControls 可選(常用受限或關閉改自動運鏡)。迴圈更新 tween 與 controls.update()。離場 dispose 非當前模型釋放記憶體。",
+    "quality_rubric": [
+      "載入態:採延遲/分段載入,每項有進度,捲動到的商品就緒才呈現",
+      "切換/捲動過渡用 tween 平滑(阻尼感),不瞬移、不卡頓",
+      "Raycaster 點選命中精準,開啟詳情面板對應正確商品",
+      "光照一致(environment)讓每件商品在任意位置都打光充足",
+      "resize 響應式:canvas、HTML 面板、pointer 換算同步更新",
+      "效能:只保留鄰近模型於記憶體,離開項 dispose,長型錄不爆記憶體",
+      "瀏覽節奏與視覺引導清晰,商品主體突出、詳情資訊易讀"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "3D logo動畫",
+    "keywords": [
+      "three.js",
+      "3d",
+      "logo animation",
+      "ExtrudeGeometry",
+      "intro",
+      "動畫"
+    ],
+    "execution": "標準場景三件套,可透明背景(alpha:true)。核心=立體 logo + 進場動畫:logo 來源—SVG 用 SVGLoader 取 paths → ExtrudeGeometry(depth、bevel)擠出立體;或匯入 GLTF;或 TextGeometry(FontLoader)。材質金屬感 MeshStandardMaterial(metalness/roughness)+ environment 反射。進場動畫用 tween/GSAP 或迴圈 + clock:scale/rotation/opacity 由 0 緩入,可加 stagger、描邊先畫再填充、material.opacity 漸顯(transparent=true)。閒置可緩慢 autoRotate 或浮動。光照 DirectionalLight 製造高光 + environment。可選 Bloom(EffectComposer)讓金屬發光。迴圈 controls?.update() 與動畫更新(composer.render())。dispose 幾何/材質/composer。",
+    "quality_rubric": [
+      "載入態:字型/SVG/模型載入完成前不閃現未動畫的靜態 logo",
+      "進場動畫用 tween/clock 緩動曲線(ease),不線性死板;阻尼順滑",
+      "光照 + environment 讓立體面有高光與反射,bloom(若用)僅點綴不糊",
+      "resize 響應式,logo 置中、比例正確、透明背景可疊任意頁面",
+      "效能輕量:擠出幾何 bevel 段數克制,動畫不掉幀,結束後可降載/暫停迴圈",
+      "離場 dispose 幾何/材質/composer;動畫節奏俐落、收尾穩定不抖動"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "材質球展示",
+    "keywords": [
+      "three.js",
+      "3d",
+      "material preview",
+      "SphereGeometry",
+      "PBR",
+      "材質球"
+    ],
+    "execution": "標準場景三件套,toneMapping=ACESFilmic。核心=標準球體預覽 PBR 參數與貼圖:SphereGeometry(高 segments 求平滑),套 MeshStandardMaterial 或 MeshPhysicalMaterial;UI(dat.GUI/lil-gui)即時改 metalness、roughness、color、clearcoat、transmission、ior,改完無需重建材質(直接賦值屬性)。貼圖模式:載 map/normalMap/roughnessMap(map 設 SRGBColorSpace,其餘 linear),material.needsUpdate=true。HDRI environment(RGBELoader+PMREM)是反射關鍵,可切換不同 .hdr 比較材質在不同光下的表現。可放多顆球並排比較不同參數。OrbitControls enableDamping 近觀。迴圈 controls.update()。dispose 切換掉的 texture 與 env。",
+    "quality_rubric": [
+      "載入態:HDRI 與貼圖載入有進度,environment 就緒前不顯示無反射死球",
+      "lil-gui 改 PBR 參數即時生效(屬性賦值非重建),互動阻尼順滑可近觀",
+      "environment 反射正確:metalness=1 全反射、roughness 變化呈現霧化漸層",
+      "可切換不同 HDRI 比較材質,光照變化即時反映在球面",
+      "resize 響應式,GUI 與 canvas 並存,球體置中不變形",
+      "切換掉的 texture/env dispose,反覆調參與換圖不洩漏記憶體",
+      "球面平滑(足夠 segments)、高光乾淨,參數差異在球上清楚可辨"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "產品比較檯",
+    "keywords": [
+      "three.js",
+      "3d",
+      "comparison",
+      "side by side",
+      "sync camera",
+      "比較"
+    ],
+    "execution": "標準場景 + environment。核心=並排多商品同步檢視:兩種做法—(A)單 scene 內把各商品放不同 x 位置成一排,共用一台相機與 OrbitControls,旋轉時所有商品同步觀看;(B)多視窗用 renderer.setScissor/setViewport 在同一 canvas 分割區域,各區 render 各自 scene 但共享 camera 角度(把 controls 的 rotation 同步給每個 view)。商品用 GLTFLoader 載入並各自置中對齊(統一 bounding 尺度,等比縮放使體積可比)。光照 environment + 主光一致套用各商品確保公平比較。差異標註用 HTML/CSS2D 規格表對齊各商品下方。OrbitControls enableDamping,迴圈內 controls.update() 後對每個 viewport render。dispose 全部商品。",
+    "quality_rubric": [
+      "載入態:多商品各有載入進度,全部就緒再進入可比狀態避免錯位比較",
+      "相機/旋轉同步:拖動一個商品所有同步轉動(共享角度),阻尼一致順滑",
+      "光照與 environment 對各商品一致套用,確保比較公平無偏照",
+      "尺度對齊:各商品統一縮放/置中,大小可信地反映真實比例差異",
+      "resize 響應式:scissor/viewport 分割或排列隨容器更新,HTML 規格表對齊",
+      "效能:多 scene/viewport 控制 draw call 與陰影,離開 dispose 所有商品資源",
+      "並排佈局清晰、標註對位,商品差異(尺寸/材質/造型)一目了然"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "建築漫遊",
+    "keywords": [
+      "three.js",
+      "3d",
+      "architectural walkthrough",
+      "第一人稱漫遊",
+      "FPS controls",
+      "GLTF"
+    ],
+    "execution": "Scene + PerspectiveCamera(60fov, near 0.1, far 1000) + WebGLRenderer({antialias:true})，renderer.outputColorSpace=SRGBColorSpace、shadowMap.enabled=true、setPixelRatio(min(devicePixelRatio,2))。光照：HemisphereLight 環境 + DirectionalLight 當太陽(castShadow，設 shadow.camera 正交範圍涵蓋建物)。載入：GLTFLoader 載建築模型，可配 DRACOLoader 解壓。核心=第一人稱漫遊：用 PointerLockControls 鎖滑鼠看視角，鍵盤 WASD 改 velocity 向量，每幀 controls.moveForward/moveRight(velocity*delta)。重力與碰撞：對地面/牆面用 Raycaster 從相機下射偵測樓板高度設 y，牆面射線擋住前進。迴圈：setAnimationLoop 內 delta=clock.getDelta()，更新移動、render(scene,camera)。相機高度固定約 1.6m 模擬人眼。",
+    "quality_rubric": [
+      "載入態：模型載入有進度條(onProgress)或 spinner，完成才解鎖控制",
+      "互動阻尼：移動速度套 delta 與加速/減速衰減，避免瞬移與卡頓感",
+      "光照真實：方向光 + 環境光雙層，陰影邊緣用 PCFSoftShadowMap",
+      "響應式 resize：監聽 resize 更新 camera.aspect、updateProjectionMatrix、setSize",
+      "效能 dispose：切換場景時 geometry/material/texture.dispose，移除 event listener",
+      "碰撞正確：不可穿牆/穿地，相機維持人眼高度",
+      "視覺品質：天空盒或漸層背景、PBR 材質、適度色調對應(toneMapping)"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "室內設計預覽",
+    "keywords": [
+      "three.js",
+      "3d",
+      "interior design",
+      "傢俱擺放",
+      "OrbitControls",
+      "PBR materials"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer({antialias:true})，outputColorSpace=SRGBColorSpace、toneMapping=ACESFilmicToneMapping、shadowMap.enabled。光照：用 RoomEnvironment + PMREMGenerator 產生環境貼圖給 scene.environment 讓 PBR 材質反射真實，再加 DirectionalLight 做主光與陰影。控制：OrbitControls(enableDamping=true、dampingFactor 0.05)繞房間看，限制 maxPolarAngle 避免穿地板。核心=傢俱擺放與換材質：GLTFLoader 載傢俱，用 Raycaster 從滑鼠射線偵測地板交點 → 把選中物件 position 設到交點(可吸附網格)；換材質時改 mesh.material.map/color/roughness 並 needsUpdate。拖曳用 DragControls 或自寫 pointerdown/move/up + 地面 raycast。迴圈：setAnimationLoop 內 controls.update()(阻尼需要)、render。",
+    "quality_rubric": [
+      "載入態：每件傢俱載入顯示佔位或進度，避免空白",
+      "互動阻尼：OrbitControls enableDamping + 拖曳吸附地面網格",
+      "光照真實：environment map(PMREM)讓材質反射，陰影柔和接地",
+      "響應式 resize：相機 aspect 與 renderer size 同步更新",
+      "效能 dispose：刪除傢俱時 dispose geometry/material/texture",
+      "選取回饋：hover/選中有 outline 或高亮，材質切換即時",
+      "視覺品質：PBR roughness/metalness 正確、地板有接觸陰影"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "虛擬樣品屋",
+    "keywords": [
+      "three.js",
+      "3d",
+      "virtual show home",
+      "導覽動線",
+      "camera tween",
+      "GLTF"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer，outputColorSpace=SRGBColorSpace、toneMapping=ACESFilmic、shadowMap.enabled。光照：每個房間放 PointLight/RectAreaLight 模擬窗光與燈具 + 弱環境光，整體配 environment map 提升質感。載入：GLTFLoader 載整棟樣品屋(含傢俱)，DRACO 壓縮。核心=預設導覽點 + 平滑相機切換：定義 viewpoints 陣列(每點 position+lookAt target)，點按鈕用 tween(自寫 lerp 或 gsap)在 N 秒內把 camera.position 與 controls.target 過渡到目標，過渡中持續 updateProjectionMatrix。自由探索用 OrbitControls(enableDamping)。可加房間熱點(Sprite/CSS2DObject)點擊跳轉。迴圈：setAnimationLoop 內推進 tween、controls.update、render。",
+    "quality_rubric": [
+      "載入態：首屏 loading 遮罩 + 百分比，模型就緒才進場",
+      "互動阻尼：相機切換用 ease 緩動曲線，OrbitControls 阻尼開啟",
+      "光照真實：窗光/燈具分區佈光 + environment map 反射",
+      "響應式 resize：aspect 與 size 同步，UI 熱點隨之定位",
+      "效能 dispose：離開頁面 dispose 全部資源、停止 animation loop",
+      "導覽流暢：viewpoint 切換不穿牆、lookAt 對準重點",
+      "視覺品質：材質精緻、陰影接地、整體曝光自然"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "3D樓層平面",
+    "keywords": [
+      "three.js",
+      "3d",
+      "floor plan",
+      "牆體擠出",
+      "ExtrudeGeometry",
+      "正交相機"
+    ],
+    "execution": "Scene + 視專案用 OrthographicCamera(俯視等角)或 PerspectiveCamera + WebGLRenderer，outputColorSpace=SRGBColorSpace、shadowMap.enabled。光照：HemisphereLight + 一盞由上往下 DirectionalLight 投影房間分界陰影。核心=從 2D 平面資料生成 3D 牆：牆段資料(起點/終點/高度/厚度)用 Shape + ExtrudeGeometry 或對每段建 BoxGeometry(長度=兩點距離、旋轉對齊向量、抬高 height/2)；地板用 PlaneGeometry 或多邊形 Shape 擠出薄板。房間標籤用 CSS2DRenderer 疊在牆中心。控制：OrbitControls(enableDamping，限制傾角接近俯視)看整層；點擊房間用 Raycaster 高亮並顯示坪數。迴圈：setAnimationLoop 內 controls.update、render，CSS2DRenderer 同步 render。",
+    "quality_rubric": [
+      "載入態：平面資料解析時顯示佔位，生成完成再呈現",
+      "互動阻尼：OrbitControls 阻尼 + 縮放/平移限制在樓層範圍",
+      "光照真實：頂光投影讓牆體有立體分界,不死板平塗",
+      "響應式 resize：相機(含正交 left/right/top/bottom)與 size 同步",
+      "效能 dispose：重建平面時先 dispose 舊牆 geometry/material",
+      "資料對應正確：牆長/角度/厚度與輸入座標一致、閉合無縫",
+      "視覺品質：房間色塊/標籤清楚、坪數標註可讀"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "智慧城市模型",
+    "keywords": [
+      "three.js",
+      "3d",
+      "smart city",
+      "instancing",
+      "InstancedMesh",
+      "資料疊加"
+    ],
+    "execution": "Scene + PerspectiveCamera(far 大如 5000) + WebGLRenderer，outputColorSpace=SRGBColorSpace、可開 logarithmicDepthBuffer 解大範圍 z-fighting、shadowMap.enabled。光照：HemisphereLight + DirectionalLight 當日照(陰影覆蓋城市核心區)。核心=大量建物用 InstancedMesh：一個 BoxGeometry + 一個材質，對每棟用 dummy Object3D 設 position/scale(高度依樓層)再 setMatrixAt(i,matrix)，instanceMatrix.needsUpdate=true，數萬棟仍單一 draw call。資料疊加：用 setColorAt(i,color) 依即時資料(人流/能耗)上色，或疊半透明 heatmap 平面。控制：OrbitControls 或 MapControls(平移為主)。點選：raycaster.instanceId 抓到哪一棟顯示資訊。迴圈：setAnimationLoop 內更新資料色彩、controls.update、render。",
+    "quality_rubric": [
+      "載入態：城市資料載入有進度,分批建構避免主執行緒卡死",
+      "互動阻尼：MapControls/OrbitControls 阻尼 + 慣性平移",
+      "光照真實：日照方向光 + 環境光,高樓陰影正確",
+      "響應式 resize：far/aspect/size 同步,大場景不破面",
+      "效能 dispose 與 instancing：必用 InstancedMesh,單 draw call,離場 dispose",
+      "資料對應正確：建物高度/顏色與輸入指標一致、可即時更新",
+      "視覺品質：LOD 或霧化遠景、選中高亮、無嚴重 z-fighting"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "園區導覽",
+    "keywords": [
+      "three.js",
+      "3d",
+      "campus tour",
+      "路徑動畫",
+      "CatmullRomCurve3",
+      "POI"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer，outputColorSpace=SRGBColorSpace、toneMapping=ACESFilmic、shadowMap.enabled、setPixelRatio 上限 2。光照：HemisphereLight(天空/地面色)+ DirectionalLight 太陽含陰影。載入：GLTFLoader 載園區建物與地形(DRACO 壓縮)，樹木/路燈用 InstancedMesh。核心=沿路徑自動導覽 + POI 熱點：用 CatmullRomCurve3 定義導覽路線，播放時 t 由 0→1，curve.getPointAt(t) 設 camera.position、getTangentAt(t) 算前方做 lookAt，形成巡覽動畫。POI 用 Sprite 或 CSS2DObject 標在景點，raycaster 點擊彈出說明。可切自由模式(OrbitControls/PointerLock)。迴圈：setAnimationLoop 內推進 t、更新相機、controls.update、render。",
+    "quality_rubric": [
+      "載入態：園區資源大,需 loading 進度 + 漸進顯示",
+      "互動阻尼：路徑動畫等速且轉彎平滑,自由模式控制有阻尼",
+      "光照真實：戶外日照 + 天空環境光,建物樹木陰影接地",
+      "響應式 resize：相機與 size 同步,CSS2D POI 定位正確",
+      "效能 dispose 與 instancing：植被用 instancing,離場 dispose 全資源",
+      "路徑正確：相機沿曲線不穿建物、lookAt 朝行進方向",
+      "視覺品質：天空盒/霧、POI 圖示清楚、地形材質自然"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "3D地圖",
+    "keywords": [
+      "three.js",
+      "3d",
+      "3d map",
+      "GeoJSON擠出",
+      "MapControls",
+      "墨卡托投影"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer，outputColorSpace=SRGBColorSpace、logarithmicDepthBuffer 視範圍開、shadowMap 選用。光照：HemisphereLight + DirectionalLight 給地塊立體感。核心=GeoJSON → 擠出地塊：把經緯度經墨卡托(或等距)投影成平面 x/z 座標，每個 polygon 用 THREE.Shape(逐點 lineTo) + ExtrudeGeometry 擠出成區塊(高度可綁人口/數值)；多區塊合併或用 group。標註/marker 用 Sprite 或 CSS2DObject 釘在座標。控制：MapControls(繼承 OrbitControls，screenSpacePanning，enableDamping)做平移縮放主導的地圖操作，限制 polar 角接近俯視。互動：raycaster 點地塊高亮 + 顯示屬性。迴圈：setAnimationLoop 內 controls.update、render(+CSS2D render)。",
+    "quality_rubric": [
+      "載入態：GeoJSON 解析/建構顯示進度,大資料分批",
+      "互動阻尼：MapControls 阻尼 + 平移縮放慣性,角度限制",
+      "光照：頂部方向光讓擠出地塊有陰影邊界,可讀",
+      "響應式 resize：相機與 size 同步,marker 重新定位",
+      "效能 dispose：重載地圖前 dispose 舊地塊 geometry/material",
+      "座標正確：投影一致、地塊形狀/高度對應資料、邊界閉合",
+      "視覺品質：分級色階、標籤清楚、選中區塊高亮"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "室內定位",
+    "keywords": [
+      "three.js",
+      "3d",
+      "indoor positioning",
+      "即時座標",
+      "marker更新",
+      "OrbitControls"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer，outputColorSpace=SRGBColorSpace、shadowMap 選用。光照：HemisphereLight + 弱 DirectionalLight 即可(室內模型為主)。載入：GLTFLoader 載室內樓層模型,座標系與定位資料對齊(校準原點與比例)。核心=即時位置點更新：用一個 Mesh(球或圖標 Sprite)代表使用者/資產,每次收到定位資料(x,y)就更新 marker.position(可用 lerp 平滑插值避免跳動);多目標用 Map<id,marker> 管理,新增/移除動態建。軌跡用 BufferGeometry 的 Line 持續 push 點(setDrawRange 控制長度)。控制：OrbitControls(enableDamping)看樓層,或鎖定相機跟隨 marker。座標映射：建立 worldX = originX + dataX*scale 的轉換函式集中管理。迴圈：setAnimationLoop 內插值 marker、controls.update、render。",
+    "quality_rubric": [
+      "載入態：樓層模型載入進度,就緒前不繪 marker",
+      "互動阻尼：marker 位置 lerp 平滑、OrbitControls 阻尼",
+      "光照：室內均勻照明,marker 顏色醒目不被吃掉",
+      "響應式 resize：相機與 size 同步",
+      "效能 dispose：移除離線目標時 dispose marker 資源,軌跡限長",
+      "座標對應正確：資料座標→世界座標轉換準確、原點校準",
+      "視覺品質：marker 圖標清楚、軌跡可讀、可標 ID/狀態色"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "空間量測",
+    "keywords": [
+      "three.js",
+      "3d",
+      "measurement",
+      "射線拾取",
+      "Raycaster",
+      "距離標註"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer，outputColorSpace=SRGBColorSpace、shadowMap 選用。光照：HemisphereLight + DirectionalLight。載入：GLTFLoader 載被量測模型(房間/物件),確保單位=公尺。核心=點選兩點量距離：監聽 pointerdown,用 Raycaster.setFromCamera(NDC,camera) 對模型 intersectObjects 取交點,記錄第一/第二點;兩點用 BufferGeometry Line 連線,距離=p1.distanceTo(p2),用 CSS2DObject 把數值標在線中點。多段量測可累加路徑、面積用投影多邊形算。輔助對齊用網格 GridHelper 或吸附頂點。控制：OrbitControls(enableDamping)旋轉觀察,量測時不應誤觸旋轉(可用 click vs drag 閾值區分)。迴圈：setAnimationLoop 內 controls.update、render + CSS2DRenderer.render。",
+    "quality_rubric": [
+      "載入態：模型載入進度,單位校準完成才可量測",
+      "互動阻尼：OrbitControls 阻尼,點選與旋轉用拖曳閾值分開",
+      "光照：模型清楚可辨表面,利於精準點選",
+      "響應式 resize：相機/size/CSS2DRenderer 三者同步",
+      "效能 dispose：清除量測時 dispose line geometry 與標籤",
+      "量測正確：交點精準、distanceTo 單位正確(公尺)、標註對齊",
+      "視覺品質：量測線/端點/數值清楚、可多段、可清除重來"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "虛擬看屋",
+    "keywords": [
+      "three.js",
+      "3d",
+      "virtual tour",
+      "全景球",
+      "equirectangular",
+      "panorama"
+    ],
+    "execution": "Scene + PerspectiveCamera(放在原點) + WebGLRenderer，outputColorSpace=SRGBColorSpace。核心=360 全景看屋：用大 SphereGeometry(半徑大、geometry.scale(-1,1,1) 把法線翻向內),材質 MeshBasicMaterial({map: equirectangular 全景貼圖}),相機置於球心往內看即為全景。控制：OrbitControls 但 enableZoom 改 fov 或限制、enablePan=false、enableDamping=true、rotateSpeed 設負值讓拖曳方向自然;相機只轉不移。場景切換(房到房)：點擊 hotspot(Sprite/CSS2DObject)→淡出 → 換球體貼圖(TextureLoader 載新圖,舊 texture.dispose) → 淡入。可選真 3D 模型走動則改用 GLTF + PointerLock。光照：全景用 BasicMaterial 不需燈光;若混 3D 物件再加環境光。迴圈：setAnimationLoop 內 controls.update、render。",
+    "quality_rubric": [
+      "載入態：全景圖大,載入顯示進度,切場景間淡入淡出過渡",
+      "互動阻尼：OrbitControls 阻尼 + 禁 pan、拖曳方向直覺",
+      "光照/曝光：全景貼圖 color space 正確(SRGB),亮度自然",
+      "響應式 resize：相機 aspect/fov 與 size 同步",
+      "效能 dispose：切換場景 dispose 舊全景 texture,避免記憶體漲",
+      "場景切換正確：hotspot 對應正確房間、相機朝向銜接合理",
+      "視覺品質：高解析全景無接縫、hotspot 圖示清楚、可看初始視角合理"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "施工進度3D",
+    "keywords": [
+      "three.js",
+      "3d",
+      "construction progress",
+      "依時間顯隱",
+      "visibility",
+      "4D"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer，outputColorSpace=SRGBColorSpace、toneMapping=ACESFilmic、shadowMap.enabled。光照：HemisphereLight + DirectionalLight(工地日照含陰影)。載入：GLTFLoader 載建物各構件,確保每個元件帶有可對應的識別(name/userData.id)。核心=依時間軸顯示進度(4D)：每構件對應一個排程資料{id, startDate, endDate}。拉時間滑桿得 currentDate,遍歷構件:已完工→mesh.visible=true 正常材質;施工中→半透明或高亮材質;未開工→隱藏或灰階 ghost。用 traverse 套用,材質切換預先建好兩三種共用 material 避免每幀新建。可加進度百分比 HUD(CSS2D)。控制：OrbitControls(enableDamping)繞工地看。迴圈：setAnimationLoop 內(時間變動才重算可見性)、controls.update、render。",
+    "quality_rubric": [
+      "載入態：模型與排程資料載入進度,對齊完成才可拖時間軸",
+      "互動阻尼：時間滑桿流暢、OrbitControls 阻尼",
+      "光照：日照方向光 + 陰影,呈現工地立體感",
+      "響應式 resize：相機與 size 同步,HUD 定位正確",
+      "效能 dispose：材質預建共用,不每幀 new;離場 dispose",
+      "資料對應正確：構件顯隱/狀態與排程日期一致、百分比正確",
+      "視覺品質：完工/施工中/未開工三態視覺區分清楚、ghost 材質"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "BIM檢視器",
+    "keywords": [
+      "three.js",
+      "3d",
+      "BIM viewer",
+      "IFC",
+      "剖切平面",
+      "clippingPlanes",
+      "web-ifc"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer({antialias:true})，outputColorSpace=SRGBColorSpace、localClippingEnabled=true、shadowMap.enabled。光照：HemisphereLight + DirectionalLight,室內模型確保整體可辨。載入：用 web-ifc-three / IFCLoader 載 IFC 模型(或 GLTF 匯出版),保留每元件的 expressID/properties。核心=元件選取 + 剖切：選取用 Raycaster 對模型 intersect,取 faceIndex→映射到 IFC 子集高亮並讀屬性面板;剖切用 THREE.Plane(法線+常數)放進 renderer.clippingPlanes 或 material.clippingPlanes,拖動更新 plane.constant 即時切開模型看內部。圖層/類別顯隱用 visible 或 IFC subset。控制：OrbitControls(enableDamping)。迴圈：setAnimationLoop 內 controls.update、render。注意大模型用 BVH 加速 raycast。",
+    "quality_rubric": [
+      "載入態：IFC 大檔解析進度條,完成才可互動",
+      "互動阻尼：OrbitControls 阻尼、剖切面拖動即時平滑",
+      "光照：均勻照明 + 陰影,內部結構可辨",
+      "響應式 resize：相機與 size 同步",
+      "效能 dispose 與加速：raycast 用 BVH、離場 dispose;大模型避免卡頓",
+      "選取/屬性正確：點選元件對應正確 expressID 與屬性、剖切方向正確",
+      "視覺品質：選中高亮、剖面乾淨(clipping cap 可選)、類別顯隱清楚"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "3D地球儀資料 (3D Data Globe)",
+    "keywords": [
+      "three.js",
+      "globe",
+      "地球儀",
+      "lat-lon",
+      "data-viz",
+      "點資料"
+    ],
+    "execution": "Scene + PerspectiveCamera(45, w/h, 0.1, 1000) at z=3。WebGLRenderer({antialias:true}), setPixelRatio(min(dpr,2)), setSize。光: AmbientLight(0x404040) + DirectionalLight 模擬太陽。球: SphereGeometry(1,64,64) + MeshPhongMaterial 貼 earth map/bump/specular (TextureLoader)。資料點經緯度轉球面座標: phi=(90-lat)*PI/180, theta=(lon+180)*PI/180; x=-r*sin(phi)*cos(theta), z=r*sin(phi)*sin(theta), y=r*cos(phi)。每點用 InstancedMesh(小 SphereGeometry, count=N): Matrix4.setPosition 後 setMatrixAt(i,m), 最後 instanceMatrix.needsUpdate=true; 顏色 setColorAt + instanceColor.needsUpdate。OrbitControls: enableDamping=true, dampingFactor=0.05, autoRotate=true。Raycaster 對 instanceId 做 hover tooltip。loop: requestAnimationFrame → controls.update() → renderer.render。",
+    "quality_rubric": [
+      "載入態: 貼圖用 TextureLoader.onLoad 後才顯示, 期間顯示 loading spinner, 不可空白閃爍",
+      "互動阻尼: OrbitControls enableDamping=true 且 loop 內呼叫 controls.update(), autoRotate 在 hover/拖曳時暫停",
+      "光照: 至少 Ambient + Directional 兩盞, 球體有明暗面不是死板平塗",
+      "響應式: window resize 監聽更新 camera.aspect, updateProjectionMatrix(), renderer.setSize",
+      "效能: N>500 點必用 InstancedMesh 而非 N 個 Mesh; pixelRatio 上限 2",
+      "dispose: 切換資料集時 geometry.dispose()/material.dispose()/texture.dispose() 釋放, 避免記憶體洩漏",
+      "視覺: 經緯度轉換公式正確 (點貼合球面非浮空), 點大小隨資料值映射, 暗色太空背景襯托"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "網路關係圖 (3D Network/Force Graph)",
+    "keywords": [
+      "three.js",
+      "network",
+      "force-graph",
+      "關係圖",
+      "nodes-edges",
+      "力導向"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer({antialias:true})。光: Ambient + 一盞 Directional/Point。節點: InstancedMesh(SphereGeometry, count=nodes) 或單一 Points + PointsMaterial(sizeAttenuation)。邊: 全部端點塞進一個 BufferGeometry 的 position Float32Array, 用單一 LineSegments(geometry, LineBasicMaterial) 一次畫完 (切勿每邊一個 Line)。力導向佈局: 每 frame 算斥力(節點間 Coulomb) + 引力(邊 spring, Hooke) + centering, 更新 node.position, 同步寫回 instanceMatrix 與 line position attribute 並設 needsUpdate=true; 收斂後可凍結省效能。OrbitControls + damping。Raycaster 點擊節點高亮鄰接邊。loop: 物理 step → 寫 buffer → controls.update() → render。",
+    "quality_rubric": [
+      "載入態: 資料解析/初始佈局期間顯示進度, 大圖先給粗略佈局再迭代收斂",
+      "互動阻尼: OrbitControls enableDamping + controls.update(); 拖曳節點時其餘繼續模擬",
+      "光照: 節點球體有立體感 (Ambient+Directional), 邊線顏色與背景對比足夠",
+      "響應式: resize 更新 aspect/projection/size",
+      "效能: 邊用單一 LineSegments + 一個 BufferGeometry, 節點用 InstancedMesh/Points; 佈局收斂後停止 per-frame 物理",
+      "dispose: 重載圖時 dispose 舊 geometry/material, 釋放 BufferAttribute",
+      "視覺: 力導向不重疊爆炸 (斥力/引力/阻尼平衡), 節點大小=degree, 顏色=社群分群"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "3D散點長條 (3D Scatter / Bar Chart)",
+    "keywords": [
+      "three.js",
+      "scatter",
+      "bar-chart",
+      "散點",
+      "instanced",
+      "3d圖表"
+    ],
+    "execution": "Scene + PerspectiveCamera 斜俯視角 + WebGLRenderer({antialias:true})。光: Ambient + DirectionalLight(castShadow 可選)。資料正規化到 [-1,1] 立方空間。散點: 單一 Points(BufferGeometry+position attr) + PointsMaterial, 或 InstancedMesh(SphereGeometry)。長條: InstancedMesh(BoxGeometry(w,1,d), count=N); 每條高度=值, 用 Matrix4 compose(position, quaternion, scale.set(1,h,1)) → setMatrixAt(i,m), instanceMatrix.needsUpdate=true; setColorAt 依值漸層 (Color.lerpColors / HSL)。座標軸: 三條 LineSegments + Sprite/Canvas texture 文字標籤。OrbitControls + damping。Raycaster→instanceId 顯示數值 tooltip。loop: controls.update() → render。",
+    "quality_rubric": [
+      "載入態: 資料載入/正規化期間 placeholder, 避免長條從原點瞬間彈出 (可加生長動畫)",
+      "互動阻尼: OrbitControls enableDamping + update(), 旋轉/縮放滑順",
+      "光照: Directional 讓長條各面明暗不同呈現立體, 非平面塗色",
+      "響應式: resize 更新 aspect/projection/size, 標籤不錯位",
+      "效能: 全部長條/點用單一 InstancedMesh 或 Points, 一次 draw call; pixelRatio≤2",
+      "dispose: 換資料集 dispose geometry/material 與軸/標籤資源",
+      "視覺: 軸線+刻度+標籤清楚, 顏色映射有 legend, 數值→高度比例正確不失真"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "城市資料塔 (City Data Towers)",
+    "keywords": [
+      "three.js",
+      "city",
+      "towers",
+      "城市",
+      "instanced-box",
+      "3d長條地圖"
+    ],
+    "execution": "Scene + PerspectiveCamera 鳥瞰斜角 + WebGLRenderer({antialias:true, shadowMap})。光: Ambient(柔) + DirectionalLight(castShadow=true, 設 shadow.camera frustum) 模擬日照, 地面 PlaneGeometry+ShadowMaterial 接陰影。塔樓: InstancedMesh(BoxGeometry(1,1,1), count=cells); 每格地理座標→平面 x,z, 值→高度; Matrix4 = compose(pos, quat, scale(footprint, height, footprint)), 注意 box pivot 在中心故 y=height/2; setMatrixAt + instanceMatrix.needsUpdate; setColorAt 依密度。可疊 city 底圖 texture 於 plane。OrbitControls(maxPolarAngle 限制不穿地) + damping。Raycaster→instanceId tooltip。loop: controls.update() → render。",
+    "quality_rubric": [
+      "載入態: 地理資料/底圖載入時 loading, 塔可由 0 高度緩動長出",
+      "互動阻尼: OrbitControls enableDamping + update(); maxPolarAngle 防止鏡頭穿到地面下",
+      "光照: Directional+Ambient, 開啟陰影讓塔有投影增強空間感與高度對比",
+      "響應式: resize 更新 aspect/projection/size, 陰影相機隨之合理",
+      "效能: 數千格用單一 InstancedMesh; 陰影解析度與 frustum 控制避免拖垮 fps; pixelRatio≤2",
+      "dispose: 切換城市/資料時 dispose box geometry/material/texture",
+      "視覺: 塔底貼地 (y=h/2 修正)、高度比例真實、顏色=數值熱度、底圖對位正確"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "流量地球 (Traffic / Flow Globe)",
+    "keywords": [
+      "three.js",
+      "globe",
+      "arcs",
+      "流量",
+      "great-circle",
+      "弧線動畫"
+    ],
+    "execution": "球體同 3D Globe (SphereGeometry+PhongMaterial+貼圖)。Scene+Camera+Renderer+Ambient+Directional。流量弧: 兩端經緯度轉球面點 p0,p1; 取中點往外抬高 (length 越長抬越高) 當控制點, 用 QuadraticBezierCurve3 或 CubicBezierCurve3 生成曲線; curve.getPoints(64) → BufferGeometry → Line(LineBasicMaterial)。動畫流動: 沿 curve 取 t 的子段畫 dash, 或一顆 Sprite/小 Mesh 用 curve.getPointAt(t) 隨時間移動 (t = (clock.elapsed*speed)%1)。多弧合併到少量 geometry。OrbitControls autoRotate + damping。loop: 更新 t/dash offset → controls.update() → render。",
+    "quality_rubric": [
+      "載入態: 貼圖 onLoad 後顯示, 弧線資料可分批進場避免一次爆量",
+      "互動阻尼: OrbitControls enableDamping+update, autoRotate 慢轉, 拖曳暫停自轉",
+      "光照: Ambient+Directional, 球面晨昏線清楚, 弧線發光色與暗背景對比",
+      "響應式: resize 更新 aspect/projection/size",
+      "效能: 弧線用 Bezier 採樣後合併, 控制總頂點數; 流動用 shader/dash offset 而非每 frame 重建 geometry; pixelRatio≤2",
+      "dispose: 換資料 dispose 弧線 geometry/material 與貼圖",
+      "視覺: great-circle 弧抬升合理 (貼合球面起降)、流動方向正確、起訖點有標記、粗細/顏色=流量"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "星空圖 (Starfield / Star Map)",
+    "keywords": [
+      "three.js",
+      "starfield",
+      "points",
+      "星空",
+      "particles",
+      "BufferGeometry"
+    ],
+    "execution": "Scene + PerspectiveCamera(視野廣 fov 60-75) + WebGLRenderer({antialias:true})。幾乎不需傳統光照 (星點自發光)。核心: 單一 THREE.Points。建 BufferGeometry, position Float32Array(N*3) 隨機填於球殼/立方, 另可加 color attribute(每星不同色溫) 與 size。PointsMaterial({size, sizeAttenuation:true, vertexColors:true, map: 圓形星點貼圖, transparent:true, blending:AdditiveBlending, depthWrite:false})。真實星表則用 RA/Dec 轉 xyz。緩慢旋轉 points.rotation.y += d 或用 OrbitControls(enablePan=false)+damping 看穹頂。可加 fog 或視差多層。loop: rotation/controls.update() → render。",
+    "quality_rubric": [
+      "載入態: 星表載入時漸顯 (opacity 0→1), 大量點分塊填充避免卡頓",
+      "互動阻尼: OrbitControls enableDamping+update (或慣性自轉), enablePan=false 維持以觀者為中心",
+      "光照: 星點 AdditiveBlending 自發光、depthWrite=false 避免黑邊方塊, 不需 Directional",
+      "響應式: resize 更新 aspect/projection/size",
+      "效能: 全部星用單一 Points + 一個 BufferGeometry (數萬點仍一 draw call), sizeAttenuation 開, pixelRatio≤2",
+      "dispose: 重建星圖 dispose Points geometry/material/貼圖",
+      "視覺: 星點為圓形非方塊 (用 map 或圓形 alpha)、亮度/顏色=星等與色溫、Additive 疊加出銀河輝光、深色背景"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "分子結構 (Molecular Structure)",
+    "keywords": [
+      "three.js",
+      "molecule",
+      "ball-stick",
+      "分子",
+      "原子鍵結",
+      "instanced"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer({antialias:true})。光: Ambient + DirectionalLight + 可加 PointLight 增立體。原子(球): 依元素分組, 同元素用一個 InstancedMesh(SphereGeometry(1,32,32)), 半徑=van der Waals/共價半徑 (scale), 顏色=CPK 標準 (C灰/O紅/N藍/H白); setMatrixAt 定位 + instanceMatrix.needsUpdate。鍵結(棒): 每鍵是兩原子間圓柱, CylinderGeometry 預設沿 Y 軸; 用 quaternion.setFromUnitVectors(up(0,1,0), dir.normalize()) 旋轉對齊, position=中點, scale.y=鍵長, 合進 InstancedMesh(count=bonds)。MeshPhong/Standard 材質含高光。OrbitControls(autoRotate 可選)+damping。Raycaster→instanceId 顯示原子資訊。loop: controls.update()→render。",
+    "quality_rubric": [
+      "載入態: 解析 PDB/mol 期間 loading, 結構就緒一次顯示",
+      "互動阻尼: OrbitControls enableDamping+update, 旋轉檢視分子各角度滑順",
+      "光照: Ambient+Directional(+Point), 球面高光呈現球棍立體, 非平塗",
+      "響應式: resize 更新 aspect/projection/size",
+      "效能: 同元素原子合一 InstancedMesh、鍵合一 InstancedMesh, 大分子仍少量 draw call; pixelRatio≤2",
+      "dispose: 換分子 dispose 各 InstancedMesh geometry/material",
+      "視覺: CPK 標準配色、原子半徑符合化學比例、鍵圓柱用 quaternion 正確對齊兩原子 (不歪斜/不穿插)"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "3D樹狀圖 (3D Tree / Hierarchy)",
+    "keywords": [
+      "three.js",
+      "tree",
+      "hierarchy",
+      "樹狀圖",
+      "treemap-3d",
+      "層級佈局"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer({antialias:true})。光: Ambient + Directional。先用遞迴佈局演算法 (如 d3.hierarchy + tree/pack, 或自寫) 算出每節點 3D 座標 (層級→y 或徑向)。節點: InstancedMesh(Sphere/Box) 一次畫, scale 依子樹大小/值, setColorAt 依深度。連線(父子邊): 全部塞一個 BufferGeometry 的 LineSegments 一次畫; 或彎曲用 QuadraticBezierCurve3 採樣。善用 THREE.Group/Object3D 的 parent-child 做整體變換與展開動畫 (子節點 group.visible 切換)。OrbitControls+damping。Raycaster 點節點展開/收合。loop: controls.update()→(展開緩動)→render。",
+    "quality_rubric": [
+      "載入態: 佈局計算期間 loading, 節點可由根向外逐層淡入",
+      "互動阻尼: OrbitControls enableDamping+update; 展開/收合用 lerp/easing 緩動非瞬跳",
+      "光照: Ambient+Directional, 節點立體, 連線與背景對比清楚",
+      "響應式: resize 更新 aspect/projection/size",
+      "效能: 節點用 InstancedMesh、邊用單一 LineSegments; 收合的大子樹可整組 visible=false 省繪製",
+      "dispose: 重建樹 dispose 節點/連線 geometry/material",
+      "視覺: 階層佈局無重疊、父子連線正確對應、深度→顏色、節點大小=值, 展開動畫流暢"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "熱力地圖 (3D Heatmap Surface)",
+    "keywords": [
+      "three.js",
+      "heatmap",
+      "surface",
+      "熱力圖",
+      "PlaneGeometry",
+      "頂點位移"
+    ],
+    "execution": "Scene + PerspectiveCamera 斜俯視 + WebGLRenderer({antialias:true})。光: Ambient + DirectionalLight (讓地形起伏有明暗)。核心: PlaneGeometry(W,H, segX, segY) 段數=資料網格解析度; 取 geometry.attributes.position, 對每頂點依資料值寫入 z (位移成高度場): position.setZ(i, value*scale) 後 position.needsUpdate=true 且 geometry.computeVertexNormals() 重算法線使光照正確。顏色: 用 vertexColors (color attribute 依值做 jet/viridis 漸層) 或在 fragment shader/材質 map 取色。MeshStandardMaterial({vertexColors:true, side:DoubleSide})。OrbitControls+damping。動態資料則每 frame 更新 z 與 normals。loop: controls.update()→render。",
+    "quality_rubric": [
+      "載入態: 資料載入/初次位移期間 loading, 表面可由平面緩起伏出現",
+      "互動阻尼: OrbitControls enableDamping+update, 旋轉觀察峰谷滑順",
+      "光照: Ambient+Directional; 改 z 後必 computeVertexNormals() 否則明暗錯誤呈平板",
+      "響應式: resize 更新 aspect/projection/size",
+      "效能: segments 解析度與資料量匹配 (過高頂點數拖累); 動態更新只改 position attribute 不重建 geometry; pixelRatio≤2",
+      "dispose: 換資料且需改解析度時 dispose 舊 PlaneGeometry/material",
+      "視覺: 高度+顏色雙重編碼數值、漸層色階 (viridis/jet) 附 legend、峰谷對應資料正確、無錯誤法線造成的塊狀陰影"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "時間軸3D (3D Timeline)",
+    "keywords": [
+      "three.js",
+      "timeline",
+      "时间轴",
+      "時間軸",
+      "scroll-camera",
+      "事件節點"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer({antialias:true})。光: Ambient + Directional。時間映射到一條主軸 (通常 z 或 x): 時間值→軸座標。主軸線 LineSegments + 刻度 (短線 + Canvas/Sprite 文字標籤)。事件節點: InstancedMesh(Sphere/Box) 沿軸排列, 高度/顏色=屬性; setMatrixAt 定位。導覽用相機沿軸平移 (camera.position.z = lerp(current, target, k)) 綁定捲動/滑桿, 而非自由 Orbit (或 OrbitControls 限制 + damping)。事件卡片用 Sprite (alwaysFacing camera) 或 CSS2DRenderer 疊 HTML 標籤。Raycaster 點事件聚焦。loop: 相機緩動/controls.update()→render。",
+    "quality_rubric": [
+      "載入態: 事件資料載入時 loading, 節點沿軸依序淡入帶時間感",
+      "互動阻尼: 相機沿軸移動用 lerp 緩動 (或 OrbitControls damping), 捲動/拖曳手感滑順不瞬跳",
+      "光照: Ambient+Directional, 節點立體, 軸線與標籤對比清楚",
+      "響應式: resize 更新 aspect/projection/size; CSS2D/Sprite 標籤位置重算",
+      "效能: 事件節點用 InstancedMesh、刻度線合一 LineSegments; 視野外節點可不更新標籤; pixelRatio≤2",
+      "dispose: 換時間軸資料 dispose 節點/軸/標籤資源 (含 Sprite texture)",
+      "視覺: 時間→座標線性正確、刻度與標籤對齊、事件密集區不重疊、當前焦點高亮、Sprite 標籤恆面向相機"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "股市3D (3D Stock Market)",
+    "keywords": [
+      "three.js",
+      "stock",
+      "candlestick",
+      "股市",
+      "K線",
+      "instanced-bars"
+    ],
+    "execution": "Scene + PerspectiveCamera 斜視 + WebGLRenderer({antialias:true})。光: Ambient + Directional。K 棒/長條: 時間→x, 價格→y, 不同股票/維度→z。每根實體 BoxGeometry; 用 InstancedMesh(count=bars), 漲跌分兩個 InstancedMesh (紅/綠材質) 或用 setColorAt; Matrix4 compose(pos.set(x,(open+close)/2,z), quat, scale(w, |open-close|, d)) → setMatrixAt + instanceMatrix.needsUpdate。影線(high-low): 細圓柱或 LineSegments 合一。趨勢線/均線: 連續價格點塞 BufferGeometry → Line。軸+網格 GridHelper/LineSegments + Sprite 標籤。OrbitControls(限角)+damping。Raycaster→instanceId 顯示 OHLC tooltip。loop: controls.update()→(即時資料更新 buffer)→render。",
+    "quality_rubric": [
+      "載入態: 行情資料載入時 loading, K 棒可由 0 高度長出",
+      "互動阻尼: OrbitControls enableDamping+update, 平移/縮放查看 K 線滑順",
+      "光照: Ambient+Directional 讓 K 棒各面立體, 漲跌色 (紅/綠) 鮮明區分",
+      "響應式: resize 更新 aspect/projection/size, 軸標籤不錯位",
+      "效能: 數千根 K 棒用 InstancedMesh (漲跌各一或 setColorAt)、均線/影線合併 geometry; 即時更新只改 instance matrix/buffer 不重建; pixelRatio≤2",
+      "dispose: 換標的/週期 dispose K 棒/均線/軸 geometry/material",
+      "視覺: OHLC→box 位置與高度正確 (中心 y=(open+close)/2, scaleY=|open-close|)、影線對齊、均線平滑、軸刻度=價格/時間"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "人口流動 (Population Migration Flow)",
+    "keywords": [
+      "three.js",
+      "migration",
+      "flow",
+      "人口流動",
+      "particles-along-curve",
+      "OD弧線"
+    ],
+    "execution": "底圖: 平面地圖 PlaneGeometry+貼圖, 或地球 Sphere (同 Flow Globe)。Scene+Camera+Renderer+Ambient+Directional。OD (origin-destination) 流: 起訖座標→3D 點, 中間抬高控制點, QuadraticBezierCurve3 生成路徑; curve.getPoints(n)→Line 顯示路徑。流動粒子: 用單一 Points, 每粒子記自己的 curve 與相位 t; 每 frame t=(t+speed)%1, 用 curve.getPointAt(t) 寫回 position attribute, needsUpdate=true (數千粒子仍一 draw call); 顏色/大小=流量。粗細=量, 方向用粒子移動表現。OrbitControls+damping (地球版 autoRotate)。loop: 更新所有粒子 t→寫 buffer→controls.update()→render。",
+    "quality_rubric": [
+      "載入態: 底圖貼圖 onLoad + OD 資料載入時 loading, 流線可分批進場",
+      "互動阻尼: OrbitControls enableDamping+update; 地球版 autoRotate 拖曳時暫停",
+      "光照: Ambient+Directional, 底圖/球面可辨, 流動粒子發光色與背景對比",
+      "響應式: resize 更新 aspect/projection/size",
+      "效能: 所有流動粒子用單一 Points + 一個 BufferGeometry, per-frame 只更新 position attribute 不重建 curve; 路徑線合併; pixelRatio≤2",
+      "dispose: 換時段/資料集 dispose 路徑/粒子 geometry/material 與貼圖",
+      "視覺: OD 弧抬升合理貼合底圖/球面、粒子沿線流動方向正確 (origin→destination)、流量→粒子密度/線粗、起訖點標記清楚"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "3D賽車",
+    "keywords": [
+      "three.js",
+      "3d racing",
+      "賽車",
+      "vehicle physics",
+      "raycast vehicle",
+      "game"
+    ],
+    "execution": "scene=new THREE.Scene()+fog; PerspectiveCamera(60,w/h,0.1,2000); WebGLRenderer({antialias:true}),setPixelRatio(min(devicePixelRatio,2)),shadowMap.enabled. 光照:HemisphereLight(天/地)+DirectionalLight投影(調shadow.camera frustum罩賽道). 車體用Group包mesh,輪子當子Group繞x軸自轉. 控制:keydown集合維護{up,down,left,right},每幀算加速度. 物理建議用cannon-es:RaycastVehicle或自寫bicycle model:速度向量沿車頭forward(applyQuaternion),轉向改heading角(速度>0才生效,steer隨速度衰減),摩擦/阻力每幀乘衰減係數. 相機跟隨:camera.position.lerp(車後上方offset經quaternion旋轉),lookAt車前方. 賽道用CatmullRomCurve3生mesh或拼ground plane. 迴圈:requestAnimationFrame,用clock.getDelta()做fixed-step累積,所有位移*dt. 碰撞牆=AABB或raycast偵測. HUD速度/圈數用CSS overlay.",
+    "quality_rubric": [
+      "首屏顯示載入進度(LoadingManager onProgress),資產/紋理載入完成才開始遊戲迴圈",
+      "車輛控制有慣性與阻尼:加速/煞車/轉向漸進非瞬時,放開油門速度平滑衰減",
+      "相機跟隨用lerp/damp平滑,不可硬綁導致畫面抖動,過彎略微外擴",
+      "光照含環境光+主方向光投影,陰影貼合車身且shadow.camera frustum框住可視賽道避免陰影破碎",
+      "window resize更新camera.aspect+updateProjectionMatrix+renderer.setSize",
+      "幾何/材質/紋理在重啟或銷毀時dispose,移除事件監聽,避免GPU記憶體洩漏",
+      "位移與物理一律乘delta time,固定步長累積積分,保證不同FPS手感一致",
+      "速度感視覺:fog深度+路面紋理流動+輕微FOV隨速度變化+HUD時速/圈數"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "第一人稱射擊",
+    "keywords": [
+      "three.js",
+      "fps",
+      "第一人稱",
+      "pointerlock",
+      "raycaster",
+      "射擊"
+    ],
+    "execution": "scene+PerspectiveCamera(75,w/h,0.1,1000)當玩家眼睛; WebGLRenderer抗鋸齒+陰影. 視角控制:PointerLockControls(camera,dom),requestPointerLock於click. 移動:WASD維護方向向量,相對camera朝向(getWorldDirection,投影到水平面),velocity含重力與阻尼,每幀*dt. 站立/碰撞:對地面/牆raycast或用capsule+簡易碰撞,跳躍改y速度. 射擊:Raycaster從camera中心(0,0)setFromCamera發射,intersectObjects(敵人陣列),取最近命中→扣血/移除+粒子或decal. 槍枝模型掛在camera子節點(viewmodel),後座力用position/rotation短暫位移+回彈lerp. 敵人用簡單state(idle/chase)朝玩家移動. 光照:Ambient+多PointLight/SpotLight營造氛圍,baked或實時陰影. 準心用CSS固定中央. 迴圈:clock delta驅動移動/射速冷卻/敵人AI.",
+    "quality_rubric": [
+      "PointerLock啟用前顯示提示遮罩(點擊開始),Esc釋放後可重新鎖定,載入完成才入場",
+      "移動含加速/阻尼與重力,WASD相對視角方向,跳躍與落地有慣性不瞬停",
+      "場景光照分明(環境光+局部光源)營造空間層次,牆面/敵人有陰影或明暗對比",
+      "resize時更新aspect/projection/setSize,準心與HUD維持置中",
+      "子彈射線/特效/移除的敵人mesh及時dispose,事件與計時器在卸載時清理",
+      "射擊有射速冷卻(基於delta累積),命中回饋明確:粒子/彈痕decal/敵人受擊反應",
+      "槍枝viewmodel有後座力與回彈動畫,移動時輕微bob搖晃增強沉浸",
+      "敵人AI與玩家移動全部delta-time驅動,跨FPS表現一致"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "平台跳躍",
+    "keywords": [
+      "three.js",
+      "3d platformer",
+      "平台跳躍",
+      "character controller",
+      "gravity",
+      "game"
+    ],
+    "execution": "scene+fog; PerspectiveCamera第三人稱; WebGLRenderer陰影開. 角色用Group(膠囊或模型). 控制器自寫:水平velocity由方向鍵設定(相對相機yaw),套阻尼;垂直velocity每幀+=gravity*dt,跳躍按鍵且onGround時設正向速度. 地面/平台偵測:向下raycast或capsule-vs-AABB,命中且下落→落地(velocity.y=0,onGround=true),支援coyote-time與jump-buffer提升手感. 移動分軸解碰撞(先x後z後y各自掃描)避免穿牆. 平台用Box mesh,移動平台則把平台位移加到站立角色. 相機:position.lerp到角色後上方offset,lookAt角色,可加碰撞回避. 光照:Hemisphere+Directional投影框住關卡. 收集物用旋轉mesh+距離偵測拾取. 迴圈:固定步長累積積分位置與重力,requestAnimationFrame. 落地/跳躍播放squash-stretch scale動畫.",
+    "quality_rubric": [
+      "資產載入用LoadingManager顯示進度,完成前不啟動物理迴圈",
+      "跳躍手感:重力+可變跳躍高度+coyote time+jump buffer,落地有阻尼非生硬",
+      "相機third-person用lerp平滑跟隨並避免穿牆,角色移動相對相機方向",
+      "光照含環境光與主光投影,平台與角色有清晰陰影定位深度感",
+      "resize更新camera.aspect/projection/setSize,UI(分數/命)自適應",
+      "移除的收集物mesh與特效dispose,事件/計時器卸載時清理避免洩漏",
+      "重力/移動固定步長*dt積分,移動平台位移正確帶動角色,跨FPS一致",
+      "視覺回饋:落地squash-stretch、收集閃光、平台材質區分可踩/危險"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "3D貪食蛇",
+    "keywords": [
+      "three.js",
+      "3d snake",
+      "貪食蛇",
+      "grid",
+      "instancedmesh",
+      "game"
+    ],
+    "execution": "scene+PerspectiveCamera俯視或斜45°+OrbitControls(可選); WebGLRenderer抗鋸齒+陰影. 邏輯與渲染分離:蛇身為格子座標陣列[{x,y,z}],固定tick(累積dt達interval才前進一格,非每幀). 每tick:newHead=head+dir,檢查撞牆/自撞→gameover,吃到food則不pop尾巴並生新food(隨機空格). 渲染:身體段用InstancedMesh(setMatrixAt每段位置,instanceMatrix.needsUpdate)效能佳;或各段獨立Box但段數多時改instanced. 移動視覺平滑:渲染位置對格子座標做lerp插值(t=累積時間/interval). 方向控制:keydown改dir但禁止180°反向. food用發光Box+旋轉. 光照:Hemisphere+Directional投影到棋盤底板. 棋盤格底板GridHelper或PlaneGeometry. 迴圈:clock.getDelta累積驅動tick與插值. 加速:interval隨長度縮短.",
+    "quality_rubric": [
+      "啟動前載入完成(若有紋理)並顯示開始畫面,棋盤與規則清楚",
+      "蛇移動為固定tick步進但視覺用lerp插值平滑過渡,非每幀瞬移格子",
+      "相機若可旋轉(OrbitControls)需enableDamping平滑,方向鍵相對視角合理",
+      "光照含環境+方向光,蛇身與food在棋盤上有陰影定位高度",
+      "resize更新aspect/projection/setSize,分數HUD自適應",
+      "用InstancedMesh渲染身體段控制draw call;gameover重置時dispose舊資源",
+      "tick間隔基於delta累積,禁止180°反向輸入,吃食物加速邏輯穩定",
+      "視覺:food發光/旋轉、蛇頭與身體區分、吃到時粒子或縮放回饋"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "迷宮逃脫",
+    "keywords": [
+      "three.js",
+      "maze",
+      "迷宮",
+      "first-person",
+      "pointerlock",
+      "collision"
+    ],
+    "execution": "scene+fog(增迷失感)+PerspectiveCamera第一人稱; WebGLRenderer陰影. 迷宮資料:2D grid(0通道1牆),用演算法生成(recursive backtracker/Prim). 渲染牆:遍歷grid,牆格生Box或合併為單一BufferGeometry(BufferGeometryUtils.mergeGeometries)降draw call;地板/天花板各一Plane. 控制:PointerLockControls第一人稱,WASD相對朝向移動. 碰撞:玩家半徑做格子碰撞(檢查目標位置所在/相鄰格是否牆,分x/z軸解析)防穿牆,比full physics輕量. 光照:低Ambient+跟隨玩家的PointLight(手電筒感)或SpotLight掛camera,牆投影. minimap用正交相機渲到小視窗或Canvas 2D畫grid+玩家點. 終點mesh發光,距離偵測判定逃脫. 迴圈:delta驅動移動,計時器顯示用時.",
+    "quality_rubric": [
+      "迷宮生成後載入完成才入場,顯示目標(找到出口)與操作提示遮罩",
+      "第一人稱移動含阻尼,牆面碰撞分軸解析平滑滑牆不卡死不穿牆",
+      "PointerLock提示與釋放/重鎖正常,視角轉動平順無瞬跳",
+      "光照營造氛圍:低環境光+手電筒PointLight/SpotLight,牆面有明暗與陰影",
+      "resize更新aspect/projection/setSize,minimap與計時HUD自適應",
+      "牆幾何合併降draw call,終點/特效在重置時dispose,事件清理",
+      "移動delta-time驅動,minimap正確反映玩家位置與朝向",
+      "視覺:fog深度、終點發光指引、牆/地材質區分增強空間辨識"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "塔防",
+    "keywords": [
+      "three.js",
+      "tower defense",
+      "塔防",
+      "pathfinding",
+      "raycaster",
+      "instancedmesh"
+    ],
+    "execution": "scene+PerspectiveCamera斜俯視+OrbitControls(damping); WebGLRenderer陰影. 地圖grid:標記path格與buildable格. 敵人沿預定path(waypoint陣列)移動:position.lerp到下一waypoint,到達切換,血量耗盡或抵達終點處理. 大量敵人/子彈用InstancedMesh. 放塔:Raycaster setFromCamera(滑鼠NDC)intersect地面格,hover顯示ghost mesh+合法性顏色,click且該格buildable且金錢足→放塔. 塔邏輯:每幀掃描射程內敵人(距離比較),冷卻到→生子彈(朝目標lerp/朝向插值)命中扣血;或雷射用Line即時連線. 波次系統:計時器spawn敵人,難度遞增. 光照:Hemisphere+Directional投影全場. 迴圈:delta驅動敵人移動/塔冷卻/子彈/波次計時. UI(金錢/血量/波次)用CSS overlay,塔選單DOM按鈕.",
+    "quality_rubric": [
+      "載入完成顯示地圖與初始資源/波次資訊,開始波次需玩家觸發或倒數",
+      "OrbitControls啟用damping平滑;放塔hover有ghost預覽與合法性顏色回饋",
+      "敵人沿路徑移動平滑(lerp waypoint),塔瞄準/子彈飛行有朝向插值非瞬擊",
+      "光照含環境+主方向光投影,塔/敵人/地圖有陰影層次",
+      "resize更新aspect/projection/setSize,HUD與塔選單自適應",
+      "敵人與子彈用InstancedMesh控制效能;死亡敵人/用過子彈mesh回收dispose",
+      "敵人移動/塔冷卻/波次spawn全部delta-time驅動,跨FPS節奏一致",
+      "視覺回饋:射程圈顯示、命中粒子、敵人受擊閃紅、波次提示與資源變動動畫"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "彈珠台",
+    "keywords": [
+      "three.js",
+      "pinball",
+      "彈珠台",
+      "cannon-es",
+      "rigidbody",
+      "physics"
+    ],
+    "execution": "scene+PerspectiveCamera斜視固定機台+輕微OrbitControls; WebGLRenderer陰影. 物理用cannon-es(或rapier):world.gravity傾斜(模擬台面斜度,如(0,-9.8,小z))或台面傾角+標準重力. 球=Sphere body(高restitution彈性);擋板flipper=用HingeConstraint或設定angularVelocity旋轉的body,按鍵時施力翻轉,放開回彈;bumper=靜態body+碰撞事件施impulse給球;牆/軌道=Trimesh或多個Box static body. three mesh每幀copy body.position/quaternion. 發射器plunger:蓄力施impulse. 碰撞計分:world.addEventListener('beginContact')判定body配對加分/觸發燈效. 失球:球掉到底部偵測→重置/扣球. 光照:Spot/Point打亮台面+Directional投影. 迴圈:固定步長world.step(1/60,dt,maxSubsteps)再同步mesh,requestAnimationFrame.",
+    "quality_rubric": [
+      "資產與物理world初始化完成才可發球,顯示球數/分數與操作提示",
+      "flipper控制即時有力:按下快速翻轉、放開回彈,有阻尼不僵硬",
+      "物理用固定步長world.step(maxSubsteps)保證彈性/碰撞穩定不穿透",
+      "光照聚焦台面(Spot/Point)+主光投影,球與障礙有陰影立體感",
+      "resize更新aspect/projection/setSize,計分HUD自適應",
+      "cannon body與three mesh一一同步;重置/卸載時dispose幾何材質與world body",
+      "碰撞計分用beginContact事件,bumper/擋板impulse手感真實,失球偵測可靠",
+      "視覺:bumper撞擊燈效/粒子、球體反光、台面材質與軌道清晰、分數跳動回饋"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "保齡球",
+    "keywords": [
+      "three.js",
+      "bowling",
+      "保齡球",
+      "cannon-es",
+      "physics",
+      "rigidbody"
+    ],
+    "execution": "scene+PerspectiveCamera球道後方視角; WebGLRenderer陰影. 物理cannon-es:world.gravity(0,-9.8,0). 球道=大Box static body(低摩擦模擬油面);球=Sphere body(質量重),bumper溝槽=傾斜Box. 球瓶=10個Cylinder/瓶身body依標準三角陣列擺位(靜置). 投球:玩家拖曳/瞄準設定方向與力道(箭頭預覽),放開→球body.velocity或applyImpulse沿球道,可加側向給curve(旋轉效果用angularVelocity). three mesh每幀同步body transform. 倒瓶判定:投球結束後檢查各瓶body.quaternion傾角或position位移超閾值=倒,計分(含spare/strike). 重置:移除倒瓶,補球. 光照:Directional主光投影+環境光,球道反光材質. 迴圈:world.step固定步長後同步mesh. 相機可隨球推進跟拍.",
+    "quality_rubric": [
+      "載入完成才可投球,顯示瞄準預覽(方向/力道)與計分板規則",
+      "投球輸入:拖曳設方向力道有阻尼回饋,可施加旋轉產生curve",
+      "物理固定步長world.step(maxSubsteps),球與瓶碰撞穩定不穿透不抖動",
+      "光照主方向光投影+環境光,球道反光、球與瓶有陰影立體感",
+      "resize更新aspect/projection/setSize,計分板HUD自適應",
+      "10瓶body與mesh同步,倒瓶判定用傾角/位移閾值準確;回合重置正確dispose/復位",
+      "計分含strike/spare規則正確,投球結束自動結算下一球",
+      "視覺:瓶倒飛散真實、球道油面反光、相機隨球跟拍、得分動畫"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "高爾夫",
+    "keywords": [
+      "three.js",
+      "mini golf",
+      "高爾夫",
+      "physics",
+      "projectile",
+      "cannon-es"
+    ],
+    "execution": "scene+fog+PerspectiveCamera可繞球/推桿視角+OrbitControls; WebGLRenderer陰影. 兩種路線:迷你推桿高爾夫用cannon-es(球Sphere body在果嶺Plane上滾動,摩擦衰減,障礙static body,洞口偵測進洞);或全揮桿用拋體運動(自寫:初速由力道+仰角分解,velocity.y-=g*dt,落地後依草地摩擦滾動衰減). 擊球:蓄力條(按住增力放開擊出)+方向(相機yaw或拖曳),power conditions箭頭/弧線預覽. three mesh同步或自算位置. 進洞:球距洞口<半徑且速度夠低→進洞,計桿數. 地形起伏:果嶺用heightmap/displacement,影響滾動方向. 光照:Hemisphere(天空藍綠草)+Directional投影. 風力(進階)加常數力. 迴圈:固定步長積分,delta驅動. 桿數/par用HUD.",
+    "quality_rubric": [
+      "載入完成顯示球洞/par與瞄準介面,擊球前可繞球觀察地形",
+      "擊球輸入:蓄力條+方向預覽(弧線/箭頭),力道有阻尼放開擊出手感佳",
+      "OrbitControls啟用damping;球滾動/飛行軌跡平滑物理真實",
+      "光照Hemisphere+主方向光投影,草地/球/旗桿有陰影與起伏明暗",
+      "resize更新aspect/projection/setSize,桿數/par HUD自適應",
+      "球體物理固定步長*dt積分(摩擦/重力/滾動),進洞判定用距離+低速閾值準確",
+      "地形起伏影響滾動方向,擊球/重置時資源dispose,事件清理",
+      "視覺:果嶺材質、球落地彈跳與滾動衰減、進洞動畫、力道蓄力條回饋"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "籃球投籃",
+    "keywords": [
+      "three.js",
+      "basketball",
+      "籃球投籃",
+      "projectile",
+      "cannon-es",
+      "physics"
+    ],
+    "execution": "scene+PerspectiveCamera正對籃框; WebGLRenderer陰影. 物理cannon-es:球Sphere body(中等restitution);籃板Box+籃框用多段Box或Torus近似(或trimesh)static body;地面Plane. 投籃:玩家用拖曳(swipe向量決定方向+力道)或蓄力+仰角,applyImpulse給球初速(含弧度);拖曳時顯示拋物線預測軌跡(用運動方程取樣畫Line)。three mesh每幀同步body. 進球偵測:在籃框下方放一觸發區(sensor body或位置判定),球由上往下穿過且在框內→得分(net布料/擺動動畫)。連續投不重置或計時挑戰. 光照:Directional投影+環境光,場館氛圍. 球場/籃架模型或基礎幾何. 迴圈:world.step固定步長後同步mesh,delta驅動. 計分/連擊HUD用CSS.",
+    "quality_rubric": [
+      "載入完成顯示籃框與投籃操作提示,計分/計時規則清楚",
+      "投籃輸入:拖曳/swipe決定方向力道+弧度,有拋物線軌跡預覽回饋",
+      "物理固定步長world.step(maxSubsteps),球與籃框/籃板碰撞與反彈真實穩定",
+      "光照主方向光投影+環境光,球/籃架/地面有陰影立體感",
+      "resize更新aspect/projection/setSize,計分HUD自適應",
+      "球body與mesh同步,進球用籃框下方sensor/位置判定避免誤判;重置時dispose",
+      "投籃力道/軌跡delta或impulse一致,得分判定需由上穿框非側穿",
+      "視覺:籃網擺動、進球粒子/閃光、球體紋理旋轉、連擊與得分動畫"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "飛行模擬",
+    "keywords": [
+      "three.js",
+      "flight sim",
+      "飛行模擬",
+      "quaternion",
+      "terrain",
+      "controls"
+    ],
+    "execution": "scene+大fog/sky(Sky shader或漸層背景)+PerspectiveCamera掛機尾或座艙; WebGLRenderer遠clip(far大). 飛機Group. 控制(quaternion避免萬向鎖):pitch/roll/yaw由鍵盤或滑鼠,每幀對機體local軸applyQuaternion(rotateX/Y/Z或premultiply delta quaternion);推力沿機頭forward(getWorldDirection)推進,velocity含重力與簡化升力(隨速度/攻角). 油門調速. 地形:大Plane+heightmap displacement或分塊(LOD/chunk隨飛機移動更新)避免一次載太大;海洋用反光material. 相機:跟隨機尾,position用quaternion算offset並slerp/lerp平滑. 儀表(高度/速度/姿態儀)用HUD/CSS或DOM. 碰地偵測:高度<地形→墜毀. 光照:Hemisphere(天空/地面)+Directional太陽投影. 迴圈:delta驅動所有旋轉/位移積分.",
+    "quality_rubric": [
+      "載入(地形/天空/模型)完成才起飛,顯示操作說明與儀表",
+      "飛行控制用quaternion積分避免萬向鎖,pitch/roll/yaw有慣性與阻尼平滑",
+      "相機跟隨機體用slerp/lerp平滑,姿態變化不抖動,座艙/機尾視角可切換",
+      "光照Hemisphere天地光+太陽方向光投影,地形與機體有明暗與陰影",
+      "resize更新aspect/projection/setSize,儀表HUD自適應",
+      "地形用chunk/LOD或heightmap控制效能,遠處fog收邊;卸載時dispose地塊與模型",
+      "推力/重力/升力與旋轉全部delta-time積分,跨FPS飛行手感一致",
+      "視覺:天空漸層/雲、地形紋理與高度起伏、速度感(fog+地面流動)、儀表盤"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "太空射擊",
+    "keywords": [
+      "three.js",
+      "space shooter",
+      "太空射擊",
+      "instancedmesh",
+      "particles",
+      "game"
+    ],
+    "execution": "scene(深色背景+星空)+PerspectiveCamera(第三人稱追尾或固定); WebGLRenderer抗鋸齒+可選bloom(EffectComposer+UnrealBloomPass發光). 星空用Points(BufferGeometry大量隨機點)或捲動的星層. 玩家船Group,WASD/滑鼠控制移動,velocity含阻尼(太空無摩擦感可低阻尼). 射擊:按鍵且冷卻到→從槍口spawn子彈(沿forward移動的mesh,用物件池+InstancedMesh管理大量彈幕);敵人/隕石用InstancedMesh批次. 命中:子彈vs敵人用距離/AABB或Sphere相交(空間分割或簡單迴圈),命中→爆炸粒子+移除. 敵人波次/AI:朝玩家或沿pattern移動,spawn計時. 相機slerp跟隨船. 光照:環境光+局部光源,材質emissive讓引擎/雷射發光配bloom. 迴圈:delta驅動移動/子彈/敵人/冷卻/spawn,物件池回收避免GC.",
+    "quality_rubric": [
+      "載入完成顯示開始畫面與操作/分數規則,星空背景就緒",
+      "飛船控制有慣性與阻尼(太空感),射擊冷卻基於delta累積",
+      "相機跟隨平滑(lerp/slerp),彈幕/敵人移動流暢無卡頓",
+      "光照+emissive材質配bloom讓雷射/引擎發光,場景明暗有層次",
+      "resize更新aspect/projection/setSize(及composer.setSize),HUD自適應",
+      "子彈/敵人用InstancedMesh+物件池控制效能與GC;爆炸特效與離場物件dispose/回收",
+      "子彈飛行/敵人AI/波次spawn全部delta-time驅動,跨FPS一致",
+      "視覺:星空視差捲動、雷射發光、爆炸粒子、受擊閃光與分數/血量HUD"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "跑酷 (Endless Runner / Parkour)",
+    "keywords": [
+      "three.js",
+      "endless-runner",
+      "跑酷",
+      "3d",
+      "lane-switch",
+      "procedural"
+    ],
+    "execution": "Scene + PerspectiveCamera(70) 跟在角色後上方,WebGLRenderer({antialias:true}); renderer.shadowMap.enabled=true。光照: HemisphereLight(天/地)+ DirectionalLight castShadow 當主光。地面/障礙用 BoxGeometry + InstancedMesh 重用。核心機制(自跑+三線道): 用 const clock=new THREE.Clock(); renderer.setAnimationLoop(()=>{const dt=clock.getDelta();}); 世界以固定速度 worldSpeed 朝 +z 移動(或角色 z 遞增),speed 隨時間漸增。線道: 三個固定 x 值(-1.5/0/1.5),按鍵切換用 lerp(camera/player.x → targetLane, dt*10) 做阻尼。跳躍: 簡易重力 vy-=g*dt; y+=vy*dt; 落地 clamp。障礙碰撞用 Box3.setFromObject 兩 AABB intersectsBox。地塊/障礙池: 超出相機後回收到前方(object pooling)避免 new。最後 renderer.render(scene,camera)。",
+    "quality_rubric": [
+      "首次載入顯示明確 loading 畫面或進度,資源就緒前不顯示空白卡頓",
+      "線道切換與跳躍用 lerp/緩動而非瞬移,有阻尼手感",
+      "光照: 至少 Hemisphere+Directional 雙光,主光開 castShadow 且地面 receiveShadow",
+      "監聽 resize: 更新 camera.aspect + updateProjectionMatrix() + renderer.setSize",
+      "障礙/地塊用 object pooling 或 InstancedMesh,迴圈內不 new geometry/material",
+      "速度與物理用 clock.getDelta() 做 frame-rate independent,不綁死 60fps",
+      "重玩或結束時 dispose 不再使用的 geometry/material/texture 防記憶體洩漏",
+      "視覺有縱深霧(fog)或漸層,遠處障礙不突兀彈出"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "釣魚 (Fishing)",
+    "keywords": [
+      "three.js",
+      "fishing",
+      "釣魚",
+      "3d",
+      "water-shader",
+      "casting"
+    ],
+    "execution": "Scene + PerspectiveCamera 面向水面,WebGLRenderer({antialias:true})。光照: DirectionalLight(陽光)+ AmbientLight 補光; 水面可用 three/examples Water 或 PlaneGeometry + 頂點波動 shader/sin 位移。核心機制(拋竿→等待→上鉤→收線): 狀態機 state∈{idle,casting,waiting,bite,reeling}。拋竿: 蓄力時間 → 浮標目標 x/z,用拋物線(重力)或 Vector3.lerp 動畫落水。浮標 bob: y += sin(t*f)*amp。咬鉤: 隨機 timeout 後進 bite,浮標下沉 + 提示。收線: 拉力條 tension,玩家按住增張力、放開減張力,clamp 在安全區否則斷線;魚的 Vector3 朝船 lerp。命中判定/距離用 position.distanceTo。renderer.setAnimationLoop 內以 getDelta 推進狀態計時與水波 uniforms.time。",
+    "quality_rubric": [
+      "載入態明確,水面材質/模型就緒前給 loading 提示",
+      "拋竿與收線是連續緩動(蓄力、拋物線、張力條),非瞬間跳值",
+      "光照含方向光+環境光,水面有反光或波動讓平面不死板",
+      "resize 正確更新 camera 與 renderer,水面 shader 解析度跟隨",
+      "水波用 uniforms.time 累加(getDelta),不同 fps 下波速一致",
+      "離場 dispose 水面/魚模型 geometry/material 與 render target",
+      "狀態機 idle/casting/bite/reeling 切換有清楚視覺與文字回饋",
+      "浮標 bob、咬鉤下沉等細節到位,整體有臨場感"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "賽艇 (Rowing / Boat Race)",
+    "keywords": ["three.js", "boat-race", "賽艇", "3d", "buoyancy", "water"],
+    "execution": "Scene + PerspectiveCamera 追尾艇身,WebGLRenderer({antialias:true}); fog 給水面縱深。光照: DirectionalLight(castShadow)+ HemisphereLight。水面用大 PlaneGeometry + sin 波頂點或 Water 範例。核心機制(划槳推進+浮力+轉向): 艇用 velocity/heading 模型,劃槳(節奏或按鍵)給 forwardForce,阻力 v*=0.98 每幀;position += dir*v*dt。轉向: yaw 角速度 → boat.rotation.y,方向向量由 yaw 求 (sin,cos)。浮力/搖晃: 取艇底數點採樣波高,boat.position.y 與 pitch/roll 隨波 lerp,營造起伏。賽道用浮標(InstancedMesh)+ Box3 或圈數檢查點 distanceTo 計圈。renderer.setAnimationLoop 內 getDelta 推進物理與 water uniforms.time;尾跡可用粒子或拖尾平面。",
+    "quality_rubric": [
+      "載入態清楚,水面與艇模型就緒前顯示進度",
+      "加速/轉向/停槳有慣性與阻尼,放開後滑行而非急停",
+      "光照: 方向光+半球光,艇開 castShadow、水面 receiveShadow 或有反光",
+      "resize 同步 camera.aspect/updateProjectionMatrix 與 renderer.setSize",
+      "水波與物理用 getDelta 計算,fps 變動下速度一致",
+      "浮標/尾跡用 InstancedMesh 或粒子池,迴圈內不重建資源",
+      "結束/重來 dispose 水面與艇 geometry/material/render target",
+      "艇身隨波 pitch/roll 起伏,有尾跡或濺水提升真實感"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "坦克大戰 (Tank Battle)",
+    "keywords": [
+      "three.js",
+      "tank-battle",
+      "坦克",
+      "3d",
+      "raycaster",
+      "projectile"
+    ],
+    "execution": "Scene + PerspectiveCamera(追尾或俯視)+ WebGLRenderer({antialias:true}); shadowMap.enabled。光照: DirectionalLight castShadow(調 shadow.camera 範圍涵蓋戰場)+ AmbientLight。地形 PlaneGeometry,坦克 = 車體 Group + 砲塔子 Group(分開旋轉)。核心機制(移動+砲塔瞄準+射擊): 車體前進 = heading 向量 * speed * dt,A/D 改 rotation.y;砲塔 turret.rotation.y 獨立跟隨滑鼠(用 Raycaster 從相機投射到地面 plane 取瞄準點)。射擊: 生成砲彈 Mesh,velocity = 砲口 forward * v,迴圈內 position+=v*dt + 簡易重力;命中用 Box3 intersectsBox 或 Raycaster 對敵列表。敵 AI 用簡單 seek/逃逸 + 計時開火。爆炸用粒子/縮放球。renderer.setAnimationLoop + getDelta 驅動所有運動與冷卻計時。",
+    "quality_rubric": [
+      "載入態明確,模型/貼圖就緒前給提示不顯示空場",
+      "車體移動與砲塔轉向有阻尼/角速度上限,瞄準平滑跟隨",
+      "光照含方向光 castShadow,shadow.camera 範圍覆蓋戰場、坦克投射陰影",
+      "resize 正確更新 camera 與 renderer,UI/準心跟隨",
+      "砲彈與敵人用 object pooling,大量物體用 InstancedMesh,迴圈不 new",
+      "彈道/移動用 getDelta,命中判定(Box3 或 Raycaster)穩定不穿透",
+      "死亡/重置 dispose 砲彈、爆炸粒子與敵模型資源",
+      "射擊有後座、爆炸粒子、命中回饋等視覺打擊感"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "第三人稱冒險 (Third-Person Adventure)",
+    "keywords": [
+      "three.js",
+      "third-person",
+      "第三人稱",
+      "3d",
+      "AnimationMixer",
+      "orbit-camera"
+    ],
+    "execution": "Scene + PerspectiveCamera 跟隨角色(camera-rig: 以角色為 target 的軌道相機)+ WebGLRenderer({antialias:true}); shadowMap。光照: DirectionalLight castShadow + HemisphereLight。角色用 GLTFLoader 載 .glb,動畫用 AnimationMixer + clipAction(idle/walk/run/jump)。核心機制(移動+鏡頭+動畫狀態): 輸入 → 期望移動向量,依相機 yaw 旋轉成世界方向;角色 rotation.y 用 lerp/slerp 平滑朝向移動方向。重力跳躍: vy-=g*dt。鏡頭: 滑鼠控 yaw/pitch,相機位置 = target + 球座標 offset,並用 lerp 跟隨 + Raycaster 防穿牆(命中縮短距離)。動畫: 依速度切 idle↔walk↔run,用 action.crossFadeTo 過渡。renderer.setAnimationLoop 內 mixer.update(dt)(getDelta)+ 移動 + 相機更新 + render。",
+    "quality_rubric": [
+      "載入態: GLTF 模型/動畫由 LoadingManager 顯示進度,就緒前不進場",
+      "鏡頭跟隨與角色轉向用 lerp/slerp 阻尼,無瞬轉抖動",
+      "光照: 方向光 castShadow + 半球光,角色與場景陰影正確",
+      "resize 更新 camera.aspect/updateProjectionMatrix 與 renderer.setSize",
+      "動畫狀態用 AnimationMixer + crossFade 平滑切換,mixer.update 餵 getDelta",
+      "相機 Raycaster 防穿牆,命中時平滑收近距離",
+      "切場景/卸載時 dispose 模型 geometry/material/texture 與 mixer",
+      "移動、跳躍、待機動畫與環境光照協調,沉浸感佳"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "解謎方塊 (Puzzle Cube / Rubik-style)",
+    "keywords": [
+      "three.js",
+      "puzzle-cube",
+      "解謎方塊",
+      "3d",
+      "quaternion",
+      "raycaster"
+    ],
+    "execution": "Scene + PerspectiveCamera + OrbitControls(看整體)+ WebGLRenderer({antialias:true})。光照: DirectionalLight + AmbientLight 讓貼面有明暗。3x3x3 用 27 個小 Box(Group 容器),每面六色用六個 material 陣列。核心機制(選面→整層旋轉): 點擊用 Raycaster.setFromCamera(pointer,camera).intersectObjects 取命中 cubie 與 face normal;依拖曳方向決定旋轉軸與層。旋轉一層: 暫時把該層 cubies reparent 到一個 pivot Group,對 pivot.rotation 做 90° 緩動(Tween/手動 lerp),完成後 detach 回 scene 並 round 位置/朝向(quaternion)避免漂移。狀態用每個 cubie 的 logical 座標追蹤,判定是否復原。OrbitControls.enableDamping=true。renderer.setAnimationLoop 內推進旋轉緩動 + controls.update() + render。",
+    "quality_rubric": [
+      "載入態明確,初始化完成前不接受操作",
+      "層旋轉是 90° 緩動動畫且 enableDamping 軌道阻尼開啟,手感順",
+      "光照讓六色面有明暗層次,非全亮平板",
+      "resize 同步 camera 與 renderer,OrbitControls 正常",
+      "旋轉完成後 round 位置/quaternion 對齊網格,長時間操作不累積漂移",
+      "Raycaster 選面判定準確,拖曳方向正確映射旋轉軸/層",
+      "離場 dispose cubie geometry/material,重置不洩漏",
+      "復原檢測與完成回饋(高亮/動效)清楚,整體精緻"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "物理積木 (Physics Blocks / Stacking)",
+    "keywords": [
+      "three.js",
+      "physics",
+      "物理積木",
+      "3d",
+      "cannon-es",
+      "rigidbody"
+    ],
+    "execution": "Scene + PerspectiveCamera + OrbitControls + WebGLRenderer({antialias:true}); shadowMap 讓堆疊有立體感。光照: DirectionalLight castShadow(調 shadow bias 減 acne)+ AmbientLight。物理用 cannon-es: world=new CANNON.World({gravity:(0,-9.82,0)});地面 = Plane Body(mass 0);每塊積木 = three Mesh(BoxGeometry) 配對一個 CANNON.Body(Box shape, mass>0)。核心機制(模擬↔渲染同步): 固定步進 world.step(1/60, dt, 3);每幀把 body.position/quaternion copy 到對應 mesh(mesh.position.copy(body.position); mesh.quaternion.copy(body.quaternion))。放置/拖放: Raycaster 對地面取落點生成新塊;丟出可給 body.velocity。睡眠: allowSleep 讓靜止塊休眠省效。renderer.setAnimationLoop 內 world.step(getDelta clamp)+ 同步 + controls.update + render。",
+    "quality_rubric": [
+      "載入態明確,物理 world 與場景就緒前不可互動",
+      "拖放/相機有阻尼(OrbitControls damping、放置吸附),操作不突兀",
+      "光照 castShadow + 適當 shadow.bias,堆疊有清晰投影與立體感",
+      "resize 同步 camera 與 renderer",
+      "物理用固定 timestep(world.step 帶 fixedDelta + maxSubSteps),fps 波動下穩定",
+      "mesh 與 body 雙向只在一處同步,靜止物體 allowSleep 省 CPU",
+      "清場/移除積木同時 dispose three 資源並移除 CANNON body,無洩漏",
+      "碰撞、倒塌、堆疊穩定感真實,材質/陰影使積木有重量感"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "滾球迷宮 (Marble Maze / Tilt Maze)",
+    "keywords": [
+      "three.js",
+      "marble-maze",
+      "滾球迷宮",
+      "3d",
+      "tilt",
+      "physics"
+    ],
+    "execution": "Scene + PerspectiveCamera(俯視略斜)+ WebGLRenderer({antialias:true}); shadowMap。光照: DirectionalLight castShadow + AmbientLight。迷宮 = 一個 board Group(地板 Plane + 牆 Box,牆可 InstancedMesh),整盤傾斜。核心機制(傾斜→重力→滾動): 輸入(鍵盤/滑鼠/裝置陀螺 deviceorientation)控制 board 的 tilt 角 (rotation.x/z),用 lerp 平滑。球物理: 由傾斜算重力分量 a=(g*sin(tiltX), g*sin(tiltZ)),v+=a*dt; pos+=v*dt; v*=friction。牆碰撞: 球 vs 牆用圓-矩形/AABB 檢測,命中時反射或 clamp 位置並衰減速度;落洞用 distanceTo 判定。目標到達同理。可用 cannon-es 的 Sphere/Box 替代手寫物理。renderer.setAnimationLoop 內 getDelta 推進傾斜緩動 + 球積分 + 碰撞 + render。",
+    "quality_rubric": [
+      "載入態明確,迷宮生成/初始化完成前不開始計時",
+      "傾斜控制用 lerp 平滑、球運動有摩擦阻尼,非生硬位移",
+      "光照 castShadow,球與牆有投影、滾動立體感明確",
+      "resize 同步 camera 與 renderer",
+      "球積分與傾斜用 getDelta,並對 dt clamp 防穿牆(高速 tunneling)",
+      "牆/邊界用 InstancedMesh,碰撞檢測穩定不卡牆角",
+      "重置/換關 dispose 舊迷宮 geometry/material,無洩漏",
+      "落洞/到達終點有清楚回饋,整體手感與視覺一致"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "卡丁車 (Kart Racing)",
+    "keywords": [
+      "three.js",
+      "kart-racing",
+      "卡丁車",
+      "3d",
+      "vehicle-physics",
+      "drift"
+    ],
+    "execution": "Scene + PerspectiveCamera 追尾(用 lerp 跟隨車身後上方)+ WebGLRenderer({antialias:true}); fog + shadowMap。光照: DirectionalLight castShadow + HemisphereLight。賽道用 mesh/平面 + 路緣;車 = 車身 Group(輪子子物件可轉)。核心機制(加速+轉向+漂移): 縱向 throttle/brake → forwardSpeed(加速度 + 阻力 + 上限);轉向角 steer 隨速度縮放,heading += steer*speed*dt → car.rotation.y;速度方向向量由 heading 求。漂移: 把 velocity 分解為前向/側向,正常時抑制側向(抓地),漂移鍵降低側向摩擦讓車尾滑出 + 累積 boost。輪胎可隨 steer 轉、車身過彎 roll 傾斜。賽道進度用檢查點 distanceTo + 圈數。renderer.setAnimationLoop 內 getDelta 推進車輛物理 + 相機 lerp + render;尾跡/煙用粒子。",
+    "quality_rubric": [
+      "載入態明確,賽道/車模型就緒前顯示進度",
+      "加速/轉向/相機跟隨皆有慣性與 lerp 阻尼,過彎與漂移手感連貫",
+      "光照 castShadow + fog,車投影、賽道縱深清楚",
+      "resize 同步 camera.aspect/updateProjectionMatrix 與 renderer.setSize",
+      "車輛物理用 getDelta,轉向隨速縮放,漂移用側向摩擦模型而非瞬轉",
+      "對手/道具/尾跡用 pooling 或 InstancedMesh,迴圈不重建資源",
+      "重賽/離場 dispose 賽道與車輛 geometry/material/texture",
+      "漂移煙、輪胎轉動、車身傾斜等細節到位,速度感強"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "劍球 (Kendama 劍玉)",
+    "keywords": [
+      "three.js",
+      "kendama",
+      "劍球",
+      "3d",
+      "string-physics",
+      "verlet"
+    ],
+    "execution": "Scene + PerspectiveCamera 近距特寫 + WebGLRenderer({antialias:true}); shadowMap。光照: DirectionalLight castShadow + AmbientLight,木質材質(MeshStandardMaterial)。劍體(ken)= Group(中軸 + 大中小皿 + 劍尖),球(tama)= Sphere + 凹孔。核心機制(揮動劍體→繩物理帶動球→接住): 劍體由滑鼠/觸控直接驅動位置與旋轉(玩家手)。繩子: 用一段或多節 Verlet/距離約束——球受重力積分 v+=g*dt; pos+=v*dt,再對『繩長』做約束: 若 distance(ball, anchor)>len 則把球沿方向拉回到 len(可迭代多次)。揮動產生的 anchor 速度透過約束甩動球。接球判定: 球速、球與皿/劍尖的相對位置與法線對齊 → 命中則把球吸附並 parent 到該承接點。用 LineGeometry 畫繩。renderer.setAnimationLoop 內 getDelta 推進球積分 + 繩約束(固定子步)+ 接球檢測 + render。",
+    "quality_rubric": [
+      "載入態明確,模型/材質就緒前不可操作",
+      "劍體跟手平滑、球受繩牽引有自然擺盪阻尼,非僵硬連動",
+      "光照 castShadow + 木質 PBR 材質,劍與球投影立體",
+      "resize 同步 camera 與 renderer",
+      "球積分與繩距離約束用固定子步/getDelta,高速揮動不爆繩",
+      "繩 LineGeometry 每幀更新頂點而非重建,接住後正確 parent/detach",
+      "離場 dispose ken/tama geometry/material 與繩資源",
+      "接球判定考慮速度與法線對齊,命中吸附與回饋自然可信"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "打地鼠3D (Whac-A-Mole 3D)",
+    "keywords": [
+      "three.js",
+      "whack-a-mole",
+      "打地鼠",
+      "3d",
+      "raycaster",
+      "tween"
+    ],
+    "execution": "Scene + PerspectiveCamera 俯視洞陣 + WebGLRenderer({antialias:true}); shadowMap。光照: DirectionalLight castShadow + AmbientLight。地面 + N 個洞,每洞一隻地鼠 Mesh,藏在洞下(y 低),用裁切或洞口圈遮住。核心機制(隨機冒出→點擊命中→計分): 排程器以遞減間隔隨機挑空閒洞,觸發地鼠 pop: 對 mole.position.y 做緩動(up→hold→down,Tween 或手動 lerp + easing),未被打到自動縮回。點擊: pointerdown → Raycaster.setFromCamera(pointer,camera).intersectObjects(moles) 取最近命中且處於『可打』狀態者 → 計分 + 命中動畫(壓扁/星星粒子)+ 立即縮回。難度隨時間提高 pop 頻率/同時數量。倒數計時結束結算。renderer.setAnimationLoop 內 getDelta 推進各 mole 緩動與排程計時 + render。",
+    "quality_rubric": [
+      "載入態明確,洞陣與地鼠模型就緒前不開始倒數",
+      "地鼠冒出/縮回用 easing 緩動,命中有壓扁/粒子回饋,非瞬間顯隱",
+      "光照 castShadow,地鼠與洞口有投影立體感",
+      "resize 同步 camera.aspect/updateProjectionMatrix 與 renderer.setSize",
+      "Raycaster 命中判定限定『可打』狀態,座標換算正確,點擊不誤判",
+      "地鼠模型重用(同一 geometry/material 或 InstancedMesh),不每次 new",
+      "結束/重玩 dispose 資源,計時器與排程清乾淨無殘留",
+      "難度隨時間提升,命中/落空與計分回饋清楚,整體俏皮有節奏"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "節奏音游 (Rhythm Game)",
+    "keywords": [
+      "three.js",
+      "rhythm-game",
+      "節奏音游",
+      "3d",
+      "Web-Audio",
+      "AudioContext.currentTime"
+    ],
+    "execution": "Scene + PerspectiveCamera 看軌道(透視縱深)+ WebGLRenderer({antialias:true})。光照: 可走低光 + 自發光(emissive)note + 少量 PointLight 製造律動。多軌 lane(平面)+ 判定線(judge line)。核心機制(音畫同步+判定): 用 Web Audio API,以 audioCtx.currentTime 為唯一時間軸(勿用 Date.now/getDelta 當節拍源,會漂)。譜面 = note 陣列{time, lane}。每幀 songTime=audioCtx.currentTime - startTime;依 note.time 與 songTime 差值算 note 的 z 位置(由遠 lerp 向判定線),只渲染時間窗內的 note(visibility cull)。命中: 按鍵時找該 lane 最接近判定的 note,|songTime-note.time| 落在 perfect/good/miss 窗 → 計分 + 命中特效(縮放/粒子/閃光)。note 用 InstancedMesh 或物件池。延遲校準 offset 可調。renderer.setAnimationLoop 內更新 note 位置 + 判定窗掃描 + render。",
+    "quality_rubric": [
+      "載入態: 音檔與譜面由 LoadingManager 預載,decodeAudioData 完成前不開始",
+      "命中特效與 note 動態用緩動/縮放,律動視覺有反饋而不刺眼",
+      "光照與 emissive/PointLight 營造節奏感,判定線清晰可辨",
+      "resize 同步 camera 與 renderer,軌道與 UI 跟隨",
+      "節拍時間軸用 audioCtx.currentTime,非 getDelta/Date,確保長曲不累積漂移",
+      "note 用 InstancedMesh 或物件池 + 時間窗 cull,大量音符不掉幀",
+      "離場 dispose note 資源並 close/suspend AudioContext,無洩漏",
+      "提供延遲校準 offset、perfect/good/miss 分級回饋,音畫對齊精準"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "粒子流場 (Particle Flow Field)",
+    "keywords": [
+      "three.js",
+      "particles",
+      "flow-field",
+      "GPGPU",
+      "粒子流場",
+      "curl-noise"
+    ],
+    "execution": "scene=new THREE.Scene(); camera=PerspectiveCamera(60,w/h,0.1,100), z≈5; renderer=WebGLRenderer({antialias,alpha}), setPixelRatio(min(devicePixelRatio,2)), outputColorSpace=SRGBColorSpace(預設)。粒子用單一 Points: BufferGeometry + Float32 position attribute (count×3),材質 PointsMaterial 或 ShaderMaterial(size/depthWrite=false/blending=AdditiveBlending)。流場核心:每幀對每顆粒子用 curl/simplex noise 算速度向量 v=curlNoise(p*scale+t),p+=v*dt,寫回 attribute 並 geometry.attributes.position.needsUpdate=true。量大(>5萬)時改 GPGPU:從 'three/addons/misc/GPUComputationRenderer.js' 建位置/速度兩張 float texture,fragment shader 更新,velocity 取 noise 偏導。光照非必需(自發光點),可加微弱 ambient。renderer.setAnimationLoop(()=>{ t+=dt; update(); render(scene,camera); })。邊界用環繞(mod)或壽命 respawn 避免飛散。",
+    "quality_rubric": [
+      "首屏要有載入態:粒子未就緒前顯示 loader/淡入,不可黑屏跳出",
+      "CPU 路徑只在粒子數 <2~5萬 時用;更高量必須走 GPUComputationRenderer,hot path 不可每幀 new 陣列",
+      "AdditiveBlending + depthWrite=false 讓流場有輝光感,背景深色才看得出密度層次",
+      "resize 監聽 window:更新 camera.aspect、camera.updateProjectionMatrix()、renderer.setSize",
+      "setPixelRatio 夾在 2 以內,避免高 DPI 螢幕 GPU 過載掉幀",
+      "卸載時 dispose:geometry.dispose()、material.dispose()、renderer.dispose(),移除 resize listener",
+      "流場向量需有時間演化(noise 加 t),靜態場看起來像死掉的點雲",
+      "粒子壽命/環繞邊界處理,避免全部飄出視錐後畫面變空"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "Shader 萬花筒 (Shader Kaleidoscope)",
+    "keywords": [
+      "three.js",
+      "shader",
+      "GLSL",
+      "kaleidoscope",
+      "萬花筒",
+      "fullscreen-quad"
+    ],
+    "execution": "全螢幕後處理型:scene + OrthographicCamera(-1,1,1,-1,0,1),一個鋪滿的 PlaneGeometry(2,2) 掛 ShaderMaterial。renderer=WebGLRenderer,outputColorSpace=SRGBColorSpace。uniforms={u_time:{value:0}, u_resolution:{value:new Vector2(w,h)}, u_mouse:{value:new Vector2()}}。萬花筒邏輯全在 fragment shader:把 uv 轉極座標 (r=length, a=atan(uv.y,uv.x)),對角度做鏡射摺疊 a=mod(a, TAU/N); a=abs(a-PI/N) 產生 N 段對稱;再用 r,a 還原取樣 noise/pattern/texture,疊時間動畫。ShaderMaterial 只能配 WebGLRenderer。迴圈 setAnimationLoop 更新 u_time、u_mouse(由 pointermove 正規化到 -1..1)。光照不適用(純 2D 著色)。效能瓶頸在 fragment 複雜度,不在幾何。",
+    "quality_rubric": [
+      "shader 編譯/首幀前給載入態或淡入,避免閃白",
+      "滑鼠/觸控輸入要有阻尼或 lerp,u_mouse 直接硬切會抖;對稱段數可互動調整",
+      "resize 必須同步更新 u_resolution.value 與 renderer.setSize,否則 uv 比例失真變形",
+      "uv 需做 aspect 校正 (uv.x*=resolution.x/resolution.y),不然萬花筒在非方形視窗被拉扁",
+      "setPixelRatio 夾 2 以內;fragment 內避免過多迴圈/分支拖垮 GPU",
+      "色彩在 sRGB 輸出下飽和自然,對稱接縫處無明顯硬邊(摺疊用 abs 鏡射)",
+      "dispose:material(含 shader)、geometry、renderer 一併釋放",
+      "動畫由 u_time 驅動且連續循環,鏡射對稱無破圖或縫隙"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "Generative 藝術 (Generative Art)",
+    "keywords": [
+      "three.js",
+      "generative",
+      "procedural",
+      "seed",
+      "生成藝術",
+      "instancing"
+    ],
+    "execution": "scene + PerspectiveCamera(50,w/h,0.1,1000) 或 Orthographic(平面構圖)。renderer=WebGLRenderer({antialias}),outputColorSpace=SRGBColorSpace,setClearColor。核心=可重現的隨機:用 seeded PRNG(如 mulberry32),seed 決定整幅作品,同 seed 必復現。大量重複元素用 InstancedMesh(geometry,material,count) + setMatrixAt(i,matrix) 擺位,單 draw call。配色從 HSL/調色盤函式生成,材質 MeshStandardMeshMaterial 或自發光 MeshBasicMaterial。光照:DirectionalLight + AmbientLight(若用 Standard 材質),純色塊用 Basic 可省光。迴圈 setAnimationLoop 做緩慢演化(旋轉/相位)或一次性靜態構圖 + OrbitControls 觀賞。提供「重新生成」按鈕換 seed 重建場景。",
+    "quality_rubric": [
+      "生成過程若耗時要有載入/進度態,不可凍結主執行緒無回饋",
+      "必須 seeded 隨機 + 可重現:同 seed 同結果,並提供換 seed/重生成入口",
+      "重複元素一律 InstancedMesh,禁止迴圈 new 數千個 Mesh 拖垮 draw call",
+      "OrbitControls 需 enableDamping=true 並在迴圈 controls.update(),旋轉有慣性",
+      "用 Standard 材質時光照(方向光+環境光)齊備,避免全黑或死白無立體感",
+      "resize 響應式:更新 aspect/projection/setSize,Orthographic 需重算 frustum",
+      "重新生成時先 dispose 舊 geometry/material/InstancedMesh 再建新,避免記憶體洩漏",
+      "構圖有層次與配色和諧(調色盤函式),不是雜亂隨機噪點"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "音訊視覺化 (Audio Visualizer)",
+    "keywords": [
+      "three.js",
+      "audio",
+      "AudioAnalyser",
+      "FFT",
+      "音訊視覺化",
+      "reactive"
+    ],
+    "execution": "scene + PerspectiveCamera + WebGLRenderer(outputColorSpace=SRGBColorSpace)。音訊:AudioListener 掛 camera;Audio/PositionalAudio 載入聲音;analyser=new THREE.AudioAnalyser(audio, fftSize)(fftSize 為 2^5~2^15,如 256/512)。每幀 data=analyser.getFrequencyData()(長度 fftSize/2,Uint8 0~255)或 analyser.getAverageFrequency()。視覺對應:把頻段映射到幾何——條狀用 InstancedMesh 依 data[i] 設高度/scale;或 ShaderMaterial 把平均頻率灌進 uniform u_frequency 驅動頂點位移/顏色。uniforms 每幀更新:u_frequency.value=avg、u_time.value=clock.getElapsedTime()。光照配 Standard 材質:Directional+Ambient,可加色光隨節拍。瀏覽器需使用者手勢才能 resume AudioContext——用點擊播放鈕啟動。迴圈 setAnimationLoop 讀 analyser→更新→render。",
+    "quality_rubric": [
+      "必須有播放/載入態與使用者手勢觸發(點擊才 resume AudioContext),否則無聲且 autoplay 被擋",
+      "頻率映射要做平滑(對 data 取 lerp/衰減),數值直接驅動會劇烈抖動",
+      "條狀/粒子用 InstancedMesh 或單一 buffer,禁止每幀重建幾何",
+      "fftSize 為 2 的次方且合理(256~1024 平衡解析與效能);讀 getFrequencyData 後再上傳 uniform",
+      "光照齊備且可隨節拍變化,Standard 材質不可無燈變黑",
+      "resize 更新 aspect/projection/setSize;setPixelRatio 夾 2",
+      "dispose:geometry/material/renderer,並 audio.stop()、釋放 AudioContext 與 listener",
+      "視覺與聲音同步明顯(低頻/高頻分區反應),不是與音樂無關的裝飾動畫"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "流體模擬 (Fluid Simulation)",
+    "keywords": [
+      "three.js",
+      "fluid",
+      "GPGPU",
+      "stable-fluids",
+      "流體模擬",
+      "render-target"
+    ],
+    "execution": "GPU ping-pong 為主:兩組 WebGLRenderTarget(float/half-float 紋理)交替當輸入輸出,每步跑全螢幕 ShaderMaterial pass。scene/OrthographicCamera + Plane(2,2)。renderer=WebGLRenderer,需 getContext 支援 float;outputColorSpace=SRGBColorSpace(僅最終顯示 pass)。Stable Fluids 順序:advection(沿速度場回溯取樣)→ 外力注入(滑鼠拖曳寫入 velocity)→ divergence → Jacobi 迭代解 pressure(多 pass)→ 投影扣壓力梯度使無散度 → 顯示 pass 把 density/velocity 上色。每個 step 用 renderer.setRenderTarget(target) 渲到紋理,uniforms 傳上一幀紋理 + u_texelSize + u_dt。互動:pointermove 算 delta 注入速度與染料。光照不適用(2D 場上色)。setAnimationLoop 內依序跑各 pass 再輸出到螢幕。",
+    "quality_rubric": [
+      "初始化(建 render target、float 支援檢測)期間給載入態,float 不支援時要 fallback/提示",
+      "滑鼠注入力需用移動 delta 與半徑衰減,避免單點爆衝;互動有手感",
+      "render target 用 ping-pong 交替,嚴禁同一張紋理同時讀寫;texelSize 隨解析度更新",
+      "Jacobi/pressure 迭代次數可調(20~40)平衡品質與幀率,模擬解析度可低於畫布",
+      "resize 重建 render target 尺寸並更新 u_resolution/texelSize,維持比例",
+      "dispose:所有 RenderTarget.dispose()、shader material、renderer,移除 pointer listener",
+      "最終顯示在 sRGB 下顏色正確,密度/速度上色平滑無格狀 artifact",
+      "模擬穩定不發散(advection 半拉格朗日 + 投影步完整),長時間運行不爆白"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "碎形地形 (Fractal Terrain)",
+    "keywords": [
+      "three.js",
+      "terrain",
+      "fractal",
+      "fBm",
+      "碎形地形",
+      "heightmap"
+    ],
+    "execution": "scene + PerspectiveCamera(60,w/h,0.1,2000),抬高俯視。renderer=WebGLRenderer({antialias}),outputColorSpace=SRGBColorSpace。地形=PlaneGeometry(size,size,segX,segY) 旋轉 -PI/2 平放;高度由 fBm(多層 simplex/value noise 疊加,octaves+lacunarity+gain)算出:遍歷 geometry.attributes.position,對 (x,z) 取 h=fBm(x*freq,z*freq) 寫入 y,完成後 computeVertexNormals() 讓光照正確。或用 diamond-square 生成 heightmap。材質 MeshStandardMaterial,依高度做頂點色(海/草/岩/雪)或 ShaderMaterial。光照必備:DirectionalLight(當太陽,開 shadow 可選)+ AmbientLight/HemisphereLight 補天光。OrbitControls(enableDamping)觀察。可加霧 scene.fog 增遠近層次。setAnimationLoop 渲染;互動可調 octaves/seed 重生並更新 normals。",
+    "quality_rubric": [
+      "地形生成(尤其高 segment)時給載入態,避免主執行緒卡死無回饋",
+      "改高度後必呼叫 computeVertexNormals(),否則光照錯誤、表面平板無起伏感",
+      "OrbitControls enableDamping=true + controls.update(),鏡頭移動有阻尼",
+      "DirectionalLight + 環境/半球光齊備,法線正確才有山體明暗;陰影為選配但需設 shadow map",
+      "resize 響應式更新 aspect/projection/setSize",
+      "重生地形時 dispose 舊 geometry/material 再建,參數(octaves/seed)變更可重現",
+      "高度依海拔分層上色 + scene.fog 遠景淡化,視覺有地貌層次而非單色斜面",
+      "segment 數合理(避免百萬頂點),必要時用 LOD 或降採樣保幀率"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "互動花園 (Interactive Garden)",
+    "keywords": [
+      "three.js",
+      "garden",
+      "raycaster",
+      "L-system",
+      "互動花園",
+      "instancing"
+    ],
+    "execution": "scene + PerspectiveCamera + WebGLRenderer({antialias}),outputColorSpace=SRGBColorSpace,setClearColor 天空色。地面 PlaneGeometry + MeshStandardMaterial。植物用程序生成(L-system 規則展開成枝幹,或預製 mesh),大量草/花用 InstancedMesh(setMatrixAt 擺放、setColorAt 變色)。互動核心=Raycaster:pointer 正規化到 NDC(-1..1),raycaster.setFromCamera(pointer,camera),intersectObjects 取命中點 → 在該處種植/生長/收割。光照:DirectionalLight(陽光,可投影)+ HemisphereLight(天空/地面色)。風吹動畫用 ShaderMaterial 頂點位移(sin(t+pos))或每幀微調。OrbitControls(damping)。setAnimationLoop 內 controls.update()、更新生長狀態與風相位再 render。",
+    "quality_rubric": [
+      "資源/植物模型載入給載入態;首次互動前場景已就緒",
+      "Raycaster 命中要準確(每幀更新 pointer NDC、相機矩陣),種植/互動回饋即時且有 hover 高亮",
+      "草花一律 InstancedMesh(setMatrixAt/setColorAt),禁止逐株 new Mesh",
+      "OrbitControls enableDamping + update();相機與互動阻尼自然",
+      "DirectionalLight + HemisphereLight 齊備,陰影為選配,色溫呈現自然戶外感",
+      "resize 更新 aspect/projection/setSize",
+      "移除/收割植物時 dispose 對應 geometry/material 或回收 instance 槽位,避免洩漏",
+      "風吹/生長動畫連續(時間驅動頂點位移),植物分佈與配色自然不機械重複"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "光影藝術 (Light & Shadow Art)",
+    "keywords": [
+      "three.js",
+      "lighting",
+      "shadow",
+      "volumetric",
+      "光影藝術",
+      "PBR"
+    ],
+    "execution": "scene + PerspectiveCamera + WebGLRenderer({antialias}),renderer.shadowMap.enabled=true、type=PCFSoftShadowMap;outputColorSpace=SRGBColorSpace,toneMapping=ACESFilmicToneMapping + toneMappingExposure。物件用 MeshStandardMaterial/MeshPhysicalMaterial(metalness/roughness),castShadow=true、地面 receiveShadow=true。光源是主角:SpotLight/DirectionalLight/PointLight,設 .castShadow、調 shadow.mapSize、shadow.camera near/far/bias 消除 acne。多彩光用數個 PointLight 不同 color/position 製造重疊投影。環境反射用 PMREMGenerator 處理 HDR/環境貼圖供 PBR。體積光感可用 fog + 透光幾何或後處理。OrbitControls(damping)。setAnimationLoop 內動光源(繞行/明滅)、controls.update()、render,讓影子隨光移動。",
+    "quality_rubric": [
+      "場景/環境貼圖(HDR/PMREM)載入期間給載入態,避免無反射的半成品閃現",
+      "shadowMap.enabled + PCFSoftShadowMap,光源 castShadow、受體 receiveShadow,並調 shadow.bias 消除條紋/痤瘡",
+      "光源動畫使影子隨之移動(光在迴圈中更新),體現『光影』而非靜態貼圖",
+      "toneMapping(ACESFilmic)+ exposure 讓高光不過曝,sRGB 輸出色彩正確",
+      "OrbitControls enableDamping + update(),觀察視角有阻尼",
+      "resize 更新 aspect/projection/setSize",
+      "dispose:geometry/material/光源 target/render target/PMREM,移除 listener",
+      "PBR 材質 metalness/roughness 與環境反射協調,多光重疊投影層次豐富有戲劇感"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "噪聲地景 (Noise Landscape)",
+    "keywords": [
+      "three.js",
+      "noise",
+      "simplex",
+      "landscape",
+      "噪聲地景",
+      "vertex-shader"
+    ],
+    "execution": "scene + PerspectiveCamera(60,w/h,0.1,2000) + WebGLRenderer({antialias}),outputColorSpace=SRGBColorSpace,可加 scene.fog。地景=PlaneGeometry(w,h,segX,segY) 平放(rotateX -PI/2)。位移兩條路:(A)CPU 每幀改 attributes.position.y=noise(x,z,t) + needsUpdate + computeVertexNormals()(段數低時);(B)效能優先用 ShaderMaterial 在 vertex shader 內算 simplex/value noise 做位移(GPU,法線可在 shader 近似或用 derivative)。動畫=noise 加時間維度 noise(x,z,u_time) 形成流動起伏。材質 MeshStandardMaterial(CPU 路徑)或 ShaderMaterial(GPU 路徑,自算 lighting/依高度上色)。光照 Directional+Ambient/Hemisphere。OrbitControls(damping)。setAnimationLoop 更新 u_time/位移、controls.update()、render。",
+    "quality_rubric": [
+      "初始化/著色器編譯給載入態,避免黑屏",
+      "高 segment 動畫優先走 vertex shader(GPU 位移),CPU 改頂點僅限低段數,hot path 不可每幀重算數萬頂點於 JS",
+      "CPU 路徑改高度後 computeVertexNormals();GPU 路徑於 shader 近似法線,確保光照隨起伏變化",
+      "OrbitControls enableDamping + update(),視角有阻尼",
+      "Directional + 環境/半球光齊備,地表明暗隨噪聲起伏",
+      "resize 更新 aspect/projection/setSize;scene.fog 與相機 far 配合遠景淡出",
+      "dispose:geometry/material(含 shader)/renderer,移除 listener",
+      "噪聲含時間維度形成連續流動,依高度分層上色,起伏有機不呆板"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "變形幾何 (Morphing Geometry)",
+    "keywords": [
+      "three.js",
+      "morph",
+      "geometry",
+      "vertex-shader",
+      "變形幾何",
+      "lerp"
+    ],
+    "execution": "scene + PerspectiveCamera + WebGLRenderer({antialias}),outputColorSpace=SRGBColorSpace。變形三路:(1)morph targets:在 BufferGeometry.morphAttributes.position 放多個目標,mesh.morphTargetInfluences[i] 做權重混合(Standard 材質原生支援);(2)ShaderMaterial 在 vertex shader 對兩組座標 mix(posA,posB,u_progress),u_progress 由時間或互動 ease 驅動;(3)CPU lerp 頂點(低頻才用)。前提:各目標頂點數/索引一致才能對位插值。材質 MeshStandardMaterial(配光)或 ShaderMaterial。光照 Directional+Ambient;變形後若靠頂點位移要留意法線(morph 可用 morphNormals,shader 路徑需重算或近似)。OrbitControls(damping)。setAnimationLoop 更新 influences/u_progress(用 easing 而非線性)、controls.update()、render。可加自轉與互動切換目標形狀。",
+    "quality_rubric": [
+      "幾何/目標載入給載入態,首幀前不顯示半成品",
+      "形狀切換用 easing(easeInOut)+ 阻尼,influence/progress 不可硬跳,過渡平滑",
+      "變形時法線同步(morphNormals 或 shader 重算),避免變形後光照僵在原姿態",
+      "所有 morph 目標頂點數/拓撲一致才插值;頂點插值放 GPU(morph 或 shader),不在 JS 每幀重算大網格",
+      "Directional+Ambient 光照齊備,Standard 材質有立體明暗",
+      "OrbitControls enableDamping + update();resize 更新 aspect/projection/setSize",
+      "dispose:geometry(含 morphAttributes)/material/renderer,移除 listener",
+      "變形連續且形狀可辨(目標間平滑漸變),配旋轉/互動有觀賞性"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "星雲生成 (Nebula Generation)",
+    "keywords": [
+      "three.js",
+      "nebula",
+      "particles",
+      "additive",
+      "星雲生成",
+      "volumetric"
+    ],
+    "execution": "scene(深色背景) + PerspectiveCamera(60,w/h,0.1,2000) + WebGLRenderer({antialias,alpha}),outputColorSpace=SRGBColorSpace。星雲=大量 Points:BufferGeometry 的 position 由 3D 分佈生成(球殼/噪聲偏移/絲狀結構),per-vertex color attribute 做色彩漸層,可加 size attribute。材質 ShaderMaterial 或 PointsMaterial:vertexColors=true、transparent、depthWrite=false、blending=AdditiveBlending,並貼一張軟圓 sprite 紋理(map)讓每點呈柔光團。密度層次靠多層粒子 + noise 調 alpha/亮度。星點/塵埃可分多組 Points。光照通常省略(自發光加色)。互動:OrbitControls(damping)緩慢環繞;滑鼠視差。setAnimationLoop 內緩慢旋轉(group.rotation.y+=)、更新 u_time(若 shader 做閃爍/流動)、controls.update()、render。",
+    "quality_rubric": [
+      "粒子/紋理載入給載入態或淡入,深色背景不可空無一物突現",
+      "AdditiveBlending + depthWrite=false + 軟 sprite,呈雲氣輝光;背景深色凸顯星雲",
+      "OrbitControls enableDamping + update(),環繞/視差有阻尼緩慢移動",
+      "大量 Points 用單一 BufferGeometry + attributes,禁止逐點建物件;size/color 走 attribute",
+      "vertexColors 與 alpha 分層做出密度與色相過渡,而非均勻一團",
+      "resize 更新 aspect/projection/setSize;setPixelRatio 夾 2 保幀率",
+      "dispose:geometry/material/sprite texture/renderer,移除 listener",
+      "整體有星雲的體積感與色彩層次(多層粒子+noise),緩慢演化不靜止死板"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "互動鏡面 (Interactive Mirror)",
+    "keywords": [
+      "three.js",
+      "mirror",
+      "reflection",
+      "Reflector",
+      "互動鏡面",
+      "envmap"
+    ],
+    "execution": "scene + PerspectiveCamera + WebGLRenderer({antialias}),outputColorSpace=SRGBColorSpace,toneMapping=ACESFilmic。真鏡面用 addon Reflector('three/addons/objects/Reflector.js'):new Reflector(geometry,{textureWidth,textureHeight,color}) 內部用 render target 即時反射場景;放置為平面鏡。曲面/物件鏡面反射用 CubeCamera + WebGLCubeRenderTarget:每幀(或低頻)cubeCamera.update(renderer,scene) 產生環境貼圖,賦給 MeshStandard/Physical 材質的 envMap(metalness=1,roughness 低)。環境用 PMREM 處理 HDR 供 PBR 反射。互動:OrbitControls(damping)或 Raycaster 讓滑鼠擾動鏡面/物件;鏡前物件動畫使反射隨之變化。光照 Directional+環境光(PBR 需要)。setAnimationLoop:先(必要時)cubeCamera.update,再 controls.update()、render;Reflector 於主 render 自動更新。",
+    "quality_rubric": [
+      "場景/環境貼圖(HDR/PMREM)與 render target 初始化給載入態,避免無反射的黑鏡突現",
+      "反射即時更新:鏡前物件動則反射同步(Reflector 每幀、CubeCamera 適度頻率更新)",
+      "互動有阻尼:OrbitControls enableDamping+update,或 Raycaster 擾動回饋平順",
+      "反射用 render target(Reflector)或 CubeRenderTarget(envMap),解析度與更新頻率平衡效能",
+      "PBR 材質 metalness/roughness 合理 + toneMapping/sRGB,反射明亮不過曝、色彩正確",
+      "resize 更新 aspect/projection/setSize,並同步 Reflector/render target 尺寸",
+      "dispose:Reflector、CubeRenderTarget、render target、geometry/material、PMREM,移除 listener",
+      "鏡面反射正確對位且乾淨(無錯位/閃爍),曲面 envMap 反射與場景一致有真實感"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "布料模擬 (Cloth Simulation)",
+    "keywords": [
+      "three.js",
+      "cloth simulation",
+      "布料模擬",
+      "Verlet integration",
+      "3d",
+      "constraint solver"
+    ],
+    "execution": "Scene + PerspectiveCamera(fov 50) + WebGLRenderer({antialias:true, alpha:true}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.shadowMap.enabled=true。光照:HemisphereLight + DirectionalLight(castShadow)。核心=Verlet 質點網格:每點存 position 與 previousPosition,無顯式速度。每幀三步順序:(1)積分 next = pos*2 - prev + accel*dt*dt(重力+風);(2)約束鬆弛——對結構/剪切/彎曲彈簧迴圈 8-15 次,把兩點拉回 restLength(diff*0.5),pin 住的點(頂排)強制復位;(3)碰撞——與球/地面做位置投影。網格幾何用 PlaneGeometry,每幀把解算後的點寫回 geometry.attributes.position.array,呼叫 needsUpdate=true 並 computeVertexNormals()。material 設 side:DoubleSide。固定子步長 dt(如 1/60),用累加器消化 delta 避免發散。OrbitControls 加 enableDamping。滑鼠拖曳用 Raycaster 抓最近質點施力。",
+    "quality_rubric": [
+      "載入態:模型/紋理就緒前顯示明確 loading 指示,布料初始化完成才開始迴圈,避免首幀爆量約束抖動",
+      "互動阻尼:OrbitControls.enableDamping=true(dampingFactor~0.08);滑鼠拖曳施力需平滑,不可瞬間扯飛質點",
+      "光照:布料必須投/受陰影且 computeVertexNormals 每幀更新,否則皺褶無立體感;material 用 DoubleSide",
+      "響應式 resize:監聽 resize 更新 camera.aspect、projectionMatrix 與 renderer.setSize,含 pixelRatio 上限 2",
+      "效能 dispose:離場時 geometry.dispose()/material.dispose()/renderer.dispose() 並移除事件監聽;固定子步長防卡頓發散",
+      "數值穩定:約束鬆弛迭代固定次數、dt 固定;布料不可隨機爆炸或無限拉伸",
+      "視覺:可見的網格皺褶、垂墜與風吹擺動;陰影柔和,FPS 顯示穩定 ≥50"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "剛體堆疊 (Rigid Body Stacking)",
+    "keywords": [
+      "three.js",
+      "rigid body",
+      "剛體堆疊",
+      "cannon-es",
+      "physics engine",
+      "3d"
+    ],
+    "execution": "渲染端 Scene + PerspectiveCamera + WebGLRenderer(shadowMap.enabled, PCFSoftShadowMap)。物理端用 cannon-es:world = new CANNON.World({gravity:(0,-9.82,0)}),world.solver.iterations=10-20(堆疊穩定關鍵)。每個方塊配對:THREE.Mesh(BoxGeometry+MeshStandardMaterial, castShadow) 與 CANNON.Body({mass:1, shape:new CANNON.Box(halfExtents)});地面 mass:0 的靜態 plane body。設 ContactMaterial 調 friction~0.4、restitution~0.1(過高會永遠彈不穩)。迴圈順序:world.step(1/60, deltaTime, 3) 固定步長+最多3次子步 → 把每個 body.position/quaternion copy 到對應 mesh。光照:DirectionalLight 設 shadow.camera 範圍框住堆疊。OrbitControls enableDamping。互動:Raycaster 點選方塊 → 對 body.applyImpulse 施力推倒。睡眠優化:body.allowSleep=true 讓靜止方塊休眠省 CPU。",
+    "quality_rubric": [
+      "載入態:物理世界與所有 body 建立完成才啟動迴圈;首幀不可出現方塊互相穿插後爆飛",
+      "互動阻尼:OrbitControls.enableDamping;施力(applyImpulse)強度合理,推一下而非瞬間炸開整堆",
+      "光照:castShadow/receiveShadow 正確,shadow camera frustum 框住堆疊範圍,陰影不破圖",
+      "響應式 resize:aspect/projectionMatrix/setSize 同步更新,pixelRatio 上限 2",
+      "效能 dispose:body.allowSleep 讓靜止物休眠;離場 dispose 幾何/材質/world 並清事件",
+      "物理穩定:solver.iterations 足夠、restitution 偏低,堆疊靜止後不抖動不緩慢下陷",
+      "視覺:方塊接觸面貼合無縫隙、倒塌動畫自然有重量感,陰影清晰"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "流體沙盒 (Fluid Sandbox)",
+    "keywords": [
+      "three.js",
+      "fluid simulation",
+      "流體沙盒",
+      "SPH",
+      "particles",
+      "3d",
+      "GPGPU"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer({antialias:true})。流體用 SPH 粒子法(CPU 數千顆,或 GPGPU GPUComputationRenderer 上萬顆)。粒子以單一 THREE.Points + BufferGeometry 渲染,PointsMaterial 或自訂 ShaderMaterial(依密度上色、加 metaball 感)。SPH 每幀順序:(1)用空間網格 hash 建鄰居表(避免 O(n²));(2)算密度 density=Σ m·W(r,h);(3)算壓力 p=k(density-rest) 與壓力梯度力、黏滯力;(4)積分速度與位置(半隱式歐拉),dt 要小(~1/120)且 clamp 速度防爆;(5)邊界碰撞——撞到沙盒牆面反射速度並衰減。每幀寫回 geometry.attributes.position 並 needsUpdate。光照對 Points 影響小,重點在顏色映射。OrbitControls enableDamping。互動:滑鼠 Raycast 到水面平面 → 對附近粒子加力或注入新粒子。",
+    "quality_rubric": [
+      "載入態:粒子緩衝與鄰居網格初始化完成才跑;啟動瞬間不可全部粒子擠在原點爆開",
+      "互動阻尼:OrbitControls.enableDamping;滑鼠攪動/加水的施力平滑且範圍有限",
+      "光照/著色:依密度或速度做顏色映射,讓流體有體積感與表面高光,而非死板色點",
+      "響應式 resize:camera 與 renderer 同步;粒子點大小依 pixelRatio 調整不失真",
+      "效能 dispose:用空間 hash 避免 O(n²) 鄰居搜尋;優先 GPGPU;離場釋放 buffer/RT/material",
+      "數值穩定:dt 夠小、速度/壓力 clamp,粒子不穿牆不無限加速,靜止時水面平整",
+      "視覺:流動連續、濺起與晃動自然,邊界反彈有衰減,整體像水而非散沙"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "重力模擬 (Gravity / N-Body Simulation)",
+    "keywords": [
+      "three.js",
+      "gravity simulation",
+      "重力模擬",
+      "n-body",
+      "orbital mechanics",
+      "3d"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer({antialias:true}),背景深色 + 可加 bloom(UnrealBloomPass)讓天體發光。每個天體=Mesh(SphereGeometry+MeshStandardMaterial 或 emissive),狀態存 position(THREE.Vector3)、velocity、mass。核心=N-body 萬有引力:每幀對每對 (i,j) 算 F = G·mi·mj/r² 方向沿 (pj-pi),小天體用 softening ε 避免 r→0 力爆炸:r²+ε²。積分順序建議用 Velocity-Verlet 或半隱式歐拉以守恆能量:先依合力更新 acc → vel += acc·dt → pos += vel·dt。固定 dt 子步長,delta 大時拆多步。軌跡用 Line/LineSegments 累積歷史點繪製拖尾。中心恆星可放 PointLight。OrbitControls enableDamping + 可跟隨某天體。互動:點擊空白處以滑鼠拖曳向量生成新天體(設初速度),即時看軌道形成。",
+    "quality_rubric": [
+      "載入態:天體與初始速度設定完成才啟動;不可一開始就因 r≈0 力爆而瞬間飛散",
+      "互動阻尼:OrbitControls.enableDamping;新增天體的拖曳定速操作流暢、可預覽初速向量",
+      "光照:中心星用 PointLight/emissive,行星受光有明暗面;可選 bloom 強化發光天體",
+      "響應式 resize:aspect/projectionMatrix/setSize 同步,bloom pass 也需 setSize",
+      "效能 dispose:N 大時注意 O(n²),必要時 Barnes-Hut;軌跡點數設上限;離場釋放幾何/材質/composer",
+      "數值穩定:softening ε + 固定 dt + Verlet 積分,長時間運行軌道不無故衰減或爆走",
+      "視覺:橢圓軌道清晰、拖尾漂亮,天體相對大小與發光營造空間感"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "彈簧系統 (Spring System)",
+    "keywords": [
+      "three.js",
+      "spring system",
+      "彈簧系統",
+      "Hooke's law",
+      "damping",
+      "3d"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer(shadowMap on)。質點存 position/velocity/mass;彈簧連結兩質點存 restLength、剛度 k、阻尼 c。核心=Hooke + 阻尼力(顯式積分,與 Verlet 不同這裡用力法):每幀順序:(1)清零各質點受力,先加重力;(2)對每條彈簧算 delta=pB-pA, dist=|delta|, dir=delta/dist;彈力 Fs = -k(dist-restLength)·dir;阻尼 Fd = -c·((vB-vA)·dir)·dir;對 A、B 反向施加;(3)半隱式歐拉:vel += (F/m)·dt; pos += vel·dt;固定子步長 dt(~1/120),k 越大 dt 要越小否則爆。彈簧用 Line 或細 CylinderGeometry(每幀更新端點/朝向)呈現,質點用小 Sphere(castShadow)。pin 住的錨點不積分。OrbitControls enableDamping。互動:Raycaster 抓質點拖動,放開後彈回振盪。",
+    "quality_rubric": [
+      "載入態:質點/彈簧拓樸建好才啟動;初始長度接近 restLength,不可一啟動就劇烈彈跳",
+      "互動阻尼:OrbitControls.enableDamping;拖曳質點時施力平滑,放手後阻尼讓振盪自然衰減",
+      "光照:質點與彈簧投/受陰影,振盪時立體感清楚",
+      "響應式 resize:camera/renderer 同步,pixelRatio 上限 2",
+      "效能 dispose:固定子步長 + k 與 dt 匹配防發散;彈簧 Cylinder 重用 instance;離場釋放資源",
+      "數值穩定:阻尼係數 c>0 確保收斂,高剛度時不爆走;系統最終靜止於平衡",
+      "視覺:彈簧伸縮、質點振盪、阻尼衰減清楚可見;彈簧粗細隨拉伸可選變化"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "粒子碰撞 (Particle Collision)",
+    "keywords": [
+      "three.js",
+      "particle collision",
+      "粒子碰撞",
+      "elastic collision",
+      "spatial hash",
+      "3d",
+      "InstancedMesh"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer({antialias:true})。大量球用 InstancedMesh(SphereGeometry)單 draw call,或 Points;每顆存 position/velocity/radius/mass(平行陣列)。核心=彈性碰撞:每幀順序:(1)積分 pos += vel·dt;(2)邊界碰撞——超出沙盒/球容器則沿法線反射 vel(可加 restitution<1 衰減);(3)粒子間碰撞偵測用空間網格 hash(把空間切格,只比同格與鄰格)避免 O(n²);(4)兩球重疊(dist<rA+rB)時:先位置分離防黏連,再沿碰撞法線做動量守恆的彈性碰撞公式更新兩者法向速度分量。寫回:InstancedMesh 用 dummy Object3D.setMatrixAt 後 instanceMatrix.needsUpdate=true;依速度設 setColorAt 上色。OrbitControls enableDamping。互動:滑鼠 Raycast 範圍內推開粒子,或點擊噴發。",
+    "quality_rubric": [
+      "載入態:實例緩衝與空間網格就緒才跑;初始不可大量粒子重疊在同點後爆散",
+      "互動阻尼:OrbitControls.enableDamping;滑鼠推力範圍有限且平滑",
+      "光照/著色:依速度做顏色映射呈現動能,InstancedMesh 統一受光",
+      "響應式 resize:camera/renderer 同步;Points 大小依 pixelRatio 調整",
+      "效能 dispose:必須空間 hash 而非 O(n²);InstancedMesh 單 draw call;離場釋放幾何/材質/buffer",
+      "物理正確:碰撞守恆動量、重疊先分離防黏連,粒子不穿牆、整體動能不無故暴增",
+      "視覺:碰撞反彈乾脆、粒子分佈均勻流暢,FPS 在數千顆下仍 ≥50"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "軟體模擬 (Soft Body Simulation)",
+    "keywords": [
+      "three.js",
+      "soft body",
+      "軟體模擬",
+      "mass-spring",
+      "shape matching",
+      "3d",
+      "deformation"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer(shadowMap on)。軟體=質點雲 + 結構/剪切/彎曲彈簧(或四面體 + shape-matching)。建模:取 SphereGeometry/BoxGeometry 頂點當質點,鄰接頂點連彈簧;表面 Mesh 頂點綁到質點。每幀順序:(1)積分質點(Verlet 或半隱式歐拉,加重力);(2)約束鬆弛——彈簧拉回 restLength 多次迭代;為防整體塌陷,加體積保持(壓力法:依當前/初始體積調整法向力)或 shape-matching(算質心+最佳旋轉,把點拉回變形後的原始形狀,剛度可調);(3)地面/障礙碰撞做位置投影 + 速度衰減。每幀把質點位置寫回 surface mesh 的 attributes.position 並 computeVertexNormals。material DoubleSide。OrbitControls enableDamping。互動:Raycaster 抓表面質點拖動,鬆手後 Q 形變回彈、整體晃動。",
+    "quality_rubric": [
+      "載入態:質點/彈簧/表面綁定建好才啟動;初始為原始形狀,不可一啟動就塌成一團",
+      "互動阻尼:OrbitControls.enableDamping;拖曳變形平滑,放手後回彈晃動自然衰減",
+      "光照:每幀 computeVertexNormals 並投/受陰影,變形時表面明暗正確",
+      "響應式 resize:camera/renderer 同步,pixelRatio 上限 2",
+      "效能 dispose:約束迭代次數固定、質點數適中;離場釋放幾何/材質;事件解綁",
+      "形狀穩定:體積保持或 shape-matching 防止永久塌陷,軟體會恢復原形而非越壓越扁",
+      "視覺:擠壓凹陷、Q 彈回彈、落地變形有彈性物的質感;表面平滑無破面"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "繩索物理 (Rope Physics)",
+    "keywords": [
+      "three.js",
+      "rope physics",
+      "繩索物理",
+      "Verlet",
+      "distance constraint",
+      "3d",
+      "TubeGeometry"
+    ],
+    "execution": "Scene + PerspectiveCamera + WebGLRenderer(shadowMap on)。繩=一串 Verlet 質點(每點 position/prevPosition),相鄰用距離約束(segmentLength)。每幀順序:(1)積分 next = pos*2 - prev + gravity·dt·dt(可加風/拖曳力);(2)約束鬆弛迴圈 15-30 次:對每段把兩端點各拉回半個誤差(dir*(dist-segLen)*0.5);若一端 pinned 則只移動另一端;迭代越多繩越不可伸長;(3)碰撞——與地面/球做位置投影。渲染:用 TubeGeometry 沿質點做 CatmullRomCurve3 每幀重建管狀繩(或 Line/MeshLine 寬線);castShadow。固定子步長 dt,delta 大時拆步。兩端可一端 pin、一端自由或雙端 pin(吊橋感)。OrbitControls enableDamping。互動:Raycaster 抓任一質點拖動,即時甩動;放手後自然下垂擺盪。",
+    "quality_rubric": [
+      "載入態:質點鏈與約束建好才啟動;初始接近自然垂墜,不可一啟動就劇烈鞭甩",
+      "互動阻尼:OrbitControls.enableDamping;拖動繩端平滑,甩動與下垂自然",
+      "光照:繩(Tube)投/受陰影,擺動時立體感清楚",
+      "響應式 resize:camera/renderer 同步,pixelRatio 上限 2",
+      "效能 dispose:約束迭代固定、TubeGeometry 每幀重建需 dispose 舊幾何防洩漏;離場清資源與事件",
+      "不可伸長:約束迭代足夠使繩長近似守恆,快速甩動不會明顯拉長或穿透",
+      "視覺:繩的垂墜曲線、鞭動慣性、與物體纏繞自然;管狀平滑無折角"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "骨牌 (Dominoes)",
+    "keywords": [
+      "three.js",
+      "dominoes",
+      "骨牌",
+      "cannon-es",
+      "rigid body",
+      "chain reaction",
+      "3d"
+    ],
+    "execution": "渲染 Scene + PerspectiveCamera + WebGLRenderer(shadowMap, PCFSoft)。物理用 cannon-es:world.gravity=(0,-9.82,0),solver.iterations~10。每張骨牌=THREE.Mesh(BoxGeometry 薄板, castShadow/receiveShadow) 對應 CANNON.Body({mass:~0.5, shape:Box(halfExtents)});地面靜態 plane(mass:0)。沿路徑(直線/曲線/陣列)等間距擺放,間距 < 骨牌高度才能連鎖倒。ContactMaterial:friction~0.4、restitution~0(骨牌不該彈)。迴圈:world.step(1/60, delta, 3) → 同步 body→mesh 的 position/quaternion。光照:DirectionalLight 投長陰影強化連鎖視覺。OrbitControls enableDamping。互動:Raycaster 點第一張 → applyImpulse 或 applyForce 推倒觸發連鎖;提供 reset 把所有 body 復位(position/quaternion 重設、velocity/angularVelocity 歸零、wakeUp)。body.allowSleep 讓未倒骨牌休眠。",
+    "quality_rubric": [
+      "載入態:全部骨牌與物理 body 擺好靜止才可互動;初始不可互相穿插或自行倒下",
+      "互動阻尼:OrbitControls.enableDamping;推倒第一張的施力一推即倒、不過猛炸飛",
+      "光照:長陰影投射強化連鎖節奏,castShadow/receiveShadow 正確",
+      "響應式 resize:aspect/projectionMatrix/setSize 同步",
+      "效能 dispose:allowSleep 休眠未動骨牌;reset 重用 body 不重建;離場釋放 world/幾何/材質",
+      "連鎖正確:間距 < 牌高、restitution≈0,倒下能穩定逐張傳遞不中斷不亂彈",
+      "視覺:骨牌依序傾倒的節奏感與重量感真實,reset 後乾淨復位"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "破壞模擬 (Destruction Simulation)",
+    "keywords": [
+      "three.js",
+      "destruction",
+      "破壞模擬",
+      "cannon-es",
+      "fracture",
+      "voronoi",
+      "3d"
+    ],
+    "execution": "渲染 Scene + PerspectiveCamera + WebGLRenderer(shadowMap on)。物理 cannon-es:world.gravity=(0,-9.82,0)。預先把目標物切碎:用 Voronoi/預切的碎塊幾何,每塊=Mesh(碎片 geometry, castShadow) + CANNON.Body(凸包 ConvexPolyhedron 或近似 Box,mass 依體積)。未撞擊前碎塊可用約束/或當靜止整體(allowSleep,或先合併顯示)。觸發破壞:撞擊點施 applyImpulse 給附近碎塊,喚醒它們各自飛散(衝量隨距離衰減)。迴圈:world.step(1/60, delta, 3) → 同步每塊 body→mesh。光照 DirectionalLight 投陰影。效能關鍵:碎塊數量設上限、用 InstancedMesh 或共用材質、靜止碎塊 allowSleep、掉出範圍的碎塊回收(從 world/scene 移除)。OrbitControls enableDamping。互動:Raycaster 點擊處發射衝擊(或丟投射物 body 撞牆),即時碎裂飛散;提供 reset 復位。",
+    "quality_rubric": [
+      "載入態:碎塊幾何與凸包 body 預生成完成才可互動;破壞前物體看似完整、靜止不漏縫",
+      "互動阻尼:OrbitControls.enableDamping;衝擊力隨距離衰減,碎裂自然而非全部等速暴飛",
+      "光照:碎塊 castShadow/receiveShadow,飛散時陰影清楚增強衝擊感",
+      "響應式 resize:aspect/projectionMatrix/setSize 同步",
+      "效能 dispose:碎塊數上限 + 掉出範圍回收 + allowSleep + 共用材質/InstancedMesh;離場釋放 world/幾何/材質",
+      "物理正確:碎塊用凸包碰撞不互穿、衝量守恆,碎片落地堆積穩定不抖",
+      "視覺:破裂瞬間碎塊沿衝擊方向飛散、翻滾、落地的衝擊力與重量感真實;reset 乾淨復位"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "WebXR VR展廳",
+    "keywords": ["three.js", "WebXR", "VR", "虛擬展廳", "VRButton", "teleport"],
+    "execution": "WebGLRenderer({antialias:true}), renderer.xr.enabled=true, document.body.appendChild(VRButton.createButton(renderer))。PerspectiveCamera 放入 user Group 以便移動;PMREMGenerator + RoomEnvironment 給 scene.environment 做 IBL,加 HemisphereLight + 一盞 DirectionalLight(shadow)。展品用 GLTFLoader 載入、KTX2/Draco 壓縮;牆面 plane + MeshStandardMaterial。移動用 controller (renderer.xr.getController(0/1)) 發 ray + thumbstick teleport:selectstart 時對地板 plane 做 Raycaster,確認落點再平移 user group(避免暈眩,不用平滑加速)。迴圈用 renderer.setAnimationLoop(render) 而非 requestAnimationFrame(XR 必需)。互動展品 raycast 命中後高亮 emissive。記得 controller 加 XRControllerModelFactory 顯示手把模型,line helper 顯示指向。",
+    "quality_rubric": [
+      "載入態:GLTF/環境貼圖載入時顯示進度(LoadingManager.onProgress),未載完不可進 VR",
+      "互動阻尼:teleport 用瞬移或淡入淡出,絕不平滑加速移動(暈眩);轉向用 snap-turn 30 度",
+      "光照:用 PMREM + environment IBL,MeshStandardMaterial,展品有正確 metalness/roughness 與陰影",
+      "響應式:監聽 resize 更新 camera.aspect 與 renderer.setSize;非 XR 桌面預覽也要可看",
+      "效能:setAnimationLoop 驅動;貼圖 KTX2 壓縮、draw call 控管;離開時 dispose geometry/material/texture",
+      "視覺:地板有參考格線或陰影接地,展品比例正確(真實世界尺度 1 單位=1 公尺)",
+      "舒適度:user group 高度符合站姿,UI 面板距離 0.5-1.5m、面向使用者",
+      "無障礙:提供非 VR fallback(OrbitControls 桌面瀏覽)"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "AR商品試擺",
+    "keywords": [
+      "three.js",
+      "WebXR",
+      "AR",
+      "hit-test",
+      "ARButton",
+      "placement"
+    ],
+    "execution": "renderer.xr.enabled=true;ARButton.createButton(renderer,{requiredFeatures:['hit-test'],optionalFeatures:['dom-overlay'],domOverlay:{root}})。AR 模式背景透明(alpha:true, 不設 scene.background)。核心是 hit-test:session.requestReferenceSpace('viewer') + session.requestHitTestSource({space:viewerSpace});每幀在 render(t,frame) 中 frame.getHitTestResults(source),取 hitPose 更新 reticle(環形 mesh)matrix。controller 'select' 事件時若 reticle 可見,clone 商品 GLTF 放到 reticle 位置(setFromMatrixPosition)。光照用 XREstimatedLight(light-estimation)或 fallback HemisphereLight,讓商品融入真實環境。商品落地後可拖曳:對既放置物件 raycast + 沿地面平移。reticle 預設隱藏,無命中不顯示。setAnimationLoop 驅動。",
+    "quality_rubric": [
+      "載入態:商品模型預載完成才允許放置;搜尋平面時顯示提示文字(移動手機掃描地面)",
+      "互動阻尼:reticle 跟隨平滑、放置即時;拖曳沿偵測平面、不穿地",
+      "光照:啟用 light-estimation(XREstimatedLight)讓商品陰影/亮度貼合真實場景;有接觸陰影(shadow plane)",
+      "響應式:resize 更新相機與 renderer;dom-overlay UI 在不同螢幕尺寸可用",
+      "效能:單一 hitTestSource 重用、不每幀重建;放置物件數量上限;session end 時 dispose 與釋放 hitTestSource",
+      "視覺:商品真實尺度(公尺),reticle 對齊地面法線,陰影柔和落地",
+      "穩定性:偵測不到平面/不支援 AR 時給明確訊息與 fallback",
+      "放置流程:可移除/重置已放物件,避免重疊堆疊"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "手部追蹤",
+    "keywords": ["three.js", "WebXR", "hand-tracking", "joints", "pinch", "VR"],
+    "execution": "ARButton/VRButton 加 optionalFeatures:['hand-tracking']。用 XRHandModelFactory:hand=renderer.xr.getHand(0);hand.add(handModelFactory.createHandModel(hand,'mesh'|'boxes'|'spheres'))。每幀可讀 25 個 joint:frame 中 hand.joints['index-finger-tip'] 等,joint 有 position/quaternion(已是 world)。捏合偵測:計算 'index-finger-tip' 與 'thumb-tip' 兩 joint 距離 < ~0.02m 視為 pinch;進入/離開閾值做 hysteresis 防抖動。也可監聽 'pinchstart'/'pinchend'(若用 OculusHandModel)。互動:pinch 時對場景物件 raycast(由 index tip 朝向)或直接碰撞偵測(joint sphere vs 物件 bounding sphere)抓取,attach 物件到手。光照 HemisphereLight + 環境 IBL。setAnimationLoop 驅動,render(t,frame) 才有 frame 資料。",
+    "quality_rubric": [
+      "載入態:手部模型載入前不顯示半成品;追蹤未就緒時提示(伸出雙手)",
+      "互動阻尼:pinch 用雙閾值 hysteresis 防抖;抓取/放開有明確視覺與(若可)震動回饋",
+      "光照:手部 mesh 受環境光照,關節有適當材質;可見性不被場景遮擋誤判",
+      "響應式:resize 正常;單手/雙手缺失時不崩潰(joint 可能為 null,需判空)",
+      "效能:joint 距離計算輕量、每幀只算必要關節;離開 dispose 手部模型",
+      "視覺:手部模型比例正確、貼合真實手;互動目標有 hover 高亮",
+      "穩健:每個 joint 存取前判 null(追蹤丟失);手勢誤觸防護",
+      "可學性:pinch/grab 手勢有 onboarding 提示或圖示"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "VR繪畫",
+    "keywords": [
+      "three.js",
+      "WebXR",
+      "VR",
+      "TubeGeometry",
+      "controller",
+      "繪畫"
+    ],
+    "execution": "VR 模式 renderer.xr.enabled、setAnimationLoop。取 controller=renderer.xr.getController(0),監聽 'selectstart'/'selectend' 控制 drawing 狀態,'squeeze' 換色/橡皮擦。每幀若 drawing:讀 controller 世界座標(controller.getWorldPosition),若與上點距離 > 閾值則 push 進當前 stroke 點陣列。筆畫渲染兩法:(1) 即時用 BufferGeometry + Line/LineSegments 動態 setDrawRange 增量更新;(2) 結束後用 CatmullRomCurve3 + TubeGeometry 生成有體積的筆刷(MeshStandardMaterial)。建議邊畫邊以 ribbon(自訂 BufferGeometry,沿 controller up 向外擴張兩側頂點)做帶狀筆觸,attributes.position 動態 setUsage(DynamicDrawUsage)。色盤/筆刷 UI 用貼在另一手 controller 上的 mesh 面板,raycast 選取。HemisphereLight + 環境光。完成可匯出 GLTF。",
+    "quality_rubric": [
+      "載入態:進場即可畫,UI/筆刷資源預載;無長時間黑屏",
+      "互動阻尼:筆觸依距離閾值取樣避免抖動點;線條平滑(Catmull-Rom 插值)",
+      "光照:筆刷材質受光、emissive 選項讓螢光筆畫亮;深度正確不互相 z-fight",
+      "響應式:resize 正常;桌面預覽 fallback 可旋轉看作品",
+      "效能:動態 BufferGeometry 用 DynamicDrawUsage 增量更新,不每幀重建整條;筆畫數上限或 merge;dispose 舊 geometry",
+      "視覺:筆觸有體積/寬度,顏色準確,空間中連續流暢",
+      "狀態:undo/redo 與清除;色盤手把面板易取用",
+      "匯出:可存成 GLTF/截圖,座標與比例一致"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "360全景",
+    "keywords": [
+      "three.js",
+      "panorama",
+      "equirectangular",
+      "SphereGeometry",
+      "360",
+      "OrbitControls"
+    ],
+    "execution": "標準 WebGLRenderer + PerspectiveCamera(fov 70-75)。核心:SphereGeometry(500,60,40),geometry.scale(-1,1,1) 把面翻向內;材質 MeshBasicMaterial({map: equirectangularTexture})(全景圖無需光照,故 Basic)。或更簡:scene.background = texture 並設 texture.mapping=THREE.EquirectangularReflectionMapping。相機置於球心 (0,0,0)。控制:OrbitControls 設 enableZoom 透過 fov、enablePan=false、rotateSpeed 取負值(從內看需反向)、enableDamping=true。熱點(切換場景)用小 Sprite 放球面,raycast 命中切換 texture(淡入淡出 crossfade)。手機加 DeviceOrientationControls 或用陀螺儀。可選 VRButton 進 VR 看 360。載入大圖用 TextureLoader + LoadingManager 進度條,texture.colorSpace=SRADColorSpace。",
+    "quality_rubric": [
+      "載入態:全景大圖載入顯示進度;未載完顯示低解析預覽或 loader,不顯示破圖",
+      "互動阻尼:OrbitControls enableDamping=true,旋轉慣性順手;rotateSpeed 反向(內視)",
+      "光照:全景用 MeshBasicMaterial/scene.background 不需打光;colorSpace 設 SRGB 避免偏色",
+      "響應式:resize 更新 aspect/setSize;手機支援陀螺儀(DeviceOrientation)",
+      "效能:單一大貼圖,mipmap 開啟;切換場景時 dispose 舊 texture 釋放記憶體",
+      "視覺:無接縫(球內翻面正確)、無極點扭曲過度;熱點清晰可辨",
+      "導覽:場景切換有 crossfade、熱點有 hover 提示",
+      "VR 選配:可進 VR 模式且左右眼正確"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "虛擬試衣",
+    "keywords": ["three.js", "GLTF", "SkinnedMesh", "morph", "試衣", "avatar"],
+    "execution": "WebGLRenderer + PerspectiveCamera + OrbitControls(限制 polar 角)。人體 avatar 用 GLTFLoader 載入(含 skeleton 的 SkinnedMesh);衣服為另一 SkinnedMesh,共享/重綁同一 skeleton(skinnedMesh.bind(avatar.skeleton, bindMatrix))讓衣服跟骨架擺姿。換尺寸/體型用 morph targets:mesh.morphTargetInfluences[i] 調整。換衣=切換載入不同衣服 GLTF、隱藏舊件;換色=複製材質改 map/color。光照關鍵:PMREMGenerator + HDR environment 做 IBL,key DirectionalLight + fill,讓布料 MeshStandardMaterial(或 MeshPhysicalMaterial 加 sheen 表現織物)質感正確、有陰影。布料簡易擺動可用骨架動畫或輕量 verlet,不必上真 cloth sim。轉身用 AnimationMixer 播 idle/turn 動畫。背景中性、地面接觸陰影。",
+    "quality_rubric": [
+      "載入態:avatar 與衣物 GLTF 載入進度;切換衣服時載入指示,避免閃裸模",
+      "互動阻尼:OrbitControls damping + polar/距離限制,聚焦人體;旋轉/縮放平順",
+      "光照:HDR environment IBL + key/fill 燈,布料用 Physical(sheen/roughness)質感真實,有落地陰影",
+      "響應式:resize 正常;直/橫螢幕構圖合理",
+      "效能:衣服切換 dispose 舊 mesh/material;貼圖壓縮;morph 與 skinning 控管骨數",
+      "視覺:衣服貼合骨架不穿模、比例對位;材質顏色/織紋準確",
+      "穿戴正確:衣物與身體 fit(肩/腰對齊),換尺寸 morph 連動",
+      "互動:可換色、換款、轉身查看背面"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "AR名片",
+    "keywords": ["three.js", "WebXR", "AR", "image-tracking", "marker", "名片"],
+    "execution": "ARButton 加 requiredFeatures(image-tracking 屬實驗性,需 trackedImages:[{image:imageBitmap, widthInMeters:0.09}])。背景透明。每幀 render(t,frame):for results of frame.getImageTrackingResults(),取 result.trackingState、result.imageSpace,用 frame.getPose(imageSpace, refSpace) 取得名片在世界中的 pose,將內容 Group.matrix 設為 pose.transform.matrix(matrixAutoUpdate=false)。內容:名片上方浮 3D logo(旋轉動畫)、文字(TextGeometry 或貼圖 plane)、社群按鈕 plane(raycast 點擊開連結)。若瀏覽器不支援 image-tracking,fallback 走 hit-test 手動放置或用 MindAR/8thWall。光照用 light-estimation 或 HemisphereLight。AnimationMixer/簡單 rotate 讓 logo 動。tracking lost 時隱藏內容(emulated 狀態判斷)。",
+    "quality_rubric": [
+      "載入態:3D 內容與貼圖預載;對準名片前提示(將鏡頭對準名片)",
+      "互動阻尼:內容貼合名片 pose 穩定跟隨;按鈕點擊回饋明確",
+      "光照:light-estimation 融入環境或柔和補光;內容不過曝/死黑",
+      "響應式:resize 與 dom-overlay UI 適配;直橫向皆可",
+      "效能:matrixAutoUpdate=false 直接套 pose 省計算;tracking lost 隱藏內容;session end dispose",
+      "視覺:內容浮於名片正確位置/比例,動畫精緻不浮誇",
+      "相容:不支援 image-tracking 時 fallback(hit-test 放置或第三方庫)並提示",
+      "連結安全:按鈕開啟外部連結前顯示目標 URL"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "VR會議室",
+    "keywords": ["three.js", "WebXR", "VR", "multiuser", "avatar", "WebRTC"],
+    "execution": "VR 場景:renderer.xr.enabled、setAnimationLoop;會議室環境 GLTF + PMREM environment IBL + DirectionalLight(shadow)。本地玩家 = camera 放入 rig Group,XR controller 控移動(snap-turn + teleport)。多人:每位遠端使用者一個 avatar(頭+雙手 mesh 或半身 GLTF),透過 WebSocket/WebRTC datachannel 同步 XR pose——每幀送出 camera.position/quaternion 與兩 controller 的 world transform,收到後 lerp/slerp 平滑套到對應 avatar 的 head/hands(避免抖動)。語音用 WebRTC audio,接 PositionalAudio 綁在 avatar head 做空間音效。共享白板/螢幕用貼了 video/canvas texture 的 plane。名牌用 always-face-camera 的 Sprite。狀態同步節流(~10-20Hz)+ 本地插值補幀。",
+    "quality_rubric": [
+      "載入態:房間與 avatar 資源載入進度;連線/同步就緒前顯示等待狀態",
+      "互動阻尼:遠端 avatar pose 用 lerp/slerp 插值平滑;移動 snap-turn/teleport 防暈",
+      "光照:environment IBL + 陰影,avatar 與房間一致;螢幕分享 plane 不受光干擾(Basic/emissive)",
+      "響應式:resize 正常;非 VR 桌面也能加入(滑鼠+鍵盤 fallback)",
+      "效能:pose 同步節流 10-20Hz + 本地插值;avatar LOD;離開 dispose 並關閉連線/媒體",
+      "視覺:avatar 比例與站位合理、名牌面向觀者;空間音效隨位置衰減",
+      "網路韌性:封包遺失/延遲時插值不跳變;人數上限與重連處理",
+      "臨場感:頭手追蹤映射自然,語音與口型/位置一致"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "立體視差",
+    "keywords": ["three.js", "parallax", "depth", "layers", "視差", "mouse"],
+    "execution": "可分兩種實作。(A) 多層 2D 視差:數個貼了去背 PNG 的 PlaneGeometry(MeshBasicMaterial,transparent)沿 z 軸分層擺放,正交或透視相機;監聽 pointermove 正規化成 (-1..1),依各層 depth 係數平移 layer.position 或微動 camera(慢層近、快層遠),用 lerp 緩動。(B) 深度貼圖視差:單 plane + ShaderMaterial,uniforms 傳 colorMap 與 depthMap,fragment shader 依滑鼠/陀螺儀偏移量 * depth 取樣 UV 位移(parallax mapping),做出 2.5D 立體照片(類 Facebook 3D photo)。相機微動加 enableDamping 概念的 lerp 收斂。背景視差層可加輕微縮放避免邊緣露白。RAF 迴圈即可(非 XR);手機改用 deviceorientation 驅動偏移。",
+    "quality_rubric": [
+      "載入態:各層圖/深度圖載入完成再顯示;loader 期間不破圖",
+      "互動阻尼:滑鼠/陀螺儀輸入經 lerp 緩動,視差柔順無突跳",
+      "光照:2D 視差層用 MeshBasicMaterial 不需打光;shader 版正確處理 colorSpace",
+      "響應式:resize 重算層位移範圍與構圖;直橫向不露白邊(層略放大)",
+      "效能:層數/貼圖適度,RAF 驅動;切換場景 dispose 貼圖與 shader",
+      "視覺:深度層次分明、近快遠慢符合直覺;邊緣無破綻、不過度位移失真",
+      "輸入:支援滑鼠與手機陀螺儀,偏移幅度適中不誇張",
+      "shader 版:depthMap 取樣位移合理、無明顯拉伸 artifact"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "眼動互動",
+    "keywords": [
+      "three.js",
+      "WebXR",
+      "eye-tracking",
+      "gaze",
+      "raycast",
+      "dwell"
+    ],
+    "execution": "WebXR 端:session 需 optionalFeatures 含 'eye-tracking'(裝置支援有限,如部分頭顯);render(t,frame) 中取 frame.getViewerPose,某些實作經 XR input 提供 gaze ray。通用退路 = gaze=相機朝向(head-gaze):每幀以 camera 位置/方向建 Raycaster(camera.getWorldDirection)對互動物件 intersectObjects。核心是 dwell 選取:射線命中某物件即開始計時,顯示填充環(reticle ring 的 ringGeometry thetaLength 隨停留時間增長),停留達 ~1.2s 觸發該物件的 action;視線移開重置。命中物件加 hover 高亮(emissive/scale)。reticle 固定在相機前方一定距離(camera.add(reticle))。非 XR 桌面可用 WebGazer.js 估算注視點映射到螢幕 NDC 再 raycast。HemisphereLight + 環境光。setAnimationLoop 驅動(XR)。",
+    "quality_rubric": [
+      "載入態:UI 與互動目標載入完成;校準/支援檢查通過才啟用 gaze",
+      "互動阻尼:dwell 計時 + 視覺進度環,移開即重置;避免誤觸(最短停留閾值)",
+      "光照:目標 hover 用 emissive/縮放回饋清楚;整體光照不干擾 reticle 可見性",
+      "響應式:resize 正常;reticle 維持螢幕中心/相機前方",
+      "效能:每幀單一 gaze raycast、目標集合精簡;離開 dispose 與停用追蹤",
+      "視覺:reticle 與進度環清晰、目標選中狀態明確;不遮擋內容",
+      "無障礙:eye-tracking 不可用時 fallback(head-gaze 或滑鼠)並提示",
+      "防誤觸:dwell 閾值與冷卻時間,避免掃視即觸發"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "體積影像",
+    "keywords": [
+      "three.js",
+      "volume",
+      "raymarching",
+      "Data3DTexture",
+      "ShaderMaterial",
+      "點雲"
+    ],
+    "execution": "兩種典型。(A) 點雲/體積資料視覺化:用 Points + BufferGeometry(position + color attributes),PointsMaterial(size, sizeAttenuation, vertexColors);大資料用 InstancedMesh 或自訂 shader 著色。(B) 真體積渲染(醫療 CT 類):Data3DTexture 載入 3D volume,BoxGeometry 當代理體,ShaderMaterial(side:BackSide)在 fragment 做 ray marching——沿視線在 box 內步進取樣 3D texture,套 transfer function/閾值累積顏色與不透明度(front-to-back compositing)。uniforms 傳 u_data(Data3DTexture)、u_cameraPos、steps、threshold。RGBAFormat/RedFormat,texture.minFilter=LinearFilter。相機 OrbitControls,旋轉看穿透。可加 clipping plane(切片)。效能靠調 step 數與 early-ray-termination。RAF 迴圈;可選 VR 觀看。",
+    "quality_rubric": [
+      "載入態:體積資料/點雲(常很大)載入進度明確;未載完不渲染半成品",
+      "互動阻尼:OrbitControls damping;切片/閾值滑桿即時但平順",
+      "光照:點雲多用 vertexColors 不打光;體積版正確的 transfer function 與(可選)梯度照明",
+      "響應式:resize 更新 aspect 與 raymarch uniforms(解析度);直橫向可用",
+      "效能:ray marching step 數與 early termination 取捨;點雲用 InstancedMesh/Points;dispose Data3DTexture 與 geometry",
+      "視覺:體積邊界清晰無嚴重 banding(步進足夠或抖動),點雲密度與大小合宜",
+      "探索:支援旋轉/縮放/切片/閾值調整觀察內部結構",
+      "資料正確:座標/比例與原始資料一致,色彩映射有圖例"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "虛擬角色",
+    "keywords": [
+      "three.js",
+      "GLTF",
+      "AnimationMixer",
+      "SkinnedMesh",
+      "VRM",
+      "角色"
+    ],
+    "execution": "WebGLRenderer + PerspectiveCamera + OrbitControls。GLTFLoader(或 VRMLoaderPlugin 載 VRM)載入帶骨架角色;AnimationMixer 管理動畫:mixer=new AnimationMixer(model),action=mixer.clipAction(clip),crossFadeTo 切換 idle/walk/wave 狀態,迴圈中 mixer.update(delta)(用 THREE.Clock.getDelta())。光照:PMREM environment IBL + key DirectionalLight(castShadow)+ fill/rim,讓角色 MeshStandardMaterial 立體;卡通角色可用自訂 toon/MToon shader。表情用 morphTargetInfluences(blink/口型),可由音量驅動 lip-sync。看向滑鼠:取得頭/眼 bone,quaternion 朝 pointer 方向 slerp(LookAt 限角)。地面 + 接觸陰影。互動:點擊播放手勢動畫、UI 切換服裝/動作。背景中性,角色置中。可選掛 idle 呼吸微動。",
+    "quality_rubric": [
+      "載入態:角色 GLTF/VRM 與動畫載入進度;就緒前不顯示 T-pose 裸模",
+      "互動阻尼:動畫狀態用 crossFade 平滑過渡;頭部看向 slerp 緩動、限制角度",
+      "光照:environment IBL + key/fill/rim,角色立體有陰影;卡通風用 toon/MToon 一致",
+      "響應式:resize 正常;構圖在不同比例維持角色置中",
+      "效能:mixer.update 用真實 delta;骨數/貼圖控管;切換資源 dispose;閒置降幀可選",
+      "視覺:動畫自然不滑步、過渡無瞬切;表情/口型與材質精緻",
+      "生動:idle 呼吸/眨眼微動、可點擊觸發手勢,避免僵硬",
+      "嘴型:lip-sync(若有語音)與音訊同步"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "語音化身",
+    "keywords": [
+      "three.js",
+      "lip-sync",
+      "Web Audio",
+      "AnalyserNode",
+      "morph",
+      "avatar"
+    ],
+    "execution": "在虛擬角色基礎上接 Web Audio 驅動嘴型。音訊來源:TTS/麥克風/音檔 → AudioContext,createMediaElementSource 或 getUserMedia → AnalyserNode(fftSize 256/512)。迴圈每幀 analyser.getByteFrequencyData/getByteTimeDomainData,算 RMS/音量包絡,映射到 model.morphTargetInfluences[mouthOpen](平滑 lerp,避免抖)。進階:用幾個 viseme morph(aa/oh/ee)依頻譜重心粗分母音切換,或接 wawa-lipsync/rhubarb 預生成 viseme 時間軸照 audio.currentTime 播。角色照常 GLTFLoader/VRM + AnimationMixer(idle/gesture)。眨眼用計時器隨機觸發 blink morph。光照 PMREM IBL + key/fill/rim。PositionalAudio(THREE)可把聲音綁角色 head 做空間感。OrbitControls 看臉。嘴型與音量同步、靜音時閉嘴。",
+    "quality_rubric": [
+      "載入態:角色與音訊資源就緒前不啟動;TTS/音檔載入指示",
+      "互動阻尼:音量→嘴型用 lerp 平滑,無逐幀抖動;靜音自然閉口",
+      "光照:臉部受 key/fill/rim 光,嘴型變化在光下清楚;材質一致",
+      "響應式:resize 正常;構圖聚焦臉部",
+      "效能:單一 AnalyserNode、輕量 FFT;每幀只更新必要 morph;dispose audio 與模型",
+      "視覺:嘴型開合與音量/母音相符、過渡自然;搭配眨眼與微表情",
+      "同步:viseme/音量與 audio.currentTime 對齊,不超前落後",
+      "音訊權限:麥克風需使用者授權,提供靜音/重播控制"
+    ]
+  },
+  {
+    "type": "3d_web_artifact",
+    "title": "混合實境",
+    "keywords": [
+      "three.js",
+      "WebXR",
+      "MR",
+      "passthrough",
+      "depth-sensing",
+      "anchors"
+    ],
+    "execution": "MR(passthrough)用 immersive-ar session 但在頭顯上呈現:ARButton.createButton(renderer,{requiredFeatures:['local-floor'],optionalFeatures:['hit-test','anchors','depth-sensing','plane-detection','mesh-detection','light-estimation','hand-tracking']})。背景透明(看到真實世界)。空間理解:plane-detection 取 frame.detectedPlanes、mesh-detection 取真實房間網格做遮擋與碰撞;depth-sensing 用 frame depth 做虛實遮擋(depthOcclusion,虛擬物被真實物遮住)。錨定:select 命中後 frame.createAnchor(pose) 建立 XRAnchor,持久固定虛擬物到真實空間(每幀以 anchor 更新 matrix)。光照:XREstimatedLight 讓虛擬物匹配真實環境光與反射(environment 自動更新)。互動用 controller 或 hand-tracking。setAnimationLoop。物件接觸陰影投到偵測平面,增強虛實融合。",
+    "quality_rubric": [
+      "載入態:資源預載;進 MR 前提示掃描環境(取得平面/網格)",
+      "互動阻尼:錨定物件穩定不漂移;放置/操作用 hit-test/手勢平順",
+      "光照:light-estimation(XREstimatedLight)讓虛擬物的亮度/反射/陰影貼合真實場景",
+      "響應式:resize 正常;支援 controller 與 hand-tracking 兩種輸入",
+      "效能:plane/mesh/depth 資源重用不每幀重建;anchor 數量控管;session end 釋放所有 XR 資源與 dispose",
+      "虛實融合:depth-sensing 遮擋正確(真實物擋住虛擬物)、接觸陰影落在真實平面",
+      "持久性:anchor 維持物件在真實位置,移動觀看不跳",
+      "相容:缺 depth/plane 等特性時優雅降級並提示"
+    ]
+  }
+]

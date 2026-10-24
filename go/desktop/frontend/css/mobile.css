@@ -1,0 +1,703 @@
+/* Responsive layer for the real Desktop shell; desktop tokens/layout survive. */
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 767px), (max-width: 1024px) and (pointer: coarse) {
+  /* The Desktop default is expanded. Never paint an unbound mobile drawer
+     while workspace/bootstrap is still pending on the network. */
+  body:not(.mobile-shell-ready):not(.side-collapsed) #sidebar {
+    visibility: hidden;
+    transform: translateX(-105%);
+    pointer-events: none;
+  }
+  html {
+    overflow: hidden;
+  }
+  body,
+  body.side-collapsed {
+    position: fixed;
+    top: var(--mobile-vv-top, 0px);
+    left: 0;
+    width: 100%;
+    height: var(--mobile-vv-height, 100dvh);
+    grid-template-columns: minmax(0, 1fr);
+    transition: none;
+  }
+  .mobile-only:not([hidden]) {
+    display: flex;
+  }
+  #main {
+    position: relative;
+    grid-column: 1;
+    width: 100%;
+    overflow: hidden;
+  }
+  #header,
+  body.side-collapsed #header {
+    height: calc(64px + env(safe-area-inset-top, 0px));
+    padding: env(safe-area-inset-top, 0px)
+      max(10px, env(safe-area-inset-right, 0px)) 0
+      max(10px, env(safe-area-inset-left, 0px));
+    gap: 8px;
+    container-type: normal;
+    -webkit-app-region: no-drag;
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr) 96px;
+    border-bottom: 0;
+  }
+  #headerLeft {
+    display: contents;
+  }
+  #mobileHeading {
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.035em;
+  }
+  #btnSideToggle {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  #headerRight {
+    display: flex;
+    grid-column: 3;
+    grid-row: 1;
+    justify-content: flex-end;
+    gap: 8px;
+    /* Desktop floats tools at 101; on phones they must stay BELOW drawers. */
+    z-index: auto;
+  }
+  #header
+    :is(
+      #logo,
+      #projBadge,
+      #headerActions,
+      #btnTerminal,
+      #btnProgress,
+      #btnExpertLens,
+      #btnDiff,
+      #threadTitle,
+      #outTabs
+    ) {
+    display: none;
+  }
+  #btnSideToggle,
+  #headerRight :is(#mobileMore, #mobileWorkToggle) {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    color: var(--fg);
+    background: var(--card2);
+    padding: 0;
+  }
+  #mobileWorkToggle svg {
+    width: 22px;
+    height: 22px;
+  }
+  #mobileWorkToggle[aria-expanded='true'] {
+    background: var(--accent);
+    color: var(--primary);
+  }
+  /* Remove these mobile entry points only; desktop retains the same nodes and handlers. */
+  #pillInteract,
+  #pillResearch {
+    display: none !important;
+  }
+  #btnSideToggle > svg,
+  #composerLeft #attachImageBtn > .ic {
+    display: none;
+  }
+  .mobile-icon {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+    background: currentColor;
+    -webkit-mask: var(--mobile-icon) center / contain no-repeat;
+    mask: var(--mobile-icon) center / contain no-repeat;
+  }
+  .mobile-icon-menu {
+    --mobile-icon: url('../icons/menu.svg');
+  }
+  .mobile-icon-sliders {
+    --mobile-icon: url('../icons/sliders-horizontal.svg');
+  }
+  .mobile-icon-plus {
+    --mobile-icon: url('../icons/plus.svg');
+  }
+  #mobileMore {
+    font-size: 13px;
+    letter-spacing: 0;
+    line-height: 1;
+  }
+  #headerRight #btnDiff.on,
+  #mobileMore[aria-expanded='true'] {
+    background: var(--accent);
+    color: var(--primary);
+  }
+  #scroll,
+  body.fresh-thread #scroll {
+    display: block;
+    padding: 32px 0 calc(var(--mobile-composer-height, 126px) + 20px);
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+  }
+  #timeline {
+    width: 100%;
+    padding: 0 18px;
+  }
+  #timeline:empty::before {
+    height: auto;
+    margin: 18vh 0 0;
+    font-size: 16px;
+    color: var(--muted);
+  }
+  .amd,
+  .ubub {
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
+  .ubub {
+    max-width: 90%;
+    background: color-mix(in srgb, var(--primary) 10%, var(--card));
+    border-color: color-mix(in srgb, var(--primary) 12%, transparent);
+    border-radius: 18px;
+  }
+  .amd :is(h1, h2) {
+    font-size: 21px;
+  }
+  .amd :is(h3, h4) {
+    font-size: 17px;
+  }
+  .amd pre {
+    max-width: 100%;
+    overflow-x: auto;
+    font-size: 13px;
+  }
+  .amd table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  .amd img,
+  .user-attachment {
+    max-width: 100%;
+  }
+  #timeline .activityrow {
+    min-width: 0;
+  }
+  #timeline .activityrow > :last-child {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  #composerWrap,
+  body.fresh-thread #composerWrap {
+    position: absolute;
+    z-index: 6;
+    bottom: var(--mobile-terminal-height, 0px);
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 6px max(12px, env(safe-area-inset-right, 0px))
+      max(8px, calc(env(safe-area-inset-bottom, 0px) - var(--mobile-bottom-occlusion, 0px)))
+      max(12px, env(safe-area-inset-left, 0px));
+    background: var(--background);
+    max-height: 55%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transition: transform 180ms ease, opacity 180ms ease;
+  }
+  #busy:empty {
+    display: none;
+  }
+  body.mobile-reading #composerWrap {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .jump-wrap {
+    /* Anchor to main, outside the scroller's content-end composer reserve. */
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--mobile-composer-height, 126px) + var(--mobile-terminal-height, 0px) + 12px);
+    padding: 0 18px;
+    transition: bottom 180ms ease;
+  }
+  body.mobile-reading .jump-wrap {
+    bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  }
+  #composer {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    align-items: end;
+    column-gap: 8px;
+    padding: 9px;
+    border-radius: 32px;
+    width: 100%;
+    min-width: 0;
+    min-height: 64px;
+  }
+  #input {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+    min-width: 0;
+    font-size: 16px;
+    line-height: 1.5;
+    min-height: 44px;
+    max-height: min(144px, 24dvh);
+    padding: 10px 0;
+    overflow-y: auto !important;
+    border-radius: 0;
+  }
+  #input::placeholder {
+    color: var(--muted);
+  }
+  #attachStrip {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    padding: 0;
+  }
+  #attachStrip:not(:empty) {
+    padding: 6px 4px 10px;
+  }
+  #attachStrip .att-card {
+    flex: 0 0 184px;
+    min-width: 0;
+    max-width: min(184px, 100%);
+    padding-right: 44px;
+  }
+  #attachStrip .att-x {
+    opacity: 1;
+    width: 44px;
+    height: 44px;
+    top: 2px;
+    right: 0;
+    border: 0;
+    background: transparent;
+  }
+  #composerFoot,
+  #composerLeft {
+    display: contents;
+  }
+  #composerRight {
+    grid-column: 3;
+    grid-row: 2;
+    width: 44px;
+    min-width: 0;
+    gap: 0;
+  }
+  #composerLeft #attachImageBtn {
+    grid-column: 1;
+    grid-row: 2;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--fg);
+    background: var(--card2);
+  }
+  #mobileComposerPreferences {
+    width: 100%;
+    min-width: 0;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 0 4px 4px;
+  }
+  #mobileComposerPreferences .pill {
+    display: inline-flex;
+    min-width: 0;
+    max-width: calc(50% - 6px);
+    min-height: 44px;
+    height: 44px;
+    font: 500 13px var(--sans);
+    padding: 0 4px;
+    border: 0;
+    border-radius: 10px;
+    color: var(--muted);
+    background: transparent;
+    gap: 7px;
+  }
+  #mobileComposerPreferences .pill .ic,
+  #mobileActions .pill .ic {
+    display: inline-flex;
+    font-size: 0;
+    flex: 0 0 16px;
+  }
+  #mobileComposerPreferences .ic svg,
+  #mobileActions .pill .ic svg {
+    width: 16px;
+    height: 16px;
+  }
+  #mobileComposerPreferences .cv,
+  #mobileActions .pill .cv {
+    width: 12px;
+    height: 12px;
+    flex: 0 0 12px;
+  }
+  #mobileComposerPreferences #pillModel {
+    margin-left: auto;
+  }
+  #pillModelName {
+    max-width: 118px;
+  }
+  #mobileComposerPreferences .pill:hover {
+    color: var(--fg);
+  }
+  #mobileComposerPreferences .pill.locked {
+    opacity: 0.6;
+  }
+  #composer :is(#sendBtn, #stopBtn)[hidden] {
+    display: none;
+  }
+  body.mobile-work-open :is(#scroll, #composerWrap, #termDrawer) {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  #sendBtn,
+  #stopBtn {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    font-size: 22px;
+  }
+  #sendBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #stopBtn:not([hidden]) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #folderAbove {
+    margin-bottom: 4px;
+  }
+  #folderAboveBtn {
+    min-height: 36px;
+    max-width: 100%;
+  }
+  #folderAboveName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  #checkoutRow {
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px 4px 0;
+    min-width: 0;
+  }
+  #checkoutRight {
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+  #checkoutRow .pill {
+    max-width: 100%;
+    min-width: 0;
+  }
+  #pillFolderName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #taskQueue {
+    max-height: 28dvh;
+    overflow: auto;
+    padding-block: 1px;
+  }
+  #taskQueue .queue-row {
+    padding-block: 0;
+  }
+  #taskQueue button,
+  #pendingArea button {
+    min-height: 44px;
+  }
+  #pendingArea .card-actions {
+    flex-wrap: wrap;
+  }
+  #sidebar,
+  body.side-collapsed #sidebar {
+    position: fixed;
+    z-index: 71;
+    top: var(--mobile-vv-top, 0px);
+    left: 0;
+    height: var(--mobile-vv-height, 100dvh);
+    width: min(280px, calc(100% - 80px));
+    min-width: 0;
+    border-right: 1px solid var(--border);
+    background: var(--background);
+    transition: transform 0.18s ease;
+  }
+  body.mobile-shell-ready:not(.side-collapsed) #sidebar {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  body.side-collapsed #sidebar {
+    transform: translateX(-100%);
+    opacity: 1;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  #sideResizer,
+  .side-kbd {
+    display: none !important;
+  }
+  #sidebar .side-head {
+    height: calc(58px + env(safe-area-inset-top, 0px));
+    padding: env(safe-area-inset-top, 0px) 10px 0 20px;
+    justify-content: space-between;
+    -webkit-app-region: no-drag;
+  }
+  .mobile-nav-brand {
+    font-size: 16px;
+    font-weight: 650;
+    letter-spacing: -0.025em;
+  }
+  #mobileNavClose,
+  #mobileActionsClose {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: transparent;
+    color: var(--fg);
+    font-size: 25px;
+    border-radius: 12px;
+  }
+  #newChatBtn,
+  #sideSearch button,
+  #sideFoot button {
+    min-height: 44px;
+    font-size: 14px;
+  }
+  #sidebar .thread,
+  #sidebar .sess {
+    min-height: 48px;
+    padding: 10px 8px;
+  }
+  #sidebar .t-title {
+    font-size: 14px;
+  }
+  #sidebar .proj-head {
+    min-height: 44px;
+  }
+  #mobileTools {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 8px;
+    color: var(--fg);
+    background: transparent;
+    text-align: left;
+  }
+  #mobileTools:hover {
+    background: var(--accent);
+  }
+  #sideFoot {
+    padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
+  }
+  #mobileBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    border: 0;
+    border-radius: 0;
+    background: rgb(0 0 0 / 0.45);
+    padding: 0;
+    cursor: default;
+  }
+  #mobileActions {
+    position: fixed;
+    z-index: 72;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    bottom: max(
+      8px,
+      calc(
+        100dvh - var(--mobile-vv-height, 100dvh) - var(--mobile-vv-top, 0px) +
+          8px
+      )
+    );
+    padding: 8px 14px max(16px, env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column;
+    max-height: calc(var(--mobile-vv-height, 100dvh) - 24px);
+    overflow-y: auto;
+    background: var(--card);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: 0 18px 64px rgb(0 0 0 / 0.25);
+  }
+  #mobileActions[hidden],
+  #mobileBackdrop[hidden] {
+    display: none;
+  }
+  .mobile-actions-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 12px;
+  }
+  .mobile-actions-head h2 {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  #mobileActions .mobile-action {
+    width: 100%;
+    min-height: 50px;
+    padding: 12px;
+    border: 0;
+    border-radius: 12px;
+    text-align: left;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+  }
+  #mobileActions .mobile-action:hover {
+    background: var(--accent);
+  }
+  #mobileActions .mobile-action:disabled {
+    opacity: 0.45;
+  }
+  #mobileProjectDetails {
+    padding: 0 12px 8px;
+  }
+  #mobileProjectDetails summary {
+    cursor: pointer;
+    padding: 16px 0;
+    min-height: 48px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  #mobileProjectDetails #checkoutRow {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  #mobileProjectDetails #checkoutRight {
+    flex-wrap: wrap;
+  }
+  #mobileProjectDetails #checkoutRow #pillFolder {
+    display: inline-flex;
+  }
+  #mobileProjectDetails :is(#ctxMeter, #folderAbove) {
+    padding-block: 8px;
+  }
+  #mobileProjectDetails #ctxMeter {
+    color: var(--muted);
+  }
+  #mobileActions #folderAbove[hidden] {
+    display: none;
+  }
+  #mobileActions :is(#folderAboveBtn, #checkoutRow .pill) {
+    min-height: 44px;
+  }
+  .pop.open {
+    max-width: calc(100vw - 24px);
+    max-height: calc(var(--mobile-vv-height, 100dvh) - 24px);
+    overflow: auto;
+  }
+  .pop.open:not(.ctx-pop) {
+    z-index: 80;
+  }
+  .pop .it.mode-it {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  #rightPanel,
+  #rightPanel.open {
+    position: fixed;
+    z-index: 69;
+    inset: 0;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    top: calc(var(--mobile-vv-top, 0px) + 64px + env(safe-area-inset-top, 0px));
+    bottom: auto;
+    height: calc(
+      var(--mobile-vv-height, 100dvh) - 64px - env(safe-area-inset-top, 0px)
+    );
+    transition: none;
+    border: 0;
+    background: var(--background);
+  }
+  #rightPanel:not(.open) {
+    display: none;
+  }
+  #rightPanel #rpHead {
+    padding: 0 12px;
+    height: 52px;
+  }
+  #rightPanel .rp-tab {
+    min-height: 44px;
+    padding: 0 12px;
+  }
+  #rightPanel #diffClose {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    padding: 0;
+  }
+  #rightPanel #rpTabs {
+    overscroll-behavior-x: contain;
+  }
+  #rightPanel .rp-tab {
+    flex-shrink: 0;
+  }
+  #rpWrap > .rp-page {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  #termDrawer {
+    max-height: 45%;
+    min-height: 120px;
+  }
+  #termDrawer[hidden] {
+    display: none;
+  }
+  #termTabs button {
+    min-height: 44px;
+  }
+  button {
+    touch-action: manipulation;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #sidebar,
+    #composerWrap,
+    .jump-wrap {
+      transition: none;
+    }
+  }
+}

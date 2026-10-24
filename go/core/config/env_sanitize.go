@@ -1,0 +1,523 @@
+package config
+
+import (
+	"bytes"
+	"os"
+	"path/filepath"
+	"sort"
+	"strings"
+	"unicode"
+)
+
+const envSanitizerKeyData = `
+AGENT_BROWSER_ENGINE
+AIRTABLE_API_KEY
+ALIBABA_CODING_PLAN_API_KEY
+ALIBABA_CODING_PLAN_BASE_URL
+ANTHROPIC_API_KEY
+ANTHROPIC_TOKEN
+API_SERVER_ENABLED
+API_SERVER_HOST
+API_SERVER_KEY
+API_SERVER_MODEL_NAME
+API_SERVER_PORT
+ARCEEAI_API_KEY
+ARCEE_BASE_URL
+AWS_PROFILE
+AWS_REGION
+AZURE_FOUNDRY_API_KEY
+AZURE_FOUNDRY_BASE_URL
+BLUEBUBBLES_ALLOWED_USERS
+BLUEBUBBLES_ALLOW_ALL_USERS
+BLUEBUBBLES_HOME_CHANNEL
+BLUEBUBBLES_HOME_CHANNEL_NAME
+BLUEBUBBLES_PASSWORD
+BLUEBUBBLES_SERVER_URL
+BRAVE_SEARCH_API_KEY
+BROWSERBASE_API_KEY
+BROWSERBASE_PROJECT_ID
+BROWSER_USE_API_KEY
+BRV_API_KEY
+CAMOFOX_API_KEY
+CAMOFOX_URL
+CLAUDE_CODE_OAUTH_TOKEN
+DASHSCOPE_API_KEY
+DASHSCOPE_BASE_URL
+DEEPINFRA_API_KEY
+DEEPINFRA_BASE_URL
+DEEPSEEK_API_KEY
+DEEPSEEK_BASE_URL
+DINGTALK_ALLOWED_USERS
+DINGTALK_CLIENT_ID
+DINGTALK_CLIENT_SECRET
+DINGTALK_HOME_CHANNEL
+DINGTALK_HOME_CHANNEL_NAME
+DINGTALK_WEBHOOK_URL
+DISCORD_ALLOWED_USERS
+DISCORD_ALLOW_ALL_USERS
+DISCORD_BOT_TOKEN
+DISCORD_HOME_CHANNEL
+DISCORD_HOME_CHANNEL_NAME
+DISCORD_REPLY_TO_MODE
+ELEVENLABS_API_KEY
+EMAIL_ADDRESS
+EMAIL_ALLOWED_USERS
+EMAIL_HOME_ADDRESS
+EMAIL_IMAP_HOST
+EMAIL_PASSWORD
+EMAIL_SMTP_HOST
+EMAIL_SMTP_PORT
+EXA_API_KEY
+FAL_KEY
+FEISHU_ALLOWED_USERS
+FEISHU_ALLOW_ALL_USERS
+FEISHU_APP_ID
+FEISHU_APP_SECRET
+FEISHU_DOMAIN
+FEISHU_ENCRYPT_KEY
+FEISHU_HOME_CHANNEL
+FEISHU_HOME_CHANNEL_NAME
+FEISHU_VERIFICATION_TOKEN
+FIRECRAWL_API_KEY
+FIRECRAWL_API_URL
+FIRECRAWL_BROWSER_TTL
+FIRECRAWL_GATEWAY_URL
+FIREWORKS_API_KEY
+GATEWAY_ALLOW_ALL_USERS
+GATEWAY_PROXY_KEY
+GATEWAY_PROXY_URL
+GEMINI_API_KEY
+GEMINI_BASE_URL
+GITHUB_TOKEN
+GLM_API_KEY
+GLM_BASE_URL
+GMI_API_KEY
+GMI_BASE_URL
+GOOGLE_API_KEY
+GOOGLE_CHAT_ALLOWED_USERS
+GOOGLE_CHAT_HOME_CHANNEL
+GOOGLE_CHAT_HTTP_EVENTS_AUDIENCE
+GOOGLE_CHAT_HTTP_EVENTS_SERVICE_ACCOUNT_EMAIL
+GOOGLE_CHAT_HTTP_EVENTS_URL
+GOOGLE_CHAT_PROJECT_ID
+GOOGLE_CHAT_SERVICE_ACCOUNT_JSON
+GOOGLE_CHAT_SUBSCRIPTION_NAME
+HASS_TOKEN
+HASS_URL
+HERMES_EPHEMERAL_SYSTEM_PROMPT
+HERMES_LANGFUSE_BASE_URL
+HERMES_LANGFUSE_DEBUG
+HERMES_LANGFUSE_ENV
+HERMES_LANGFUSE_MAX_CHARS
+HERMES_LANGFUSE_PUBLIC_KEY
+HERMES_LANGFUSE_RELEASE
+HERMES_LANGFUSE_SAMPLE_RATE
+HERMES_LANGFUSE_SECRET_KEY
+HERMES_PREFILL_MESSAGES_FILE
+HERMES_QWEN_BASE_URL
+HERMES_SIMPLEX_TEXT_BATCH_DELAY
+HERMES_TOOL_PROGRESS
+HERMES_TOOL_PROGRESS_MODE
+HF_BASE_URL
+HF_TOKEN
+HINDSIGHT_API_KEY
+HINDSIGHT_API_URL
+HONCHO_API_KEY
+HONCHO_BASE_URL
+IRC_ALLOWED_USERS
+IRC_ALLOW_ALL_USERS
+IRC_CHANNEL
+IRC_HOME_CHANNEL
+IRC_NICKNAME
+IRC_NICKSERV_PASSWORD
+IRC_PORT
+IRC_SERVER
+IRC_SERVER_PASSWORD
+IRC_USE_TLS
+KILOCODE_API_KEY
+KIMI_API_KEY
+KIMI_BASE_URL
+KIMI_CN_API_KEY
+KIMI_CODING_API_KEY
+KREA_API_KEY
+LANGFUSE_BASE_URL
+LANGFUSE_PUBLIC_KEY
+LANGFUSE_SECRET_KEY
+LINEAR_API_KEY
+LINE_ALLOWED_GROUPS
+LINE_ALLOWED_ROOMS
+LINE_ALLOWED_USERS
+LINE_ALLOW_ALL_USERS
+LINE_CHANNEL_ACCESS_TOKEN
+LINE_CHANNEL_SECRET
+LINE_HOME_CHANNEL
+LINE_HOST
+LINE_PORT
+LINE_PUBLIC_URL
+LINE_SLOW_RESPONSE_THRESHOLD
+LM_API_KEY
+LM_BASE_URL
+MATRIX_ACCESS_TOKEN
+MATRIX_ALLOWED_USERS
+MATRIX_ALLOW_ALL_USERS
+MATRIX_AUTO_THREAD
+MATRIX_DEVICE_ID
+MATRIX_DM_AUTO_THREAD
+MATRIX_ENCRYPTION
+MATRIX_FREE_RESPONSE_ROOMS
+MATRIX_HOMESERVER
+MATRIX_HOME_CHANNEL
+MATRIX_HOME_CHANNEL_NAME
+MATRIX_HOME_ROOM
+MATRIX_PASSWORD
+MATRIX_RECOVERY_KEY
+MATRIX_REQUIRE_MENTION
+MATRIX_USER_ID
+MATTERMOST_ALLOWED_CHANNELS
+MATTERMOST_ALLOWED_USERS
+MATTERMOST_ALLOW_ALL_USERS
+MATTERMOST_FREE_RESPONSE_CHANNELS
+MATTERMOST_HOME_CHANNEL
+MATTERMOST_HOME_CHANNEL_NAME
+MATTERMOST_REPLY_MODE
+MATTERMOST_REQUIRE_MENTION
+MATTERMOST_TOKEN
+MATTERMOST_URL
+MEM0_API_KEY
+MINIMAX_API_KEY
+MINIMAX_BASE_URL
+MINIMAX_CN_API_KEY
+MINIMAX_CN_BASE_URL
+MISTRAL_API_KEY
+NOTION_API_KEY
+NOUS_BASE_URL
+NOVITA_API_KEY
+NOVITA_BASE_URL
+NTFY_ALLOWED_USERS
+NTFY_ALLOW_ALL_USERS
+NTFY_HOME_CHANNEL
+NTFY_HOME_CHANNEL_NAME
+NTFY_MARKDOWN
+NTFY_PUBLISH_TOPIC
+NTFY_SERVER_URL
+NTFY_TOKEN
+NTFY_TOPIC
+NVIDIA_API_KEY
+NVIDIA_BASE_URL
+OLLAMA_API_KEY
+OLLAMA_BASE_URL
+OPENAI_API_KEY
+OPENAI_BASE_URL
+OPENCODE_GO_API_KEY
+OPENCODE_GO_BASE_URL
+OPENCODE_ZEN_API_KEY
+OPENCODE_ZEN_BASE_URL
+OPENROUTER_API_KEY
+OPENVIKING_API_KEY
+OPENVIKING_ENDPOINT
+PARALLEL_API_KEY
+PHOTON_ALLOWED_USERS
+PHOTON_ALLOW_ALL_USERS
+PHOTON_DASHBOARD_HOST
+PHOTON_HOME_CHANNEL
+PHOTON_HOME_CHANNEL_NAME
+PHOTON_MARKDOWN
+PHOTON_MENTION_PATTERNS
+PHOTON_NODE_BIN
+PHOTON_PROJECT_ID
+PHOTON_PROJECT_SECRET
+PHOTON_REACTIONS
+PHOTON_REQUIRE_MENTION
+PHOTON_SIDECAR_AUTOSTART
+PHOTON_SIDECAR_PORT
+PHOTON_SPECTRUM_HOST
+PHOTON_TELEMETRY
+QQBOT_HOME_CHANNEL
+QQBOT_HOME_CHANNEL_NAME
+QQ_ALLOWED_USERS
+QQ_ALLOW_ALL_USERS
+QQ_APP_ID
+QQ_CLIENT_SECRET
+QQ_GROUP_ALLOWED_USERS
+QQ_HOME_CHANNEL
+QQ_HOME_CHANNEL_NAME
+QQ_MARKDOWN_SUPPORT
+QQ_SANDBOX
+QQ_STT_API_KEY
+QQ_STT_BASE_URL
+QQ_STT_MODEL
+RAFT_PROFILE
+RETAINDB_API_KEY
+RETAINDB_BASE_URL
+SEARXNG_URL
+SIGNAL_ACCOUNT
+SIGNAL_ALLOWED_USERS
+SIGNAL_GROUP_ALLOWED_USERS
+SIGNAL_HOME_CHANNEL
+SIGNAL_HOME_CHANNEL_NAME
+SIGNAL_HTTP_URL
+SIMPLEX_ALLOWED_USERS
+SIMPLEX_ALLOW_ALL_USERS
+SIMPLEX_AUTO_ACCEPT
+SIMPLEX_GROUP_ALLOWED
+SIMPLEX_HOME_CHANNEL
+SIMPLEX_HOME_CHANNEL_NAME
+SIMPLEX_WS_URL
+SLACK_ALLOWED_USERS
+SLACK_ALLOW_ALL_USERS
+SLACK_APP_TOKEN
+SLACK_BOT_TOKEN
+SLACK_HOME_CHANNEL
+SLACK_HOME_CHANNEL_NAME
+SMS_ALLOWED_USERS
+SMS_HOME_CHANNEL
+SMS_HOME_CHANNEL_NAME
+STEPFUN_API_KEY
+STEPFUN_BASE_URL
+SUDO_PASSWORD
+SUPERMEMORY_API_KEY
+TAVILY_API_KEY
+TEAMS_ALLOWED_USERS
+TEAMS_ALLOW_ALL_USERS
+TEAMS_CLIENT_ID
+TEAMS_CLIENT_SECRET
+TEAMS_HOME_CHANNEL
+TEAMS_HOME_CHANNEL_NAME
+TEAMS_PORT
+TEAMS_TENANT_ID
+TELEGRAM_ALLOWED_USERS
+TELEGRAM_ALLOW_ALL_USERS
+TELEGRAM_BOT_TOKEN
+TELEGRAM_HOME_CHANNEL
+TELEGRAM_HOME_CHANNEL_NAME
+TELEGRAM_PROXY
+TENOR_API_KEY
+TERMINAL_ENV
+TERMINAL_SSH_KEY
+TERMINAL_SSH_PORT
+TOOL_GATEWAY_DOMAIN
+TOOL_GATEWAY_SCHEME
+TOOL_GATEWAY_USER_TOKEN
+TWILIO_ACCOUNT_SID
+TWILIO_AUTH_TOKEN
+TWILIO_PHONE_NUMBER
+UPSTAGE_API_KEY
+UPSTAGE_BASE_URL
+VERTEX_CREDENTIALS_PATH
+VOICE_TOOLS_OPENAI_KEY
+WEBHOOK_ENABLED
+WEBHOOK_PORT
+WEBHOOK_SECRET
+WECOM_ALLOWED_USERS
+WECOM_BOT_ID
+WECOM_CALLBACK_AGENT_ID
+WECOM_CALLBACK_CORP_ID
+WECOM_CALLBACK_CORP_SECRET
+WECOM_CALLBACK_ENCODING_AES_KEY
+WECOM_CALLBACK_HOST
+WECOM_CALLBACK_PORT
+WECOM_CALLBACK_TOKEN
+WECOM_HOME_CHANNEL
+WECOM_HOME_CHANNEL_NAME
+WECOM_SECRET
+WECOM_WEBSOCKET_URL
+WEIXIN_ACCOUNT_ID
+WEIXIN_ALLOWED_USERS
+WEIXIN_ALLOW_ALL_USERS
+WEIXIN_BASE_URL
+WEIXIN_CDN_BASE_URL
+WEIXIN_DM_POLICY
+WEIXIN_GROUP_ALLOWED_USERS
+WEIXIN_GROUP_POLICY
+WEIXIN_HOME_CHANNEL
+WEIXIN_HOME_CHANNEL_NAME
+WEIXIN_TOKEN
+WHATSAPP_ALLOWED_USERS
+WHATSAPP_ALLOW_ALL_USERS
+WHATSAPP_ENABLED
+WHATSAPP_HOME_CHANNEL
+WHATSAPP_HOME_CHANNEL_NAME
+WHATSAPP_MODE
+XAI_API_KEY
+XAI_BASE_URL
+XIAOMI_API_KEY
+XIAOMI_BASE_URL
+YUANBAO_HOME_CHANNEL
+YUANBAO_HOME_CHANNEL_NAME
+ZAI_API_KEY
+Z_AI_API_KEY
+`
+
+var envSanitizerKeys = func() []string {
+	keys := strings.Fields(envSanitizerKeyData)
+	sort.Strings(keys)
+	return keys
+}()
+
+type envMatchRange struct {
+	start int
+	end   int
+}
+
+func sanitizeEnvLines(lines []string) []string {
+	sanitized := make([]string, 0, len(lines))
+	for _, line := range lines {
+		raw := strings.TrimSuffix(strings.TrimSuffix(line, "\n"), "\r")
+		stripped := strings.TrimSpace(raw)
+		if stripped == "" || strings.HasPrefix(stripped, "#") {
+			sanitized = append(sanitized, raw+"\n")
+			continue
+		}
+
+		var ranges []envMatchRange
+		for _, name := range envSanitizerKeys {
+			needle := name + "="
+			offset := 0
+			for offset <= len(stripped) {
+				index := strings.Index(stripped[offset:], needle)
+				if index < 0 {
+					break
+				}
+				start := offset + index
+				ranges = append(ranges, envMatchRange{
+					start: start,
+					end:   start + len(needle),
+				})
+				offset = start + len(needle)
+			}
+		}
+
+		positionSet := map[int]struct{}{}
+		for index, candidate := range ranges {
+			contained := false
+			for otherIndex, other := range ranges {
+				if index == otherIndex {
+					continue
+				}
+				if other.start <= candidate.start &&
+					other.end >= candidate.end &&
+					(other.start != candidate.start ||
+						other.end != candidate.end) {
+					contained = true
+					break
+				}
+			}
+			if !contained {
+				positionSet[candidate.start] = struct{}{}
+			}
+		}
+		positions := make([]int, 0, len(positionSet))
+		for position := range positionSet {
+			positions = append(positions, position)
+		}
+		sort.Ints(positions)
+
+		split := len(positions) > 1 && positions[0] == 0
+		segments := make([]string, 0, len(positions))
+		if split {
+			for index, position := range positions {
+				end := len(stripped)
+				if index+1 < len(positions) {
+					end = positions[index+1]
+				}
+				segment := stripped[position:end]
+				segments = append(segments, segment)
+				if index+1 < len(positions) {
+					_, value, found := strings.Cut(segment, "=")
+					if !found || looksLikeStructuredEnvValue(value) {
+						split = false
+					}
+				}
+			}
+		}
+		if split {
+			for _, segment := range segments {
+				if part := strings.TrimSpace(segment); part != "" {
+					sanitized = append(sanitized, part+"\n")
+				}
+			}
+			continue
+		}
+		sanitized = append(sanitized, stripped+"\n")
+	}
+	return sanitized
+}
+
+func looksLikeStructuredEnvValue(value string) bool {
+	if strings.Contains(value, "://") ||
+		strings.Contains(value, "?") ||
+		strings.Contains(value, "&") {
+		return true
+	}
+	return strings.IndexFunc(value, unicode.IsSpace) >= 0
+}
+
+func sanitizeEnvData(data []byte) ([]byte, int, bool) {
+	text := strings.ToValidUTF8(
+		string(bytes.TrimPrefix(data, []byte{0xef, 0xbb, 0xbf})),
+		"\uFFFD",
+	)
+	original := splitEnvLines([]byte(text))
+	sanitized := sanitizeEnvLines(original)
+	if equalStringSlices(original, sanitized) {
+		return []byte(strings.Join(original, "")), 0, false
+	}
+	fixes := len(sanitized) - len(original)
+	if fixes < 0 {
+		fixes = -fixes
+	}
+	if fixes == 0 {
+		for index := range original {
+			if original[index] != sanitized[index] {
+				fixes++
+			}
+		}
+	}
+	return []byte(strings.Join(sanitized, "")), fixes, true
+}
+
+func equalStringSlices(left, right []string) bool {
+	if len(left) != len(right) {
+		return false
+	}
+	for index := range left {
+		if left[index] != right[index] {
+			return false
+		}
+	}
+	return true
+}
+
+func (d *Document) sanitizeEnvFile() (int, error) {
+	path := filepathForDocumentEnv(d)
+	if path == "" {
+		return 0, nil
+	}
+	data, err := os.ReadFile(path)
+	if os.IsNotExist(err) {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, err
+	}
+	sanitized, fixes, changed := sanitizeEnvData(data)
+	if !changed {
+		return 0, nil
+	}
+	if err := writePrivateAtomic(path, sanitized); err != nil {
+		return 0, err
+	}
+	values, warnings := parseEnv(sanitized)
+	d.userEnv = values
+	for _, warning := range warnings {
+		d.warnings = append(d.warnings, path+": "+warning)
+	}
+	return fixes, nil
+}
+
+func filepathForDocumentEnv(d *Document) string {
+	if d == nil || strings.TrimSpace(d.Path) == "" {
+		return ""
+	}
+	return filepath.Join(filepath.Dir(d.Path), EnvFileName)
+}

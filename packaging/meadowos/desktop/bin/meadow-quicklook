@@ -1,0 +1,6 @@
+#!/usr/bin/python3
+"""Run the installed native Meadow file preview."""
+from pathlib import Path
+import runpy
+
+runpy.run_path(str(Path(__file__).resolve().parents[1] / "quicklook.py"), run_name="__main__")

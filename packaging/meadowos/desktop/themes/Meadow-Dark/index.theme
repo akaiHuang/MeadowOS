@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=X-GNOME-Metatheme
+Name=Meadow Dark
+Comment=Meadow graphite surfaces and green actions
+
+[X-GNOME-Metatheme]
+GtkTheme=Meadow-Dark
+IconTheme=Meadow
+CursorTheme=Adwaita

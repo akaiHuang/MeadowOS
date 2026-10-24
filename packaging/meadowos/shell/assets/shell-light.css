@@ -1,0 +1,46 @@
+@define-color chat_c_composer rgba(250,255,251,.86);
+/* Airy Meadow: cool neutral white glass and the brand's emerald accent. */
+@define-color shell_bg #f8fafb;
+@define-color shell_card #fcfdfe;
+@define-color shell_hover rgba(42,61,56,.065);
+@define-color shell_fg #26332f;
+@define-color shell_muted #687772;
+@define-color shell_border rgba(45,67,59,.09);
+@define-color shell_action #09bd79;
+@define-color shell_action_fg #ffffff;
+window.shell-panel { background: #f5f8fa; }
+window.shell-panel.shell-composited { background: rgba(250,252,254,.60); }
+window.shell-dock { background: #f9fbfd; border-color: rgba(255,255,255,.72); }
+window.shell-dock.shell-composited {
+  background: rgba(250,253,255,.64); border-color: rgba(255,255,255,.72);
+  box-shadow: inset 0 1px rgba(255,255,255,.56);
+}
+.shell-panel button:checked, .shell-dock button.active { background: rgba(36,147,113,.09); }
+.shell-panel .shell-busy-indicator { color: #09ad70; }
+.shell-dock .dock-indicator { color: #09ad70; }
+window.shell-chat { background: #f9fbfd; }
+window.shell-chat decoration {
+  border-color: rgba(255,255,255,.74);
+  box-shadow: 0 10px 32px rgba(44,65,49,.12);
+}
+.chat-window-toolbar { background: #f9fbfd; }
+window.shell-chat.shell-composited .chat-window-toolbar { background: rgba(252,254,255,.96); }
+.chat-timeline { background: #f9fbfd; }
+.chat-status-dot { color: #a0aaa5; }
+.chat-status-dot.ready { color: #10b77a; }
+.chat-bubble { border-color: rgba(255,255,255,.40); }
+.chat-bubble.user { background: rgba(224,242,229,.88); }
+.chat-bubble.assistant { background: rgba(255,255,255,.78); }
+.chat-composer { background: #f7fafc; }
+.chat-input-shell { background: rgba(255,255,255,.84); border-color: rgba(255,255,255,.52); }
+.chat-composer textview { background: transparent; }
+.chat-composer button.send:disabled { background: rgba(9,189,121,.26); color: rgba(255,255,255,.90); }
+.chat-composer button.stop { color: #b56a50; background: rgba(177,108,79,.08); }
+.chat-error { color: #a64b31; }
+.chat-system-notice.tool-failed .chat-system { color: #a64b31; }
+.chat-permission { background: rgba(255,242,211,.65); border-color: rgba(157,124,57,.16); }
+.shell-launcher searchentry { background: rgba(255,255,255,.60); }
+window.chat-variant-c .chat-bubble.assistant { background: rgba(255,255,255,.72); border-color: rgba(255,255,255,.5); }
+window.chat-variant-c .chat-bubble.user { background: rgba(211,237,221,.85); }
+window.chat-variant-c .meadow-glass-surface .chat-composer { background: rgba(250,255,251,.86); border-color: rgba(109,144,120,.20); }
+window.chat-variant-c .chat-input-shell { background: transparent; border: 0; }

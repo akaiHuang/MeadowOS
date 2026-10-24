@@ -1,0 +1,57 @@
+#modelModal.compact-model-picker .mm-harness {
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--border);
+  color: var(--fg);
+}
+.mm-harness .mh-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mm-harness .mh-label {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+.mm-harness select {
+  min-width: 0;
+  max-width: 146px;
+  padding: 4px 3px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--fg);
+  font: inherit;
+  font-size: 11px;
+}
+.mm-harness select:focus-visible,
+.mm-harness button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.mm-harness select:disabled { opacity: .65; }
+.mm-harness :is(.mh-next, .mh-active, .mh-note, .mh-error) {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.mm-harness .mh-note { color: var(--muted); }
+.mm-harness .mh-active { color: var(--primary2); }
+.mm-harness .mh-error { color: var(--destructive, #ee8383); }
+.mm-harness .mh-retry {
+  margin-top: 6px;
+  padding: 3px 6px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--fg);
+  font-size: 11px;
+}
+
+#evoControls {display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 4px 12px;font-size:12px;color:var(--muted);}
+#evoControls[hidden] {display:none;}
+#evoControls select,#evoControls button {font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 8px;}
+#evoControls [role=status][data-running=true]::before {content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:#80e6aa;margin-right:5px;}
+#evoControls select:focus-visible,#evoControls button:focus-visible {outline:2px solid var(--primary);outline-offset:2px;}

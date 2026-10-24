@@ -1,0 +1,64 @@
+/* One real top-level window; toolbar and body occupy separate layout rows. */
+window.meadow-hover-window,
+window.meadow-hover-window.shell-composited {
+  background: transparent; border: 0; border-radius: 16px; box-shadow: none;
+}
+window.meadow-hover-window decoration {
+  margin: 0; border: 0; border-radius: 16px; background: transparent;
+  box-shadow: none;
+}
+.meadow-hover-frame { background: transparent; border-radius: 16px; }
+.meadow-hover-content { background-color: @theme_bg_color; border-radius: 16px; }
+/* Native glass paints captured lower windows before sharp child widgets. */
+.meadow-glass-surface,
+.meadow-settings .meadow-hover-content,
+.meadow-quicklook .meadow-hover-content,
+.meadow-welcome .meadow-hover-content { background: transparent; }
+.meadow-chrome-visible .meadow-hover-content { border-top-left-radius: 0; border-top-right-radius: 0; }
+.meadow-hover-toolbar {
+  background-color: @theme_bg_color; color: @theme_fg_color;
+  border: 0; border-radius: 16px 16px 0 0; padding: 0;
+  box-shadow: inset 0 -1px alpha(@theme_fg_color,.08);
+}
+.meadow-hover-composited .meadow-hover-toolbar {
+  background-color: alpha(@theme_bg_color,.94);
+  box-shadow: inset 0 1px alpha(white,.22);
+}
+.meadow-hover-toolbar .meadow-window-button {
+  min-width: 18px; min-height: 26px; padding: 0; margin: 0;
+  background: transparent; border: 0; border-radius: 11px; box-shadow: none;
+}
+.meadow-window-dot { min-width: 12px; min-height: 12px; border-radius: 100%; padding: 0; }
+.meadow-window-dot.close { background: #ff6058; }
+.meadow-window-dot.minimize { background: #ffbd2e; }
+.meadow-window-dot.maximize { background: #28c840; }
+.meadow-window-glyph { opacity: 0; color: #473a28; font-size: 9px; font-weight: 700; }
+.meadow-window-button:hover .meadow-window-glyph,
+.meadow-window-button:focus .meadow-window-glyph { opacity: .90; }
+.meadow-window-button:focus { outline: 1px solid alpha(@theme_fg_color,.45); outline-offset: 1px; }
+.meadow-window-button:disabled { opacity: .4; }
+.meadow-hover-toolbar .meadow-window-title { font-size: 12px; font-weight: 500; color: alpha(@theme_fg_color,.72); }
+.meadow-hover-toolbar .meadow-window-pin {
+  min-width: 26px; min-height: 26px; padding: 0; margin: 0;
+  background: transparent; border: 0; border-radius: 8px; box-shadow: none; color: @theme_fg_color;
+}
+.meadow-window-pin:hover { background: alpha(@theme_fg_color,.07); }
+.meadow-window-pin:checked { background: alpha(@theme_selected_bg_color,.16); color: @theme_selected_bg_color; }
+.meadow-window-pin image { padding: 0; margin: 0; -gtk-icon-shadow: none; -gtk-icon-transform: none; }
+.meadow-chrome-square, .meadow-chrome-square decoration,
+.meadow-chrome-square .meadow-hover-frame,
+.meadow-chrome-square .meadow-hover-content,
+.meadow-chrome-square .meadow-hover-toolbar { border-radius: 0; }
+window.meadow-hover-window:not(.meadow-hover-composited) { background-color: @theme_bg_color; }
+window.meadow-hover-window:not(.meadow-hover-composited),
+.meadow-hover-window:not(.meadow-hover-composited) decoration,
+.meadow-hover-window:not(.meadow-hover-composited) .meadow-hover-frame,
+.meadow-hover-window:not(.meadow-hover-composited) .meadow-hover-content,
+.meadow-hover-window:not(.meadow-hover-composited) .meadow-hover-toolbar { border-radius: 0; }
+/* Chat keeps its existing material; whole-window opacity is never changed. */
+window.shell-chat .meadow-hover-content { background-color: @shell_bg; }
+window.shell-chat.shell-composited .meadow-hover-content { background-color: alpha(@shell_bg,.78); }
+window.shell-chat .meadow-hover-toolbar { background-color: @shell_bg; }
+window.shell-chat.shell-composited .meadow-hover-toolbar { background-color: alpha(@shell_bg,.94); }
+
+.meadow-window-button .meadow-control-image { min-width: 12px; min-height: 12px; padding: 0; margin: 0; opacity: 1; -gtk-icon-shadow: none; -gtk-icon-transform: none; }

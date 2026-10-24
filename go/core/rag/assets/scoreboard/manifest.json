@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "title": "Persistent leaderboard / 本機排行榜",
+  "description": "Reusable dependency-free JavaScript component, not a whole game. Adds top-five numeric scores in localStorage, clear control, and safe text rendering. Listens to game-score events with detail {score,finished:true}; works with curated Snake and Maze. Can also call returned API.record(score).",
+  "tags": [
+    "排行榜",
+    "leaderboard",
+    "scoreboard",
+    "top five",
+    "localStorage",
+    "game",
+    "snake",
+    "pacman",
+    "component",
+    "組合"
+  ],
+  "kind": "component",
+  "entrypoint": "scoreboard.js",
+  "usage": "Copy scoreboard.js alongside your HTML. Load after game code and call Scoreboard.attach({selector:\"main\",key:\"my-game-scores\",limit:5}). Record only finished games. API: record(score), clear(), scores(), destroy().",
+  "license": "MIT; authored for Meadow, 2026",
+  "source": "Meadow curated examples, locally authored 2026-10-02",
+  "verification": "Chromium fixture acceptance 2026-10-02: controls/persistence/offline and canonical game captures exercised. Full-board wins and physical Safari unverified. Fixture evidence is not future model-delivery evidence.",
+  "files": [
+    {
+      "path": "scoreboard.js",
+      "sha256": "962a3945f640efd48e418e7c1348ae9eaf0408a8c7ebfcb458d52d24b11ac086",
+      "bytes": 2056
+    }
+  ],
+  "key": "scoreboard",
+  "related": [
+    "snake",
+    "maze"
+  ]
+}

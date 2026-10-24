@@ -1,0 +1,133 @@
+/* Answer typography follows Meadow's existing light/dark theme tokens. */
+.amd.is-rich-answer {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+}
+.is-rich-answer [data-meadow-markdown] { min-width: 0; max-width: 100%; }
+.is-rich-answer [data-meadow-markdown] > :first-child { margin-top: 0; }
+.is-rich-answer [data-meadow-markdown] > :last-child { margin-bottom: 0; }
+.is-rich-answer p { margin: .65em 0 1em; }
+.amd.is-rich-answer :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--fg);
+  font-weight: 650;
+  line-height: 1.45;
+  margin: 1.4em 0 .6em;
+}
+.amd.is-rich-answer h1 { font-size: 1.5em; }
+.amd.is-rich-answer h2 { font-size: 1.28em; }
+.amd.is-rich-answer h3 { font-size: 1.12em; }
+.amd.is-rich-answer :is(h4, h5, h6) { font-size: 1em; }
+.is-rich-answer strong { color: var(--fg); font-weight: 650; }
+.is-rich-answer :is(ul, ol) { padding-left: 1.5em; margin: .6em 0 1em; }
+.is-rich-answer li { margin: .35em 0; padding-left: .15em; }
+.is-rich-answer li::marker { color: var(--muted); }
+.is-rich-answer li > p { margin: .25em 0; }
+.is-rich-answer blockquote {
+  margin: 1em 0;
+  padding: 8px 14px;
+  border-left: 3px solid var(--primary-dim);
+  background: var(--secondary);
+  color: var(--muted);
+}
+.is-rich-answer blockquote p { margin: .2em 0; }
+.is-rich-answer a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-color: var(--primary-dim);
+  text-underline-offset: 3px;
+}
+.amd.is-rich-answer :not(pre) > code {
+  padding: .12em .34em;
+  border-radius: var(--r-sm);
+  background: var(--secondary);
+  color: var(--fg);
+  font: .86em var(--mono);
+}
+.is-rich-answer .meadow-code-block {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  margin: 1em 0;
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  background: var(--secondary);
+}
+.is-rich-answer .meadow-code-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 10px 5px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+}
+.is-rich-answer .meadow-code-bar > span { min-width: 0; overflow-wrap: anywhere; }
+.amd.is-rich-answer pre {
+  display: block;
+  max-width: 100%;
+  margin: 0;
+  padding: 14px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  white-space: pre;
+  word-break: normal;
+  overflow-wrap: normal;
+  font: 13px/1.65 var(--mono);
+  color: var(--fg);
+}
+.amd.is-rich-answer pre code { white-space: pre; font: inherit; }
+.is-rich-answer .meadow-copy {
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+.is-rich-answer .meadow-copy:hover { color: var(--fg); background: var(--accent); }
+.is-rich-answer .meadow-copy[aria-busy="true"] { cursor: progress; }
+.is-rich-answer .meadow-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  margin: 1em 0;
+  border: 1px solid var(--border2);
+  border-radius: var(--r-md);
+}
+.amd.is-rich-answer table {
+  display: table;
+  width: 100%;
+  max-width: none;
+  overflow: visible;
+  border-collapse: collapse;
+  font-size: .92em;
+}
+.is-rich-answer :is(th, td) {
+  min-width: 8em;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.is-rich-answer th { color: var(--fg); background: var(--secondary); font-weight: 600; }
+.is-rich-answer tbody tr:last-child td { border-bottom: 0; }
+.is-rich-answer hr { border: 0; border-top: 1px solid var(--border2); margin: 1.5em 0; }
+.is-rich-answer :is(pre, .meadow-table-scroll, .meadow-copy, a):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+@media (pointer: coarse) {
+  .is-rich-answer .meadow-copy { min-height: 44px; }
+}

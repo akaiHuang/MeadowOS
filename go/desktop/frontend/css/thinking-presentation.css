@@ -1,0 +1,67 @@
+/* Keep the existing conversation typography, with a touch-sized disclosure. */
+details.think.thinking-receipt {
+  min-width: 0;
+  max-width: 100%;
+  margin: 10px 0;
+}
+
+details.think.thinking-receipt summary {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
+}
+
+details.think.thinking-receipt summary::before {
+  content: '›';
+  font-size: 18px;
+  flex: 0 0 auto;
+  transform: rotate(0deg);
+}
+
+details.think.thinking-receipt[open] summary::before {
+  transform: rotate(90deg);
+}
+
+details.think.thinking-receipt summary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+details.think.thinking-receipt .thinking-hint {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+details.think.thinking-receipt .thinking-text {
+  max-width: 100%;
+  margin: 0;
+  padding-bottom: 8px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  font-family: inherit;
+  font-style: normal;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+details.think.thinking-receipt.live .tx::after {
+  content: none;
+}
+
+@media (max-width: 768px) {
+  details.think.thinking-receipt summary {
+    min-height: 44px;
+  }
+}

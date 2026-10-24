@@ -1,0 +1,6 @@
+{
+  "type": "static_web_artifact",
+  "title": "貪食蛇遊戲",
+  "keywords": ["貪食蛇", "snake", "貪吃蛇", "蛇"],
+  "content_file": "snake.html"
+}

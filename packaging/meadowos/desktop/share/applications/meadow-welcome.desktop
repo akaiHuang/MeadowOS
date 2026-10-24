@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=MeadowOS
+Name[zh_TW]=Meadow 工作桌面
+Comment=Open Meadow and manage this AI workstation
+Comment[zh_TW]=開啟 Meadow 與這台 AI 工作機的桌面工具
+Exec=/opt/meadow/bin/meadow-welcome
+Icon=meadow
+Terminal=false
+Categories=Utility;
+StartupNotify=true
+StartupWMClass=meadow-welcome

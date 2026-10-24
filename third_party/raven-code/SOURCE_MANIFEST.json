@@ -1,0 +1,406 @@
+{
+  "manifest_version": 1,
+  "project": "Raven / Raven-Code",
+  "upstream": "https://github.com/EverMind-AI/Raven",
+  "commit": "3632e6040c7038a60ec418ce39ccae185c72c19f",
+  "scope": "Native Go implementation of Raven-Code execution mechanisms; not vendored Python Host, EverOS service or Evolver",
+  "license": "Apache-2.0; upstream transitive notices retained",
+  "hash_algorithm": "SHA256",
+  "files": [
+    {
+      "path": "agents/raven-code/run.py",
+      "sha256": "7e5990c66c731e8d7ae29c3a3ae6bc40d886985252e1ecce6c6256f94d0ebbf8",
+      "bytes": 41686,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/run.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "agents/raven-code/config.json",
+      "sha256": "3b732cc369afbdee37cce626d729e2b04e404c3696b8ef8268163206d02ad344",
+      "bytes": 1935,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/config.json",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "agents/raven-code/soul.md",
+      "sha256": "f08dd23527ebb161855de648aaefe6087c9f306e9c3577010663196937dfc78d",
+      "bytes": 329,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/soul.md",
+      "use": "embedded_unmodified_prompt_asset",
+      "meadow_asset": "go/core/agent/raven_prompts/soul.md"
+    },
+    {
+      "path": "agents/raven-code/plugins/code-flow/raven-plugin.toml",
+      "sha256": "220748f3823cc42b24aaf4c64f9c421967ad5ab84898c5826cdd7dc2471532e0",
+      "bytes": 3369,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/plugins/code-flow/raven-plugin.toml",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "agents/raven-code/plugins/code-flow/prompts/CODE_CONDUCT_default.md",
+      "sha256": "a62a5015a90ff849d879752c5eace92454b522756373f30c45e2777af1d545af",
+      "bytes": 6059,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/plugins/code-flow/prompts/CODE_CONDUCT_default.md",
+      "use": "embedded_unmodified_prompt_asset",
+      "meadow_asset": "go/core/agent/raven_prompts/CODE_CONDUCT_default.md"
+    },
+    {
+      "path": "agents/raven-code/plugins/code-flow/prompts/CODE_CONDUCT_anthropic.md",
+      "sha256": "9f06bb04768009042ffa1eaa68b4c3497aee7a50b73435b2377194b1b75ade40",
+      "bytes": 8371,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/plugins/code-flow/prompts/CODE_CONDUCT_anthropic.md",
+      "use": "embedded_unmodified_prompt_asset",
+      "meadow_asset": "go/core/agent/raven_prompts/CODE_CONDUCT_anthropic.md"
+    },
+    {
+      "path": "agents/raven-code/plugins/code-flow/prompts/CODE_DISCIPLINE.md",
+      "sha256": "fe7c1f8dcbcf7e205a9755474021c2ffa317568f6847eb83a4967ba684f3e316",
+      "bytes": 4643,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/plugins/code-flow/prompts/CODE_DISCIPLINE.md",
+      "use": "embedded_unmodified_prompt_asset",
+      "meadow_asset": "go/core/agent/raven_prompts/CODE_DISCIPLINE.md"
+    },
+    {
+      "path": "agents/raven-code/plugins/code-flow/prompts/TOOLS_CODE.md",
+      "sha256": "aa1dba01032b0de823137aba46a45a71883b1b0c8f3045c477b62b97be26488d",
+      "bytes": 8007,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/plugins/code-flow/prompts/TOOLS_CODE.md",
+      "use": "embedded_unmodified_prompt_asset",
+      "meadow_asset": "go/core/agent/raven_prompts/TOOLS_CODE.md"
+    },
+    {
+      "path": "agents/raven-code/plugins/code-flow/code_flow/flow.py",
+      "sha256": "0d39647a080375720ebf7c46746c84f609ac69283b09d3f6ca9e44a8644464ab",
+      "bytes": 14215,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/plugins/code-flow/code_flow/flow.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "agents/raven-code/plugins/code-flow/code_flow/sessions.py",
+      "sha256": "3194df5c15b288e372c2502d0ec0a5bc4c139e668e7e64ba0ec9b7931ede2925",
+      "bytes": 4914,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/plugins/code-flow/code_flow/sessions.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "agents/raven-code/plugins/code-flow/code_flow/system_context.py",
+      "sha256": "0aa9a7e57e69541e20b773d2792aa41881beb9a694d2de33ab56ebcf4dde0860",
+      "bytes": 4614,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/plugins/code-flow/code_flow/system_context.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "agents/raven-code/plugins/code-flow/code_flow/manifest.py",
+      "sha256": "95bcbf3a9f9b2298183b80ff0c1ee28bf2314391c9f95125a448cc8daece584b",
+      "bytes": 6626,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/plugins/code-flow/code_flow/manifest.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "agents/raven-code/plugins/code-flow/code_flow/config.py",
+      "sha256": "0dc16a0ce06ae8f6768c033b02e07315873c897d5411ff8b1b368150955bbd8d",
+      "bytes": 3320,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/plugins/code-flow/code_flow/config.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "agents/raven-code/plugins/code-flow/code_flow/tools/filesystem.py",
+      "sha256": "0356e7db3a4bf1a7102af5bbe48d9f80a39aac17a00215599c600925cb1be8b6",
+      "bytes": 21207,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/plugins/code-flow/code_flow/tools/filesystem.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "agents/raven-code/plugins/code-flow/code_flow/tools/read_state.py",
+      "sha256": "79b1913b18629cea6d4a64fa1d2c44a5ec0be7b633748f3ba8c55407e608f736",
+      "bytes": 3794,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/plugins/code-flow/code_flow/tools/read_state.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "agents/raven-code/plugins/code-flow/code_flow/tools/exec.py",
+      "sha256": "ac1b8bd03e78503e6044090300d86e41967741f761904e6458528613cfe3573d",
+      "bytes": 13766,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/plugins/code-flow/code_flow/tools/exec.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "agents/raven-code/plugins/code-flow/code_flow/tools/todo.py",
+      "sha256": "74ed6d05f4ef49f270d9362e69dfb327f6b5c797376d4722d794bf4b960e4b45",
+      "bytes": 29800,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/plugins/code-flow/code_flow/tools/todo.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "agents/raven-code/plugins/code-flow/code_flow/completion_gates.py",
+      "sha256": "559860a52935b20c7cc5adaf7f702b954c52c03554e53d3f0dad3390c2b8bec9",
+      "bytes": 9507,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/agents/raven-code/plugins/code-flow/code_flow/completion_gates.py",
+      "use": "excluded_unwired_helper_reference"
+    },
+    {
+      "path": "raven/core/runtime.py",
+      "sha256": "2a047ac893035586b6f4781802739478c5941e8e77aacc7dfd9f44071469fc38",
+      "bytes": 18052,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/core/runtime.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/contracts/harness.py",
+      "sha256": "08dfa5e139da59591ba633a63ac8a46834ec47ff21e2a4e2cbbd45d40fab0997",
+      "bytes": 17842,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/contracts/harness.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/contracts/participant.py",
+      "sha256": "e4733deb4c89f8995197c9328bfcf52d126a3557a8511b7dd3d37669ba71459c",
+      "bytes": 11967,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/contracts/participant.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/contracts/loop_hooks.py",
+      "sha256": "9c215a081cc305d8c54be7aa7effc46abcb06982cab199691ea5a34b60ba4406",
+      "bytes": 20089,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/contracts/loop_hooks.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/harness/__init__.py",
+      "sha256": "7127ce92032b3530ce5fc1f6a091d8ec2406853c6b20653018f44bedb291fc5f",
+      "bytes": 3299,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/harness/__init__.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/harness/memory.py",
+      "sha256": "583cb324482ca54f0cfffa2743fbed705a459818dcaf70bb74ee98c6ab93821d",
+      "bytes": 19881,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/harness/memory.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/harness/planning.py",
+      "sha256": "0f8a4cc45f9198d411f52f375e05922b3c6a26f03e5cd96a99a1c03d570b4562",
+      "bytes": 2538,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/harness/planning.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/harness/capability.py",
+      "sha256": "2512f92ed2e7cdcb295393a3de183c3c6e14159d84ac3ada12a60a1fff2372f9",
+      "bytes": 2095,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/harness/capability.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/harness/action.py",
+      "sha256": "4c55a56f0cf95fc3473a848f9e88633697604fc0c6489b66c272a7668e33a2ef",
+      "bytes": 5017,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/harness/action.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/harness/participants.py",
+      "sha256": "a044315b53a8065736dec2978e0305bc6cc5d528bab57bc148336d865149ac60",
+      "bytes": 11083,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/harness/participants.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/loop/main.py",
+      "sha256": "99be7bb68aa63591b2931751ff97d41867961f1468ba5def3b032e9b0e3d1390",
+      "bytes": 45795,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/loop/main.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/loop/turn_path.py",
+      "sha256": "4bd430c9c5b0f89c387774a3be895e70468307ea53df7f97c71658acc2243c16",
+      "bytes": 184347,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/loop/turn_path.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/loop/no_progress.py",
+      "sha256": "000a29c28f1b120a3ec746db66a2e9509c604c524687c0d8f7bdc401b1a653bc",
+      "bytes": 16704,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/loop/no_progress.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/loop/failure_streak.py",
+      "sha256": "9426def3383d35b859f8f01aa1a2834a148972df744c794256b739ef86d3b15c",
+      "bytes": 8786,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/loop/failure_streak.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/loop/recovery.py",
+      "sha256": "dc222ae724cc7cbd61f6bfafc01d2fecc1be5af02601da749c1cac17e4ff8867",
+      "bytes": 21029,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/loop/recovery.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/loop/dead_end.py",
+      "sha256": "32189aeff73394907a579a91ea454d3142156dc8aff7ca76d04f6d7c41cbc087",
+      "bytes": 8509,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/loop/dead_end.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/loop/first_call.py",
+      "sha256": "ce8dedac0c9ee757ba95191c1a60e10f73d20a0f6f9804ac699474eb4a0beadf",
+      "bytes": 4923,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/loop/first_call.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/loop/checkpoint.py",
+      "sha256": "f1b8a1143d6244e6a75dac24dc1b5720b204f90d8aa028c8328fbc486754108d",
+      "bytes": 31837,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/loop/checkpoint.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/window/compaction.py",
+      "sha256": "e41cfc58ca6f4d0a6409d3624f909c3f489b97ffaf8eb01eb7ab81b04183d1b4",
+      "bytes": 10474,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/window/compaction.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/agent/window/shrink.py",
+      "sha256": "b68eeaad4fe603062bfb1d8107cf8599e2c7e9b27981f807d5bc853e246d50df",
+      "bytes": 18323,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/agent/window/shrink.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/context_engine/factory.py",
+      "sha256": "273e9f663e0ddc23fcd17773f3b7789f05dd95fa7ed2d318d718a44242126b71",
+      "bytes": 13055,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/context_engine/factory.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/context_engine/assembler.py",
+      "sha256": "46163582388a5fa10f653da4bb2b3699deace0627003e83fada52a8333b5d239",
+      "bytes": 14087,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/context_engine/assembler.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/context_engine/segments/curator.py",
+      "sha256": "91ff4b65ea42ccbf64f96716ca9bf8639d6d016b9f9b1b6b9966e85e4caf1414",
+      "bytes": 16510,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/context_engine/segments/curator.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/config/raven.py",
+      "sha256": "8b40f51208e8d0715e5a1752786a4e72e20e66ce7e9cf0792a4ba7601cffd3e0",
+      "bytes": 73413,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/config/raven.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "548514ced381fbde2164196f44680dbd27593e23e0773fba12b42bddb1ce6437",
+      "bytes": 10172,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/LICENSE",
+      "use": "retained_unmodified_license_or_notice",
+      "meadow_asset": "third_party/raven-code/LICENSE"
+    },
+    {
+      "path": "NOTICES.md",
+      "sha256": "0f737a15c3bb752380fbea7ffe0f04aff167ce1c0e556a5e2ea14864f2708bd3",
+      "bytes": 4706,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/NOTICES.md",
+      "use": "retained_unmodified_license_or_notice",
+      "meadow_asset": "third_party/raven-code/NOTICES.md"
+    },
+    {
+      "path": "LICENSES/Apache-2.0-agentscope.txt",
+      "sha256": "7b90ec5b11366b1bfda57b8a719c22f6339440a6127da55294e1d7ef7511a158",
+      "bytes": 20638,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/LICENSES/Apache-2.0-agentscope.txt",
+      "use": "retained_unmodified_license_or_notice",
+      "meadow_asset": "third_party/raven-code/LICENSES/Apache-2.0-agentscope.txt"
+    },
+    {
+      "path": "LICENSES/MIT-cherry-studio.txt",
+      "sha256": "5dc59ec550176e9e3b52fac33c88480a937367b3cbe6b7258437b1a4a7f20a63",
+      "bytes": 1076,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/LICENSES/MIT-cherry-studio.txt",
+      "use": "retained_unmodified_license_or_notice",
+      "meadow_asset": "third_party/raven-code/LICENSES/MIT-cherry-studio.txt"
+    },
+    {
+      "path": "LICENSES/MIT-hermes-agent.txt",
+      "sha256": "821556e6336796450ab852d375117b48a4887e71d255794fd6318d99982a5ab6",
+      "bytes": 1070,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/LICENSES/MIT-hermes-agent.txt",
+      "use": "retained_unmodified_license_or_notice",
+      "meadow_asset": "third_party/raven-code/LICENSES/MIT-hermes-agent.txt"
+    },
+    {
+      "path": "LICENSES/MIT-ink.txt",
+      "sha256": "de84e62e27d9a970b50446d0af1f713c1439a4180faa098adfa5da94f5158a55",
+      "bytes": 1202,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/LICENSES/MIT-ink.txt",
+      "use": "retained_unmodified_license_or_notice",
+      "meadow_asset": "third_party/raven-code/LICENSES/MIT-ink.txt"
+    },
+    {
+      "path": "LICENSES/MIT-lobe-icons.txt",
+      "sha256": "add9d7531d1b21646317a8958e38fc727506fa39d24bdecb44154d943c82753a",
+      "bytes": 1064,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/LICENSES/MIT-lobe-icons.txt",
+      "use": "retained_unmodified_license_or_notice",
+      "meadow_asset": "third_party/raven-code/LICENSES/MIT-lobe-icons.txt"
+    },
+    {
+      "path": "LICENSES/MIT-nanobot.txt",
+      "sha256": "6c52a1c3da58d01630f8f7ac6bd608e5cfce3e87d090eb8e9dc16c87616af495",
+      "bytes": 1103,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/LICENSES/MIT-nanobot.txt",
+      "use": "retained_unmodified_license_or_notice",
+      "meadow_asset": "third_party/raven-code/LICENSES/MIT-nanobot.txt"
+    },
+    {
+      "path": "LICENSES/README.md",
+      "sha256": "6f0cb4e379ddd706c83697f7ae8eb79b385850308faf28481284d50b46659e53",
+      "bytes": 3564,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/LICENSES/README.md",
+      "use": "retained_unmodified_license_or_notice",
+      "meadow_asset": "third_party/raven-code/LICENSES/README.md"
+    },
+    {
+      "path": "raven/context_engine/curator.py",
+      "sha256": "e22b8fdb874dfead4517efae48204daaf635d03f96cbdfcbe32c47e9f7d13050",
+      "bytes": 39448,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/context_engine/curator.py",
+      "use": "read_only_architecture_reference"
+    },
+    {
+      "path": "raven/context_engine/history_trimmer.py",
+      "sha256": "208297c319e9e5db784a94efebe9c6dc52ffc094931fd125f72846c8d541bef7",
+      "bytes": 16186,
+      "source_url": "https://github.com/EverMind-AI/Raven/blob/3632e6040c7038a60ec418ce39ccae185c72c19f/raven/context_engine/history_trimmer.py",
+      "use": "read_only_architecture_reference"
+    }
+  ],
+  "extracted_assets": [
+    {
+      "source_path": "raven/context_engine/segments/curator.py",
+      "source_symbol": "CuratorSegmentBuilder._system_prompt",
+      "meadow_asset": "go/core/agent/raven_prompts/CURATOR.md",
+      "sha256": "345415551d75740125dd79dedd3662e9de264724e89c9c4b0722c3916f267585",
+      "bytes": 681,
+      "extraction": "Exact UTF-8 bytes of upstream Python string constant; no added trailing newline; AST read only"
+    }
+  ]
+}

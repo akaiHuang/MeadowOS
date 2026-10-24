@@ -1,0 +1,26 @@
+services:
+  meadowos:
+    build:
+      context: .
+      args:
+        MEADOW_BUILD_VERSION: 0.1-dev
+        MEADOW_WINDOW_RESOURCES: "1"
+    image: meadowos:dev
+    ports:
+      - "127.0.0.1:60511:6080"
+      - "127.0.0.1:60531:6081"
+    volumes:
+      - meadow-home:/home/meadow
+    networks:
+      - meadowos
+    shm_size: 1gb
+    stop_grace_period: 45s
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  meadow-home:
+
+networks:
+  meadowos:
+    driver: bridge

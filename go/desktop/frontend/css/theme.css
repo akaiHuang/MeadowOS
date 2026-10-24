@@ -1,0 +1,128 @@
+/* Meadow light is an explicit app theme, not an image filter. Embedded user
+   pages, screenshots and attachments retain their original colors. */
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f4f0e7;
+  --background: var(--bg);
+  --app-chrome-background: var(--bg);
+  --card: #faf7f0;
+  --popover: var(--card);
+  --card2: #eae5da;
+  --bg-deep: #eee9de;
+  --fg: #242622;
+  --foreground: var(--fg);
+  --muted: #64675e;
+  --muted-foreground: var(--muted);
+  --faint: #77796f;
+  --border: rgba(36, 38, 34, .13);
+  --border2: rgba(36, 38, 34, .22);
+  --input: var(--border2);
+  --secondary: rgba(36, 38, 34, .05);
+  --accent: rgba(36, 38, 34, .055);
+  /* Brand fill and readable brand text are separate on cream. */
+  --action-fill: #cfed35;
+  --primary: #566b13;
+  --primary2: #526612;
+  --primary-foreground: #20251c;
+  --primary-dim: rgba(118, 142, 20, .3);
+  --ring: #6c831b;
+  --pink: #c42975;
+  --warn: #8c590d;
+  --warning: #ac6f13;
+  --err: #b83149;
+  --destructive: #bb3550;
+  --info: #27649a;
+  --info-foreground: #27649a;
+  --success: #48661c;
+  --success-foreground: #48661c;
+  --commercial-green: #536a12;
+  --commercial-green-strong: #455a0c;
+  --commercial-ink: var(--fg);
+  --commercial-muted: var(--muted);
+  --commercial-panel: var(--card);
+  --commercial-border: var(--border2);
+  --commercial-danger: var(--err);
+  --commerce-bg: var(--bg);
+  --commerce-panel: var(--card);
+  --commerce-panel-2: var(--card2);
+  --commerce-green: var(--action-fill);
+  --commerce-soft-green: var(--primary);
+  --commerce-coral: #e5448c;
+  --commerce-cream: var(--bg);
+  --commerce-cream-2: var(--bg-deep);
+  --commerce-ink: var(--fg);
+  --commerce-rule: var(--border2);
+}
+
+html[data-theme='light'] body::after { opacity: .015; }
+html[data-theme='light'] :is(#sidebar, #header, #rightPanel, #termDrawer) { background: var(--bg); }
+html[data-theme='light'] :is(.user-attachment, .preview-error, .composer-queue-more-menu) { background: var(--card); color: var(--fg); }
+html[data-theme='light'] :is(.qol-overlay, .commercial-overlay, .commercial-soft-overlay, #licenseGate) {
+  background: rgba(223, 218, 206, .8);
+}
+html[data-theme='light'] :is(.model-dialog, .model-modal, .mm-card, .qol-modal) { background: var(--card); color: var(--fg); }
+html[data-theme='light'] :is(.btn.primary, #sendBtn.armed, .settings-group button.primary, .commercial-primary, .commercial-pro-plan button) {
+  background: var(--action-fill); color: var(--primary-foreground); border-color: transparent;
+}
+html[data-theme='light'] :is(.btn.primary, #sendBtn.armed, .commercial-primary):hover { background: #c2df29; }
+html[data-theme='light'] #sendBtn:not(.armed) { color: var(--muted); background: var(--card2); }
+html[data-theme='light'] #sendBtn.steer { color: #fffdf8; background: var(--warn); }
+html[data-theme='light'] :is(.thread.active, .out-tab.active, .rptab.active) { border-color: var(--pink); }
+html[data-theme='light'] :is(.diff-hunk, .preview-info) { color: var(--info); }
+
+/* Settings loads after the shell stylesheet; root scoping wins without
+   blanket !important rules or changing disabled/hidden behavior. */
+html[data-theme='light'] .qol-overlay.settings-experience-overlay { background: rgba(223, 218, 206, .8); }
+html[data-theme='light'] .settings-experience-modal {
+  background: var(--card); border-color: var(--border2); box-shadow: 0 24px 80px rgba(36, 38, 34, .14);
+}
+html[data-theme='light'] .settings-experience-modal .qol-head { background: var(--card); }
+html[data-theme='light'] .settings-experience-nav { background: var(--bg-deep); }
+html[data-theme='light'] :is(.settings-experience-nav button, .settings-panel > .settings-intro, .settings-group-copy span, .settings-mode-option small, .settings-about-grid span) { color: var(--muted); }
+html[data-theme='light'] .settings-experience-nav button:is(:hover, :focus-visible, .active) { background: var(--card2); color: var(--fg); }
+html[data-theme='light'] :is(.settings-group > button, .settings-group-control > button, .settings-group > select, .settings-group-control > select, .settings-fixed-badge, .settings-state-badge, .settings-mode-option, .settings-about-grid > div, .settings-experience-modal .set-sec) {
+  color: var(--fg); background: var(--bg-deep); border-color: var(--border2);
+}
+html[data-theme='light'] :is(.settings-about-grid strong, .settings-group > button:hover:not(:disabled), .settings-group-control > button:hover:not(:disabled), .settings-group > select:hover:not(:disabled), .settings-group-control > select:hover:not(:disabled)) { color: var(--fg); }
+html[data-theme='light'] :is(.settings-inline-note, .settings-diagnostic-output) { color: var(--muted); background: var(--bg-deep); }
+html[data-theme='light'] .settings-group button.primary { color: var(--primary-foreground); background: var(--action-fill); }
+html[data-theme='light'] :is(.settings-group-copy span[data-tone='warn']) { color: var(--warn); }
+html[data-theme='light'] :is(.settings-group-copy span[data-tone='bad'], .settings-group button.danger, .settings-state-badge[data-state='error']) { color: var(--err); }
+html[data-theme='light'] .settings-state-badge[data-state='ready'] { color: var(--primary); }
+html[data-theme='light'] .settings-switch { background: #a4a89a !important; }
+html[data-theme='light'] .settings-switch[aria-checked='true'] { background: var(--action-fill) !important; }
+html[data-theme='light'] .settings-switch::after { background: #fffdf8; }
+html[data-theme='light'] .settings-switch[aria-checked='true']::after { background: #303728; }
+
+/* Account and licensing are still the same flow, with no auth changes. */
+html[data-theme='light'] :is(.commercial-dialog, .commercial-auth-experience, .commercial-auth-form, .commercial-sheet-head, .commercial-checkout-card, .commercial-pro-plan) { color: var(--fg); background: var(--card); }
+html[data-theme='light'] .commercial-auth-brand { background: #e6edb6; }
+html[data-theme='light'] :is(.commercial-auth-tabs, .commercial-field input, .commercial-field select, .commercial-field textarea, .commercial-account-popover, .commercial-device-row, .commercial-status-panel) { background: var(--bg-deep); color: var(--fg); border-color: var(--border2); }
+html[data-theme='light'] :is(.commercial-auth-tabs button, .commercial-auth-form > p, .commercial-consent, .commercial-checkout-card > small) { color: var(--muted) !important; }
+html[data-theme='light'] .commercial-auth-tabs button.active { background: var(--card); color: var(--fg) !important; }
+html[data-theme='light'] .commercial-auth-experience > .commercial-close { color: var(--fg); background: var(--card2); }
+html[data-theme='light'] .commercial-storefront-copy { background: #e6edb6; }
+html[data-theme='light'] .commercial-primary { background: var(--action-fill); color: var(--primary-foreground); }
+html[data-theme='light'] #licenseGate {
+  --license-green: #cfed35; --license-green-hover: #c2df29; --license-green-quiet: #e5ebc9;
+  --license-surface: #faf7f0; --license-surface-2: #eee9de;
+  --license-copy: #242622; --license-muted: #64675e; --license-faint: #77796f;
+}
+html[data-theme='light'] :is(.license-primary, #licenseReminderUpgrade) { color: var(--primary-foreground); background: var(--action-fill); }
+html[data-theme='light'] .license-plan-toggle { background: var(--bg-deep); }
+html[data-theme='light'] .license-plan-toggle button.active { background: #e5ebc9; color: var(--primary); }
+html[data-theme='light'] :is(.pal-card, .mm-model-submenu, #licenseTrialReminder) {
+  background: var(--card); color: var(--fg); border-color: var(--border2);
+  box-shadow: 0 18px 60px rgba(36, 38, 34, .16);
+}
+html[data-theme='light'] .pal-it.sel { background: var(--card2); }
+html[data-theme='light'] :is(.commercial-form-note, .commercial-legal) { color: var(--muted) !important; }
+html[data-theme='light'] :is(.commercial-field, .commercial-or) { color: var(--muted); }
+html[data-theme='light'] :is(.commercial-or::before, .commercial-or::after) { background: var(--border2); }
+html[data-theme='light'] .commercial-auth-form .commercial-code { color: var(--primary); }
+html[data-theme='light'] #diffBody .dl.hunk { color: var(--info); }
+html[data-theme='light'] .pv-browser-status.warn { color: var(--warn); }
+html[data-theme='light'] .pv-browser-status.bad { color: var(--err); }
+html[data-theme='light'] .mm-submenu-head { color: var(--fg); }
+html[data-theme='light'] #modelModal.compact-model-picker .mic-lightning { color: var(--fg); }
+html[data-theme='light'] #modelInference .mic-lightning.on { color: var(--primary); }

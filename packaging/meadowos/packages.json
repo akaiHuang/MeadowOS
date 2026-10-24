@@ -1,0 +1,22 @@
+{
+  "os": "ubuntu",
+  "version_id": "26.04",
+  "architectures": ["arm64", "amd64"],
+  "packages": [
+    "bash", "git", "ca-certificates", "curl", "openssh-client", "sudo",
+    "coreutils-from-gnu", "python3", "python3-venv", "python3-pip",
+    "python3-xlib", "python3-gi", "python3-cairo", "python3-gi-cairo", "python3-pyatspi", "python3-numpy", "python3-pil", "gir1.2-gtk-3.0", "gir1.2-atspi-2.0", "gir1.2-wnck-3.0", "gir1.2-webkit2-4.1",
+    "poppler-utils", "ffmpeg", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-good", "gstreamer1.0-gtk3", "gstreamer1.0-libav",
+    "nodejs", "npm", "golang-go", "gcc", "g++", "make", "dpkg-dev", "libc6-dev", "libcrypt-dev", "pkg-config",
+    "libgtk-3-dev", "libthunarx-3-dev", "libwebkit2gtk-4.1-dev", "libxcb1", "libx11-6", "xclip",
+    "xserver-xorg", "xinit", "xfce4", "xfwm4", "picom", "libgl1-mesa-dri", "libglx-mesa0", "xfce4-settings", "xfce4-terminal", "lightdm",
+    "dbus-x11", "dbus-user-session", "libpam-systemd", "at-spi2-core", "libglib2.0-bin", "x11-utils", "x11-xserver-utils", "xdotool", "xdg-utils", "xdg-user-dirs", "fonts-noto-core", "fonts-noto-cjk"
+  ],
+  "optional_services": {
+    "postgresql": "not_installed_or_enabled_in_foundation",
+    "searxng": "not_installed_or_enabled_in_foundation",
+    "opengcua": "requires_architecture_specific_sdk_build_and_control_acceptance",
+    "browser": "requires_fixed_browser_build_and_control_acceptance",
+    "private_url": "not_provisioned_in_foundation"
+  }
+}

@@ -1,0 +1,6 @@
+#!/usr/bin/python3
+"""Installed symlinks resolve back to the self-contained desktop payload."""
+from pathlib import Path
+import runpy
+
+runpy.run_path(str(Path(__file__).resolve().parents[1] / "meadow_welcome.py"), run_name="__main__")

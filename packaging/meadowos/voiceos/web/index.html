@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="color-scheme" content="dark">
+    <title>Meadow VoiceOS</title>
+    <link rel="stylesheet" href="voiceos.css">
+    <script defer src="vendor/glaze-material.js"></script>
+    <script defer src="vendor/ink-orb.js"></script>
+    <script defer src="edge-light.js"></script>
+    <script defer src="voiceos.js"></script>
+  </head>
+  <body data-phase="idle" data-palette="meadow">
+    <main id="presence" aria-label="Meadow VoiceOS">
+      <div id="edge-fallback" aria-hidden="true"></div>
+      <canvas id="edge-light" aria-hidden="true"></canvas>
+      <button id="voice-orb" type="button" aria-label="開始語音對話" aria-describedby="voice-help">
+        <span class="ink-orb" data-style="glaze" data-renderer="fallback" aria-hidden="true">
+          <img class="glaze-poster" src="vendor/glaze-poster.webp" alt="" draggable="false">
+          <span class="poster-tint"></span>
+          <canvas id="glaze"></canvas>
+        </span>
+      </button>
+    </main>
+    <p id="voice-help" class="assistive">按一下開始或暫停語音。按 P 或滑鼠右鍵選擇釉色；按 Escape 回到桌面。</p>
+    <p id="voice-status" class="assistive" role="status" aria-live="polite"></p>
+    <section id="palette-panel" role="dialog" aria-modal="true" aria-labelledby="palette-title" hidden>
+      <div class="palette-heading">
+        <h1 id="palette-title">選擇釉色</h1>
+        <button id="palette-close" type="button" aria-label="關閉釉色選單">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 6 8 8M14 6l-8 8"/></svg>
+        </button>
+      </div>
+      <div id="palette-options" role="radiogroup" aria-label="釉色"></div>
+      <div id="work-actions" hidden aria-label="工作介面">
+        <button type="button" data-action="work-files">工作檔案</button>
+        <button type="button" data-action="work-tasks">待辦事項</button>
+        <button type="button" data-action="show-chat">對話</button>
+      </div>
+    </section>
+  </body>
+</html>

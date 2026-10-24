@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "title": "Maze arcade / 迷宮吃豆遊戲",
+  "description": "Complete offline single HTML Pac-Man-style maze game. Four ghosts, connected maze, pellets and power pellets, score, three lives, chase/flee, win/loss, restart/pause, keyboard WASD/arrows, touch/swipe, fullscreen. Deterministic advanceTime and render_game_to_text; emits game-score for optional scoreboard. 可複製完整 HTML 再修改。",
+  "tags": [
+    "pacman",
+    "pecman",
+    "maze",
+    "arcade",
+    "吃豆",
+    "小精靈",
+    "迷宮",
+    "貪食",
+    "html",
+    "game",
+    "離線",
+    "four ghosts"
+  ],
+  "kind": "application",
+  "entrypoint": "index.html",
+  "usage": "Copy index.html to your chosen output filename. No network or build required. Optional scoreboard.js can be loaded after the game script; Scoreboard.attach({selector:\"main\", key:\"maze-scores\"}) listens to game-score.",
+  "license": "MIT; authored for Meadow, 2026",
+  "source": "Meadow curated examples, locally authored 2026-10-02",
+  "verification": "Chromium fixture acceptance 2026-10-02: controls/persistence/offline and canonical game captures exercised. Full-board wins and physical Safari unverified. Fixture evidence is not future model-delivery evidence.",
+  "files": [
+    {
+      "path": "index.html",
+      "sha256": "a2e290662c4bc324ec408d15e20b18746d75690ce01455addeee81dcd277bf84",
+      "bytes": 9618
+    }
+  ],
+  "key": "maze",
+  "related": [
+    "scoreboard"
+  ]
+}

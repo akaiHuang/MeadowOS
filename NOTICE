@@ -1,0 +1,23 @@
+MeadowOS
+Copyright 2026 Meadow contributors.
+
+This standalone Linux desktop includes selected native Meadow Code components,
+original MeadowOS Shell/window/folder artwork, and separately licensed upstream
+components. Source is distributed under Apache-2.0 unless a file or accompanying
+notice states otherwise. Original copyright and license notices are retained.
+
+The Go module path remains github.com/hey-meadow/meadow-code/go for internal
+source compatibility. Building this repository does not fetch the private
+Meadow Code repository or require a Meadow account/local MLX model.
+
+Bundled upstream notices:
+- Raven prompt provenance and upstream components: third_party/raven-code/
+- Marked (MIT), DOMPurify (Apache-2.0 OR MPL-2.0), Leaflet (BSD-2-Clause),
+  Lottie Web (MIT), xterm.js (MIT): go/desktop/frontend/vendor/
+- Lucide/Feather icon licenses: go/desktop/frontend/icons/nearby-lucide-LICENSE.txt
+- Mapbox trademark/attribution: go/desktop/frontend/vendor/nearby-maps-NOTICE.md
+
+GTK, Xfce, Thunar, WebKitGTK, noVNC and other distribution packages retain their
+own licenses. noVNC runtime files retain the system package's MPL notices.
+Downloaded Go module dependencies retain their respective upstream licenses.
+Inception and Mercury are third-party service/model names, not endorsements.

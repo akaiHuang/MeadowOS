@@ -1,0 +1,105 @@
+/* Keep the existing mobile action glyphs and touch layout unchanged. */
+#composer .desktop-action-icon {
+  display: none;
+}
+
+/* Exact complement of the mobile shell breakpoint, including pointer:none. */
+@media (min-width: 768px) and (pointer: fine),
+  (min-width: 768px) and (pointer: none),
+  (min-width: 1025px) {
+  #composerFoot {
+    --toolbar-control: 28px;
+    --toolbar-icon: 16px;
+    --toolbar-chevron: 12px;
+    min-height: var(--toolbar-control);
+    align-items: center;
+  }
+  #composerLeft,
+  #composerRight {
+    align-items: center;
+    gap: 4px;
+  }
+  #composerLeft .pill,
+  #composerRight .pill {
+    height: var(--toolbar-control);
+    min-height: var(--toolbar-control);
+    box-sizing: border-box;
+    padding: 0 6px;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    font: 500 12px/16px var(--sans);
+  }
+  #composerLeft :is(#pillModel, #attachImageBtn, #pillResearch) {
+    --effort-control-size: var(--toolbar-control);
+    --effort-gauge-scale: 0.5333333333;
+    width: var(--toolbar-control);
+    min-width: var(--toolbar-control);
+    max-width: var(--toolbar-control);
+    flex: 0 0 var(--toolbar-control);
+    padding: 0;
+    gap: 0;
+  }
+  #composerLeft .pill .ic,
+  #composerRight .pill .ic {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--toolbar-icon);
+    height: var(--toolbar-icon);
+    flex: 0 0 var(--toolbar-icon);
+    line-height: 0;
+  }
+  #composerLeft .pill .ic svg,
+  #composerRight .pill .ic svg {
+    display: block;
+    width: var(--toolbar-icon);
+    height: var(--toolbar-icon);
+    stroke-width: 2;
+  }
+  #composerLeft .pill .cv,
+  #composerRight .pill .cv {
+    display: block;
+    width: var(--toolbar-chevron);
+    height: var(--toolbar-chevron);
+    flex: 0 0 var(--toolbar-chevron);
+    stroke-width: 2;
+    opacity: 0.6;
+  }
+  #composerLeft #pillModel .effort-gauge {
+    /* The open lower arc makes its ink sit above the square's center. */
+    transform: translateY(1px) scale(var(--effort-gauge-scale));
+  }
+  #composerRight #ctxMeter {
+    min-width: var(--toolbar-control);
+    height: var(--toolbar-control);
+    align-items: center;
+    justify-content: center;
+  }
+  #composerRight #ctxMeter .ring:not(.text),
+  #composerRight #ctxMeter .ring:not(.text) svg {
+    width: 20px;
+    height: 20px;
+  }
+  #composerRight #ctxMeter .ring .pct {
+    font-size: 8px;
+    line-height: 1;
+  }
+  #composerRight :is(#sendBtn, #stopBtn) {
+    width: var(--toolbar-control);
+    height: var(--toolbar-control);
+    min-width: var(--toolbar-control);
+    flex: 0 0 var(--toolbar-control);
+    padding: 0;
+    line-height: 1;
+  }
+  #composerRight .mobile-action-glyph {
+    display: none;
+  }
+  #composerRight .desktop-action-icon {
+    display: block;
+    width: var(--toolbar-icon);
+    height: var(--toolbar-icon);
+    flex: 0 0 var(--toolbar-icon);
+  }
+}

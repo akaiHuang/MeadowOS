@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Meadow — ASCII 動畫預覽</title>
+  <script src="./js/theme-bootstrap.js"></script>
+  <link rel="stylesheet" href="./product_experience.css" />
+  <link rel="stylesheet" href="./css/theme.css" />
+  <style>
+    :root { --sans: -apple-system, BlinkMacSystemFont, 'PingFang TC', sans-serif; --mono: Menlo, monospace; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg, #0f0f0f); color:var(--fg, #ddd); font:16px var(--sans); }
+    main { padding:48px; } button { cursor:pointer; font:inherit; }
+    main button { padding:12px 20px; background:#4ade80; border:0; border-radius:8px; }
+  </style>
+</head>
+<body>
+  <main><h1>Meadow ASCII 動畫預覽</h1><p id="result">這是本機介面預覽，不會啟動模型或登入。</p><button id="replay">重新播放介紹</button></main>
+  <script type="module">
+    import { showProductOnboarding } from './js/product_experience.js';
+    async function play() {
+      const result = await showProductOnboarding({force:true, returnFocus:document.querySelector('#replay')});
+      document.querySelector('#result').textContent = result === 'login'
+        ? '已走到登入入口。這裡僅驗證介面，未發送登入要求。' : '介紹已關閉，动画循環已停止。';
+    }
+    document.querySelector('#replay').addEventListener('click', play);
+    play();
+  </script>
+</body>
+</html>

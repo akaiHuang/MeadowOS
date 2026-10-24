@@ -1,0 +1,124 @@
+@define-color chat_c_composer rgba(50,68,54,.67);
+/* The panel and Dock use compositor-gated alpha; Chat and Launcher content
+ * use GlassSurface capture with an opaque fallback. No input lease is implied. */
+@define-color shell_bg #1e2421;
+@define-color shell_card #29312b;
+@define-color shell_hover rgba(190,210,195,.12);
+@define-color shell_fg #f2f5ef;
+@define-color shell_muted #a6b3a9;
+@define-color shell_border rgba(211,230,217,.14);
+@define-color shell_action #4ade80;
+@define-color shell_action_fg #102016;
+window.shell-surface, window.shell-chat {
+  background: @shell_bg; color: @shell_fg;
+  font-family: "Noto Sans", sans-serif; font-size: 13px;
+}
+window.shell-panel { background: @shell_bg; border: 0; }
+window.shell-dock { background: @shell_bg; border: 1px solid @shell_border; border-radius: 18px; }
+window.shell-panel.shell-composited { background: rgba(24,31,27,.64); }
+window.shell-dock.shell-composited { background: rgba(28,36,30,.72); }
+.shell-panel button, .shell-dock button {
+  background-image: none; background-color: transparent; border: 0;
+  box-shadow: none; text-shadow: none; color: @shell_fg;
+}
+.shell-panel button { min-height: 20px; min-width: 16px; border-radius: 6px; padding: 2px 6px; }
+.shell-dock button { min-height: 30px; min-width: 32px; border-radius: 12px; padding: 4px 7px; }
+.shell-panel button:hover, .shell-dock button:hover { background: @shell_hover; }
+.shell-panel button:checked, .shell-dock button.active { background: rgba(195,220,199,.14); }
+.shell-panel button:disabled, .shell-dock button:disabled { opacity: .40; }
+.shell-panel label { font-size: 13px; }
+.shell-panel .shell-brand { font-size: 13px; font-weight: 600; }
+.shell-panel .shell-clock { color: @shell_fg; font-size: 12px; }
+.shell-panel .shell-busy-indicator { color: #4ade80; font-size: 8px; }
+.shell-dock .dock-indicator { color: @shell_action; font-size: 7px; min-height: 4px; }
+.shell-dock .dock-title { font-size: 10px; color: @shell_muted; }
+window.shell-chat { border-radius: 16px; }
+window.shell-chat decoration {
+  border-radius: 16px; border: 1px solid @shell_border;
+  box-shadow: 0 9px 28px rgba(0,0,0,.16); background: transparent;
+}
+.chat-window-toolbar {
+  background: #253129; color: @shell_fg; padding: 0 6px;
+  border: 0; border-bottom: 1px solid @shell_border; border-radius: 16px 16px 0 0;
+}
+window.shell-chat.shell-composited .chat-window-toolbar { background: rgba(32,43,35,.96); }
+.chat-window-toolbar .traffic-button {
+  min-width: 22px; min-height: 22px; padding: 0; margin: 0;
+  background: transparent; border: 0; border-radius: 11px; box-shadow: none;
+}
+.traffic-dot { min-width: 12px; min-height: 12px; border-radius: 100%; padding: 0; }
+.traffic-dot.close { background: #ff6058; }
+.traffic-dot.minimize { background: #ffbd2e; }
+.traffic-dot.maximize { background: #28c840; }
+.traffic-glyph { opacity: 0; color: #473a28; font-size: 9px; font-weight: 700; }
+.traffic-button:hover .traffic-glyph, .traffic-button:focus .traffic-glyph { opacity: .90; }
+.chat-window-toolbar .chrome-title { font-size: 12px; font-weight: 500; color: @shell_muted; }
+.chat-window-toolbar .chrome-pin {
+  min-width: 20px; min-height: 20px; padding: 2px;
+  background: transparent; border: 0; box-shadow: none; color: @shell_muted;
+}
+.chat-window-toolbar .chrome-pin:hover, .chat-window-toolbar .chrome-pin:checked { background: @shell_hover; }
+window.shell-chat .chrome-handle {
+  min-width: 24px; min-height: 2px; padding: 4px 8px;
+  background: transparent; border: 0; box-shadow: none;
+}
+.chrome-handle-line { min-height: 2px; border-radius: 1px; background: @shell_muted; opacity: .34; }
+.chat-composer .chrome-menu { min-width: 18px; min-height: 16px; padding: 2px 4px; }
+.chat-name { font-size: 17px; font-weight: 600; }
+.chat-status { font-size: 12px; color: @shell_muted; }
+.chat-status-dot { font-size: 7px; color: #86928b; }
+.chat-status-dot.ready { color: #2aca88; }
+window.shell-chat .chat-more {
+  min-width: 26px; min-height: 26px; padding: 2px; border: 0;
+  background: transparent; color: @shell_muted; box-shadow: none; border-radius: 8px;
+}
+window.shell-chat .chat-more:hover { background: @shell_hover; }
+.chat-timeline { background: @shell_bg; }
+window.shell-chat scrolledwindow, window.shell-chat viewport { background: transparent; border: 0; }
+.chat-bubble {
+  background: #303f33; border: 1px solid rgba(210,231,216,.06); border-radius: 14px;
+  padding: 10px 12px; color: @shell_fg;
+}
+.chat-bubble.assistant { background: #2a332d; }
+.chat-message { font: 15px "Noto Sans"; }
+.chat-role { color: @shell_muted; font-size: 11px; }
+.chat-system, .chat-empty { color: @shell_muted; font-size: 13px; }
+.chat-system-notice { padding: 10px 0; border-top: 1px solid @shell_border; }
+.chat-system-notice .chat-system { font-size: 12px; }
+.chat-system-notice.tool-failed .chat-system { color: #e8b29d; }
+.chat-error { color: #e8b29d; font-size: 11px; }
+.chat-composer {
+  padding: 10px 12px; border-top: 1px solid @shell_border; background: @shell_bg;
+  border-radius: 0 0 16px 16px;
+}
+.chat-input-shell { background: #253129; border: 1px solid @shell_border; border-radius: 22px; }
+.chat-composer textview {
+  background: transparent; color: @shell_fg; border: 0;
+  font: 15px "Noto Sans";
+}
+.chat-composer textview text { background: transparent; color: @shell_fg; }
+.chat-placeholder { color: @shell_muted; font-size: 15px; }
+.chat-composer button {
+  background-image: none; background-color: transparent; border: 0; color: @shell_fg;
+  box-shadow: none; border-radius: 20px; min-height: 40px; min-width: 40px; padding: 0;
+}
+.chat-composer button:hover { background: @shell_hover; }
+.chat-composer button.send { background: #09bd79; color: #ffffff; }
+.chat-composer button.send:hover { background: #07ab6c; }
+.chat-composer button.send:disabled { background: rgba(21,161,110,.26); color: rgba(255,255,255,.70); }
+.chat-composer button.stop { min-width: 34px; min-height: 34px; color: #e8b29d; background: rgba(217,130,104,.10); }
+.chat-permission { background: #3a352a; border: 1px solid rgba(218,190,127,.24); border-radius: 11px; padding: 12px; }
+.chat-permission label { font-size: 12px; }
+.shell-launcher searchentry {
+  background: @shell_card; color: @shell_fg; border: 1px solid @shell_border;
+  border-radius: 11px; padding: 10px 12px; box-shadow: none;
+}
+.shell-launcher flowbox button {
+  background-image: none; background: transparent; color: @shell_fg; border: 0;
+  box-shadow: none; border-radius: 12px; padding: 6px;
+}
+.shell-launcher flowbox button:hover { background: @shell_hover; }
+.shell-launcher .app-name { font-size: 12px; }
+.shell-launcher .launcher-heading { color: @shell_muted; font-size: 13px; }
+/* Native menus, keyboard focus, and text selection use the shared GTK theme.
+ * This application-priority sheet only styles Shell-owned surfaces. */

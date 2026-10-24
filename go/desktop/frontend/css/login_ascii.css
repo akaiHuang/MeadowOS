@@ -1,0 +1,203 @@
+/* Account entry shares the welcome canvas, typography and theme; auth is unchanged. */
+#commercialLoginGate {
+  --login-bg: #202020;
+  --login-field: #202020;
+  --login-fg: #f1f1f1;
+  --login-muted: #b5b5b5;
+  --login-accent: #4ade80;
+  --login-rule: #444444;
+  padding: 50px 20px;
+  background: #141414;
+}
+html[data-theme='light'] #commercialLoginGate {
+  --login-bg: #faf7ef;
+  --login-field: #e5edb4;
+  --login-fg: #22271f;
+  --login-muted: #626858;
+  --login-accent: #cfee38;
+  --login-rule: #d6d6c9;
+  background: #ebe7df;
+}
+#commercialLoginGate .commercial-auth-experience {
+  width: min(1200px, calc(90vw - 36px));
+  height: min(800px, calc(90dvh - 36px), calc(100dvh - 100px));
+  min-height: 0;
+  max-height: none;
+  grid-template-columns: minmax(0, 46fr) minmax(0, 54fr);
+  grid-template-rows: minmax(0, 1fr) 56px;
+  border: 1px solid var(--login-rule);
+  border-radius: 26px;
+  background: var(--login-bg);
+  color: var(--login-fg);
+  box-shadow: none;
+  font-family: var(--sans, sans-serif);
+}
+#commercialLoginGate :is(.commercial-auth-brand, .commercial-auth-form) {
+  min-height: 0;
+  background: var(--login-bg);
+  color: var(--login-fg);
+}
+#commercialLoginGate .commercial-auth-brand {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: clamp(24px, 3.7vw, 56px);
+  background: var(--login-field);
+  overflow: hidden;
+  isolation: isolate;
+}
+#commercialLoginGate .commercial-auth-art { position: absolute; inset: 0; z-index: -2; }
+#commercialLoginGate .commercial-auth-brand::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--login-field) 65%, transparent), color-mix(in srgb, var(--login-field) 48%, transparent) 50%, transparent 90%);
+}
+.commercial-auth-art { min-height: 0; overflow: hidden; }
+.commercial-auth-art canvas { display: block; width: 100%; height: 100%; }
+#commercialLoginGate .commercial-auth-art canvas { filter: blur(2px); pointer-events: none; }
+#commercialLoginGate .commercial-auth-caption { padding: 0; position: relative; text-shadow: 0 0 5px var(--login-field), 0 0 12px var(--login-field); }
+#commercialLoginGate .commercial-auth-caption :is(p, li) { color: var(--login-muted); }
+#commercialLoginGate .commercial-auth-caption > p:last-of-type { max-width: 420px; font-size: 15px; line-height: 1.9; }
+#commercialLoginGate .commercial-feature-list { display: grid; gap: 14px; padding: 0; margin: 28px 0 0; list-style: none; font-size: 15px; color: var(--login-fg); }
+#commercialLoginGate .commercial-feature-list li::before { content: '✓'; color: var(--login-fg); margin-right: 12px; }
+#commercialLoginGate .commercial-auth-mark { display: block; width: 55px; height: 55px; margin-bottom: 30px; }
+#commercialLoginGate .commercial-kicker {
+  color: var(--login-muted);
+  font: 800 11px/1.5 var(--mono, monospace);
+  letter-spacing: .16em;
+  margin: 0 0 16px;
+}
+#commercialLoginGate h2 {
+  font: 600 clamp(24px, 2.7vw, 38px)/1.4 var(--sans, sans-serif);
+  letter-spacing: -.04em;
+  color: var(--login-fg);
+  max-width: none;
+  margin: 0 0 20px;
+}
+#commercialLoginGate .commercial-auth-caption h2 { font-size: clamp(26px, 3.4vw, 44px); line-height: 1.27; max-width: 420px; margin: 0 0 24px; }
+#commercialLoginGate .commercial-auth-caption p:last-child {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--login-muted);
+  margin: 0;
+}
+#commercialLoginGate .commercial-auth-form {
+  border-left: 0;
+  padding: 64px clamp(28px, 4.5vw, 62px) 24px;
+  overflow-y: auto;
+  justify-content: safe center;
+}
+html[data-theme='light'] #commercialLoginGate .commercial-kicker { color: var(--login-fg); }
+#commercialLoginGate :is(.commercial-form-note, .commercial-legal, .commercial-live) {
+  color: var(--login-muted) !important;
+  font: 400 14px/1.8 var(--sans, sans-serif);
+}
+#commercialLoginGate .commercial-live[data-tone='error'] { color: var(--commercial-danger) !important; }
+#commercialLoginGate .commercial-live:empty { display: none; }
+#commercialLoginGate .commercial-legal { margin-top: 24px; font-size: 11px; }
+#commercialLoginGate .commercial-wide { min-height: 52px; border-radius: 999px; font-size: 14px; }
+#commercialLoginGate .commercial-provider { display: flex; align-items: center; justify-content: center; gap: 13px; padding: 14px 20px; font-weight: 550; }
+#commercialLoginGate .commercial-provider svg { display: block; flex-shrink: 0; }
+#commercialLoginGate #commercialLoginGoogle { background: #fff; color: #242a23; border: 1px solid #d1d3c8; }
+#commercialLoginGate #commercialLoginStart { margin-top: 12px; background: var(--login-accent); border: 1px solid var(--login-accent); color: #202719; }
+#commercialLoginGate .commercial-provider:hover { filter: brightness(.98); }
+#commercialLoginGate .commercial-provider:disabled { opacity: .55; cursor: wait; }
+#commercialLoginGate .commercial-auth-form,
+#commercialLoginGate #commercialLoginEmailFlow,
+#commercialLoginGate .commercial-device-code { min-width: 0; }
+#commercialLoginGate .commercial-device-code {
+  margin: 20px 0 0;
+  padding: 16px;
+  max-width: 100%;
+  border: 1px solid var(--login-rule);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--login-accent) 5%, var(--login-bg));
+}
+#commercialLoginGate .commercial-device-code[hidden] { display: none; }
+#commercialLoginGate .commercial-device-code-label {
+  display: block;
+  color: var(--login-muted);
+  font: 600 12px/1.5 var(--sans, sans-serif);
+}
+#commercialLoginGate .commercial-code {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  margin: 10px 0;
+  color: var(--login-fg);
+  font: 650 clamp(18px, 2.2vw, 26px)/1.5 var(--mono, monospace);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .08em;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  text-align: left;
+  user-select: all;
+}
+#commercialLoginGate .commercial-code[hidden] { display: none; }
+#commercialLoginGate .commercial-device-code-help {
+  color: var(--login-muted);
+  font: 400 12px/1.7 var(--sans, sans-serif);
+  margin: 0 0 12px;
+  overflow-wrap: anywhere;
+}
+#commercialLoginGate #commercialLoginOpen { width: 100%; min-height: 44px; }
+#commercialLoginGate .commercial-auth-handoff { font-size: 11px; line-height: 1.6; color: var(--login-muted); margin: 12px 0 0; }
+#commercialLoginGate #commercialLoginEmailFlow > .commercial-form-note { margin-bottom: 28px; }
+#commercialLoginGate .commercial-primary { background: var(--login-accent); color: #152016; font-weight: 700; }
+#commercialLoginGate .commercial-serial-link { color: var(--login-fg); font-size: 13px; }
+#commercialLoginGate .commercial-or { color: var(--login-muted); margin: 30px 0; }
+#commercialLoginGate .commercial-or::before,
+#commercialLoginGate .commercial-or::after { background: var(--login-rule); }
+#commercialLoginGate .commercial-close {
+  background: var(--login-bg);
+  color: var(--login-fg);
+  border: 1px solid var(--login-rule);
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: 1;
+}
+#commercialLoginGate .commercial-close::before,
+#commercialLoginGate .commercial-close::after { content: none; }
+#commercialLoginGate .commercial-close svg { display: block; }
+#commercialLoginGate .commercial-field { color: var(--login-muted); }
+#commercialLoginGate .commercial-auth-utilities {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 28px;
+  border-top: 1px solid var(--login-rule);
+  color: var(--login-muted);
+  font: 11px/1.5 var(--mono, monospace);
+}
+#commercialLoginGate .commercial-auth-utilities button {
+  border: 0;
+  padding: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+@media (max-width: 760px) {
+  #commercialLoginGate .commercial-auth-experience {
+    grid-template-columns: 1fr;
+    grid-template-rows: 160px minmax(0, 1fr) 50px;
+    width: calc(90vw - 18px);
+  }
+  #commercialLoginGate .commercial-auth-brand { display: block; padding: 12px 48px 0; }
+  #commercialLoginGate .commercial-auth-art { height: 100%; }
+  #commercialLoginGate .commercial-auth-caption { display: none; }
+  #commercialLoginGate .commercial-auth-form { padding: 12px 24px 20px; justify-content: flex-start; }
+  #commercialLoginGate .commercial-auth-utilities { margin: 0 16px; gap: 4px; }
+  #commercialLoginGate .commercial-auth-utilities span { font-size: 9px; }
+}
+@media (max-height: 650px) {
+  #commercialLoginGate .commercial-auth-brand { overflow-y: auto; justify-content: safe center; }
+  #commercialLoginGate .commercial-auth-mark { width: 36px; height: 36px; margin-bottom: 16px; }
+  #commercialLoginGate .commercial-auth-caption h2 { font-size: 27px; margin-bottom: 16px; }
+  #commercialLoginGate .commercial-feature-list { gap: 10px; margin-top: 18px; }
+}

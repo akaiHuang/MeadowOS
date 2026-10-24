@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=X-GNOME-Metatheme
+Name=Meadow Light
+Comment=Meadow cool neutral surfaces and emerald accents
+
+[X-GNOME-Metatheme]
+GtkTheme=Meadow-Light
+IconTheme=Meadow
+CursorTheme=Adwaita

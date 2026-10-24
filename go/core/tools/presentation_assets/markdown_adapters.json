@@ -1,0 +1,355 @@
+{
+  "version": 1,
+  "template_id": "editorial",
+  "template_layouts_sha256": "44f0803620dd31674a830c6d905d1aa8918a84f15319bf8f00653368bd566255",
+  "adapters": [
+    {
+      "alias": "two_column_list",
+      "layout_id": "title_with_numbered_list_in_two_columns",
+      "layout_sha256": "fe4be7451c016f8c6b4df8d3c4d1d42e6068ff1a0656f34e919f9e6a86c5acc0",
+      "schema_sha256": "219efad7e67c795c0f571d8624a260ddc2b2e69709d7306193918eab54ec714b",
+      "min_items": 2,
+      "max_items": 8,
+      "grammar": {
+        "lead": "forbidden",
+        "items": "ordered_list"
+      },
+      "bindings": {
+        "title": "header_area.slide_heading",
+        "items": "agenda_items.agenda_items_grid",
+        "item_index": "agenda_index",
+        "item_text": "agenda_label"
+      },
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "title": "title_with_numbered_list_in_two_columns",
+        "description": "Layout with a title at the top and two to eight numbered heading-and-description items distributed across two balanced columns.",
+        "additionalProperties": false,
+        "properties": {
+          "header_area": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "slide_heading": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 52
+              }
+            },
+            "required": [
+              "slide_heading"
+            ]
+          },
+          "agenda_items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "agenda_items_grid": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 8,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "agenda_index": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2
+                    },
+                    "agenda_label": {
+                      "type": "string",
+                      "minLength": 6,
+                      "maxLength": 65
+                    }
+                  },
+                  "required": [
+                    "agenda_index",
+                    "agenda_label"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "agenda_items_grid"
+            ]
+          }
+        },
+        "required": [
+          "header_area",
+          "agenda_items"
+        ]
+      }
+    },
+    {
+      "alias": "intro_cards",
+      "layout_id": "title_description_list_of_items_with_heading_description",
+      "layout_sha256": "54bb85a02045898c063ba8e9b7eb65f03ba37eedf506bce05c6185b05ec19044",
+      "schema_sha256": "b051c3bbcf1cc645793188e23d67c028e8044b12a3965b1deb9f88a9b7dd36a5",
+      "min_items": 2,
+      "max_items": 4,
+      "grammar": {
+        "lead": "required",
+        "items": "sections"
+      },
+      "bindings": {
+        "title": "left_intro_block.intro_headline",
+        "lead": "left_intro_block.intro_description",
+        "items": "right_cards_stack.cards_list",
+        "item_index": "badge_label",
+        "item_title": "card_heading",
+        "item_body": "card_body"
+      },
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "title": "title_description_list_of_items_with_heading_description",
+        "description": "Two-column layout with a title and description on the left and a vertical list of two to four items with a heading and description on the right.",
+        "additionalProperties": false,
+        "properties": {
+          "left_intro_block": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "intro_headline": {
+                "type": "string",
+                "minLength": 7,
+                "maxLength": 31
+              },
+              "intro_description": {
+                "type": "string",
+                "minLength": 55,
+                "maxLength": 220
+              }
+            },
+            "required": [
+              "intro_headline",
+              "intro_description"
+            ]
+          },
+          "right_cards_stack": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "cards_list": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 4,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "badge_label": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2
+                    },
+                    "card_heading": {
+                      "type": "string",
+                      "minLength": 12,
+                      "maxLength": 25
+                    },
+                    "card_body": {
+                      "type": "string",
+                      "minLength": 38,
+                      "maxLength": 83
+                    }
+                  },
+                  "required": [
+                    "badge_label",
+                    "card_heading",
+                    "card_body"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "cards_list"
+            ]
+          }
+        },
+        "required": [
+          "left_intro_block",
+          "right_cards_stack"
+        ]
+      }
+    },
+    {
+      "alias": "timeline",
+      "layout_id": "title_description_with_six_alternating_timeline_callouts",
+      "layout_sha256": "0473bbe48b4001dec6534b95639e4a432855dd94576785eae3989181651424c5",
+      "schema_sha256": "669553bdc2a9af68e96131702303611aab17d19d2181929b6df5ed9d5894a9e8",
+      "min_items": 6,
+      "max_items": 6,
+      "grammar": {
+        "lead": "required",
+        "items": "sections"
+      },
+      "bindings": {
+        "title": "intro_heading_block.slide_title",
+        "lead": "intro_heading_block.slide_subtitle",
+        "items": "timeline_callout_band.timeline_items",
+        "item_title": "callout_item.callout_title",
+        "item_body": "callout_item.callout_body"
+      },
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "title": "title_description_with_six_alternating_timeline_callouts",
+        "description": "Layout with a title and description at the top and exactly six callouts alternating above and below a centered horizontal timeline.",
+        "additionalProperties": false,
+        "properties": {
+          "intro_heading_block": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "slide_title": {
+                "type": "string",
+                "minLength": 17,
+                "maxLength": 41
+              },
+              "slide_subtitle": {
+                "type": "string",
+                "minLength": 48,
+                "maxLength": 174
+              }
+            },
+            "required": [
+              "slide_title",
+              "slide_subtitle"
+            ]
+          },
+          "timeline_callout_band": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "timeline_items": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 6,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "callout_item": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "callout_title": {
+                          "type": "string",
+                          "minLength": 8,
+                          "maxLength": 21
+                        },
+                        "callout_body": {
+                          "type": "string",
+                          "minLength": 17,
+                          "maxLength": 100
+                        }
+                      },
+                      "required": [
+                        "callout_title",
+                        "callout_body"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "callout_item"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "timeline_items"
+            ]
+          }
+        },
+        "required": [
+          "intro_heading_block",
+          "timeline_callout_band"
+        ]
+      },
+      "item_order": [
+        0,
+        2,
+        1,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "alias": "photo_cover",
+      "layout_id": "large_title_with_curved_side_image",
+      "layout_sha256": "d0fd4064941ae0a2077718dddd4dd35d1271fd73330c04e34678d362b134b672",
+      "schema_sha256": "359dc9467152c28ee2d38d727ff47fadca1fd3c253d98bb349ad1288012353b4",
+      "min_items": 0,
+      "max_items": 0,
+      "grammar": {
+        "lead": "required",
+        "items": "none",
+        "images": "required"
+      },
+      "bindings": {
+        "title": "headline_text_block.headline",
+        "lead": "headline_text_block.supporting_text",
+        "image": "curved_image_panel.curved_primary_image.image_prompt"
+      },
+      "image_ui_pointer": "/components/1/elements/1/child",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "title": "large_title_with_curved_side_image",
+        "description": "Split layout with a large curved image panel on one side and an oversized title with a short description on the other.",
+        "additionalProperties": false,
+        "properties": {
+          "curved_image_panel": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "curved_primary_image": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "image_prompt": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "image_prompt"
+                ]
+              }
+            },
+            "required": [
+              "curved_primary_image"
+            ]
+          },
+          "headline_text_block": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "headline": {
+                "type": "string",
+                "minLength": 15,
+                "maxLength": 39
+              },
+              "supporting_text": {
+                "type": "string",
+                "minLength": 46,
+                "maxLength": 220
+              }
+            },
+            "required": [
+              "headline",
+              "supporting_text"
+            ]
+          }
+        },
+        "required": [
+          "curved_image_panel",
+          "headline_text_block"
+        ]
+      }
+    }
+  ]
+}

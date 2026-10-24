@@ -1,0 +1,80 @@
+/* Desktop surfaces: one restrained rail, a balanced native application Dock. */
+window.shell-notification { background: transparent; border-radius: 18px; }
+.shell-notification button { background: transparent; background-image: none; border: 0; box-shadow: none; color: @shell_fg; }
+.shell-notification .notification-body { padding: 2px; border-radius: 8px; }
+.shell-notification .notification-title { font-size: 13px; font-weight: 600; }
+.shell-notification .notification-text { font-size: 12px; color: @shell_muted; }
+.shell-notification button:hover { background: @shell_hover; }
+.shell-panel button { min-height: 22px; padding: 2px 5px; }
+.shell-panel .shell-brand { font-size: 13px; font-weight: 600; }
+.shell-panel .shell-focused-app { font-size: 12px; color: @shell_muted; }
+.shell-panel .shell-workspaces {
+  padding: 2px; border-radius: 9px; border: 1px solid alpha(@shell_fg,.07);
+  background: alpha(@shell_bg,.30);
+}
+.shell-panel .shell-workspaces button {
+  min-width: 0; min-height: 22px; padding: 0; border-radius: 6px;
+  border: 0; color: @shell_muted; background: transparent;
+  transition: background-color 120ms ease;
+}
+.shell-panel .shell-workspaces .workspace-tab { min-width: 48px; padding: 0 10px; }
+.shell-panel .shell-workspaces label { font-size: 12px; }
+.shell-panel .shell-workspaces button:hover { background: @shell_hover; color: @shell_fg; }
+.shell-panel .shell-workspaces .workspace-tab:checked {
+  background: alpha(@shell_action,.15); color: @shell_fg;
+  box-shadow: inset 0 1px alpha(@shell_fg,.07);
+}
+.shell-panel .shell-workspaces button:focus { box-shadow: inset 0 0 0 1px alpha(@shell_action,.55); }
+.shell-panel .shell-workspaces .workspace-close { min-width: 18px; margin: 0 2px 0 0; }
+.shell-panel .shell-workspaces .workspace-add { min-width: 26px; }
+.shell-panel .shell-workspaces scrolledwindow, .shell-panel .shell-workspaces viewport { border: 0; background: transparent; }
+window.shell-dock { border-radius: 22px; }
+.shell-dock button {
+  min-width: 60px; min-height: 64px; padding: 0;
+  border-radius: 14px; transition: background-color 140ms ease;
+}
+.shell-dock .dock-running-dot { min-width: 4px; min-height: 4px; border-radius: 2px; background: @shell_action; }
+.shell-dock button.active { background: rgba(128,145,138,.12); }
+.shell-dock button:hover { background: rgba(128,145,138,.18); }
+.shell-launcher .launcher-heading { color: @shell_fg; font-size: 17px; font-weight: 600; }
+.shell-launcher .launcher-native-header { -GtkWidget-window-dragging: true; }
+.shell-launcher .launcher-native-header .launcher-heading { font-size: 14px; }
+.shell-launcher searchentry { min-height: 28px; padding: 6px 12px; }
+.shell-launcher flowbox { background: transparent; }
+.shell-launcher flowboxchild { padding: 2px; }
+.shell-launcher .app-name { font-size: 14px; }
+.shell-launcher .launcher-section-heading { color: @shell_muted; font-size: 12px; font-weight: 500; margin-left: 4px; }
+/* The shared native surface paints either a matched captured backdrop or its
+ * opaque themed fallback before these existing sharp content widgets. */
+window.shell-chat .meadow-glass-surface .chat-timeline,
+window.shell-chat .meadow-glass-surface .chat-composer,
+window.shell-launcher .meadow-glass-surface scrolledwindow,
+window.shell-launcher .meadow-glass-surface viewport {
+  background-color: transparent; background-image: none;
+}
+.shell-chat .chat-progress { margin-top: 4px; margin-bottom: 8px; border-radius: 10px; padding: 8px 10px; background: alpha(@shell_fg,.035); }
+.shell-chat .chat-progress-summary { color: @shell_fg; font-size: 12px; }
+.shell-chat .chat-progress-title { color: @shell_muted; font-size: 11px; }
+.shell-chat .chat-progress-status { color: @shell_muted; font-size: 11px; }
+.shell-chat .chat-progress-unresolved { color: @shell_fg; font-weight: 600; }
+.shell-chat .chat-progress scrolledwindow, .shell-chat .chat-progress viewport { background: transparent; border: 0; }
+.shell-chat .chat-latest { font-size: 12px; border-radius: 12px; padding: 4px 12px; margin: 2px 0 4px; }
+/* Chosen C: one compact shared header and a floating, unified composer. */
+.chat-variant-c .meadow-window-title { padding: 0; }
+.chat-variant-c .chat-bubble.assistant {
+  padding: 10px 13px; border-radius: 14px 14px 14px 4px;
+  background: rgba(53,67,56,.35); border-color: rgba(196,232,208,.09);
+}
+.chat-variant-c .chat-bubble.user { border-radius: 14px 14px 4px 14px; background: rgba(61,99,74,.48); }
+window.chat-variant-c .meadow-glass-surface .chat-composer {
+  margin: 0 14px 15px; padding: 12px 12px 9px; border-radius: 20px;
+  border: 1px solid rgba(213,245,222,.17); background: @chat_c_composer;
+  box-shadow: 0 8px 20px rgba(6,24,10,.14);
+}
+.chat-variant-c .chat-input-shell { border: 0; border-radius: 0; background: transparent; }
+.chat-variant-c .chat-composer button { min-width: 28px; min-height: 28px; border-radius: 14px; }
+.chat-variant-c .chat-shortcut { color: @shell_muted; font-size: 10px; }
+.chat-variant-c .chat-attachment-card { padding: 2px; border: 1px solid alpha(@shell_fg,.1); border-radius: 8px; }
+.chat-variant-c .chat-composer .attachment-remove { min-width: 18px; min-height: 18px; font-size: 12px; background: alpha(@shell_bg,.85); }
+window.chat-variant-c .meadow-glass-surface .attachment-drop-active { border-color: #2aca88; background: alpha(@shell_action,.15); }
+.chat-variant-c .chat-composer textview { padding: 0; }

@@ -1,0 +1,3 @@
+/* Fail closed before modules mount, and hide account-owned workspace content
+   again after logout even if the login dialog is removed from the DOM. */
+[data-account-locked] { visibility: hidden !important; pointer-events: none !important; }

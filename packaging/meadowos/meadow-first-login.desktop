@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=MeadowOS session setup
+Exec=/opt/meadow/share/meadow-os/bin/meadow-first-login
+OnlyShowIn=XFCE;
+Terminal=false
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
