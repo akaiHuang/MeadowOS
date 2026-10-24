@@ -50,7 +50,9 @@ jobs:
         run: |
           python3 -m unittest scripts/meadowos/test_foundation.py \
             scripts/meadowos/test_archive_provenance.py docker/test_companion_proxy.py \
-            scripts/meadowos/test_shell_agent_client.py scripts/meadowos/test_configure_inception.py
+            docker/test_smoke_capabilities.py \
+            scripts/meadowos/test_shell_agent_client.py scripts/meadowos/test_configure_inception.py \
+            scripts/meadowos/test_companion_new_chat.py
   desktop:
     needs: credentials
     strategy:

@@ -97,6 +97,7 @@ class ConversationReceiptUITests(unittest.TestCase):
             set_sensitive=lambda value: setattr(self, 'send_enabled', value))
         self.view.stop = SimpleNamespace(set_sensitive=lambda _: None, set_visible=lambda _: None)
         self.view.retry = SimpleNamespace(set_sensitive=lambda _: None)
+        self.view.new_chat = SimpleNamespace(set_sensitive=lambda _: None)
         self.status_text = ''
         self.view.status_label = SimpleNamespace(
             set_text=lambda text: setattr(self, 'status_text', text),

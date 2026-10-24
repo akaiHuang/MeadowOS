@@ -551,6 +551,10 @@ def main() -> int:
             self.retry.get_accessible().set_name("重新連線")
             self.retry.connect("activate", lambda *_: self.connect_agent())
             actions.append(self.retry)
+            self.new_chat = Gtk.MenuItem(label="新對話")
+            self.new_chat.get_accessible().set_name("新對話")
+            self.new_chat.connect("activate", lambda *_: self.connect_agent(new_chat=True))
+            actions.append(self.new_chat)
             for title, callback in (("工作檔案", lambda: shell.show_work_files()),
                                     ("待辦事項", lambda: shell.show_work_tasks()),
                                     ("工作紀錄", self.show_work_log)):
@@ -1057,7 +1061,7 @@ def main() -> int:
                 return False
             GLib.idle_add(apply)
 
-        def connect_agent(self):
+        def connect_agent(self, new_chat=False):
             # Do not discard an unresolved submission callback or send twice.
             if self.sending or self.connecting:
                 return
@@ -1068,6 +1072,7 @@ def main() -> int:
             self.connected = self.model_ready = False
             self.status_label.set_text("正在連接 Agent…")
             self.retry.set_sensitive(False)
+            self.new_chat.set_sensitive(False)
             self.update_controls()
             def worker():
                 try:
@@ -1075,7 +1080,7 @@ def main() -> int:
                         previous.close()
                     client = AgentClient(attachment_cache=self.attachments.cache)
                     client.connect()
-                    client.open_conversation()
+                    client.open_conversation(new_chat=new_chat)
                     # SSE can advance client.last_event_id before GTK runs the
                     # queued accept callback. Freeze the snapshot cursor now.
                     replay_after = client.last_event_id
@@ -1177,6 +1182,7 @@ def main() -> int:
 
         def update_controls(self):
             self.retry.set_sensitive(not self.connecting and not self.sending)
+            self.new_chat.set_sensitive(not self.connecting and not self.sending)
             self.send.set_sensitive(self.connected and self.model_ready and not self.sending)
             self.stop.set_sensitive(self.connected and self.running)
             self.stop.set_visible(self.connected and self.running)

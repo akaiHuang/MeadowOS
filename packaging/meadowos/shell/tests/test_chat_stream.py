@@ -134,20 +134,22 @@ class AssistantMessagesTests(unittest.TestCase):
         companion = next(node for node in ast.walk(tree) if isinstance(node, ast.ClassDef) and node.name == 'Companion')
         connect = next(node for node in companion.body if isinstance(node, ast.FunctionDef) and node.name == 'connect_agent')
         callbacks, received = [], []
-        client = SimpleNamespace(last_event_id=10, connect=lambda: None, open_conversation=lambda: None,
-                                 load_messages=lambda: [], status=lambda: {})
+        client = SimpleNamespace(last_event_id=10, connect=lambda: None, open_conversation=lambda **_: None,
+                                 load_messages=lambda: [], status=lambda: {}, image_capability=lambda: None)
 
         def events():
             for index, text in ((11, '規格'), (12, '已讀取。')):
                 client.last_event_id = index
                 yield event(index, 'agent_message_chunk', text, 'inflight')
         client.events = events
-        namespace = {'AgentClient': lambda: client, 'AgentError': RuntimeError,
+        namespace = {'AgentClient': lambda **_: client, 'AgentError': RuntimeError,
                      'threading': SimpleNamespace(Thread=lambda *, target, **_: SimpleNamespace(start=target))}
         exec(compile(ast.Module(body=[connect], type_ignores=[]), str(source), 'exec'), namespace)
         view = SimpleNamespace(sending=False, connecting=False, generation=0, client=None,
                                status_label=SimpleNamespace(set_text=lambda _: None),
-                               retry=SimpleNamespace(set_sensitive=lambda _: None), update_controls=lambda: None)
+                               retry=SimpleNamespace(set_sensitive=lambda _: None),
+                               new_chat=SimpleNamespace(set_sensitive=lambda _: None),
+                               attachments=SimpleNamespace(cache=None), update_controls=lambda: None)
         view.dispatch = lambda generation, fn, *args: callbacks.append((fn, args))
         view.disconnected = lambda error: self.fail(error)
         view.accept_connection = lambda client, messages, status, cursor: setattr(view, 'stream', AssistantMessages(messages, replay_after=cursor))

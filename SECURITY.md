@@ -10,6 +10,11 @@ checkout, in the persistent home volume. Build context rules exclude Git metadat
 credentials and runtime state. Stopping containers retains the named volume;
 `docker compose down -v` deliberately removes it.
 
+The standalone release starts with fresh Git history and an explicit source
+closure. It does not import the private development repository's history or
+runtime profiles. CI scans the entire public history for secrets with redacted
+output. Please keep the same boundary when contributing changes or screenshots.
+
 This early desktop grants the Agent full tool access inside its container. The
 default Compose file mounts neither your host home nor the Docker socket and
 publishes the viewer/companion on host loopback only. Keep those boundaries when

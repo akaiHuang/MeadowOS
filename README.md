@@ -105,7 +105,7 @@ permissions and observed completion. Shell/Code Desktop attach to the same
 Agent; they do not start separate planners. See the [component map and trust
 boundaries](docs/ARCHITECTURE.md).
 
-![Native browser](docs/images/browser.png)
+![Native MeadowOS settings](docs/images/settings.png)
 
 ## Development and verification
 
@@ -116,10 +116,18 @@ boundaries](docs/ARCHITECTURE.md).
 - `docker/`: clean-container supervision, health checks and smoke tests.
 
 [CI](https://github.com/akaiHuang/MeadowOS/actions) builds from the public source,
-starts a fresh desktop without provider credentials, captures native windows
-and checks restart persistence. A compile/smoke pass is separate from a real
-model task or VM boot. Screenshots are captured from the clean desktop, not a
-maintainer's private session.
+starts a fresh desktop without provider credentials, captures native Shell,
+Files, Terminal and Settings windows, and checks restart persistence. Native
+API setup is tested against a local mock provider, without a real API key.
+A compile/smoke pass is separate from a real model task or VM boot.
+Screenshots are captured from the clean desktop, not a maintainer's private session.
+
+**Container limitation:** GNOME Web and the optional Wails Code Desktop use
+WebKit. Hosts that deny nested user/mount namespaces can prevent WebKit's
+sandbox from starting. CI records these capability probes separately from
+the core desktop checks. The default recipe keeps sandbox protections enabled;
+it does not grant privileged access to make those apps work. The native GTK
+chat and hidden API setup do not depend on Wails. See [troubleshooting](docs/QUICKSTART.md).
 
 This release focuses on the container/X11 path. Wayland, a bootable installer,
 GPU performance guarantees and complete Linux speech integration are outside

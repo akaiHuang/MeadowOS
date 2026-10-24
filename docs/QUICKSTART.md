@@ -1,8 +1,9 @@
-# Run the MeadowOS container desktop
+# Run the MeadowOS container preview
 
 MeadowOS is an Ubuntu 26.04 native desktop alpha. This path builds the Go Agent,
-Go Desktop, GTK Shell and native window helpers from source, then runs the desktop
-in Docker with a browser viewer. It supports Linux `amd64` and `arm64`; Docker
+Go Desktop, GTK Shell and native window helpers from source, then runs the native
+Shell preview in Docker with a browser viewer. The core preview and WebKit app
+capabilities are verified separately. It supports Linux `amd64` and `arm64`; Docker
 Desktop supplies Linux on macOS and Windows. This container recipe is not a
 bootable disk or VM installer.
 
@@ -32,9 +33,10 @@ Use `127.0.0.1` in this URL. The viewer and native text/attachment companion adm
 that exact browser origin. The desktop renders at 1920 × 1080 and the viewer
 scales it to the browser window.
 
-A fresh home opens the Shell and supports Files, Terminal, settings and the
-native Web browser before any model is configured. Chat shows that the model
-needs configuration. The image contains no model API key, Meadow login, private
+A fresh home opens the Shell and supports Files, Terminal and settings before
+any model is configured. Chat shows that the model needs configuration. WebKit
+apps, including the separate Go Desktop UI and GNOME Web, have the container
+limitation described below. The image contains no model API key, Meadow login, private
 Core runtime or model weights.
 
 Check the actual native session:
@@ -64,7 +66,9 @@ the connection. The key is not a Docker build argument or environment variable.
 API usage is billed by your provider. No Meadow account is required for this
 build.
 
-After setup, open Chat and send a small request. For example, ask it to create a
+After first setup, open Chat, choose **聊天選單 ⋮ → 重新連線**, and send a small
+request. For a later key/connection change, choose **聊天選單 ⋮ → 新對話** to create
+an explicit new conversation while retaining previous work. For example, ask it to create a
 text file in `~/MeadowWork` and then open that folder in Files. A configured
 connection alone does not establish successful model execution; confirm the
 reply and the actual resulting file.
@@ -118,6 +122,26 @@ recognition and speech synthesis are unavailable in this image: it includes
 neither the private macOS speech runtime nor a speech model. The VoiceOS visual
 surface remains present.
 
+## Known WebKit container limitation
+
+The GTK Shell, Files, Terminal, settings and terminal API setup flow do not need
+WebKit. GNOME Web and the separate Wails/Go Desktop interface do. On default
+Docker hosts, Bubblewrap can be denied the nested namespaces and mounts needed
+by WebKit, with `No permissions to create a new namespace` followed by
+`Failed to fully launch dbus-proxy`.
+
+That exact observed failure is reported as an **unsupported container capability**,
+not a successful browser or Go Desktop rendering check. The native core can still
+pass its own checks. Container security and browser sandbox settings remain
+unchanged: this recipe does not grant privileges, change host sysctls, disable
+sandboxing, or use an unconfined policy. Use a dedicated native Ubuntu graphical
+guest for the WebKit interfaces; its boot/runtime acceptance is separate from
+this container preview.
+
+The Inception setup helper and GTK Chat provide the core API workflow without
+the separate WebKit Desktop UI. `desktop_ready: true` reports the native Shell
+core; it does not establish WebKit app support.
+
 ## Troubleshooting and development checks
 
 Inspect process logs without dumping the private Agent profile:
@@ -143,12 +167,16 @@ docker compose up -d --force-recreate
 
 For CI (with Python3 available on the build host), `bash docker/smoke.sh` builds from the current Git commit, creates a new
 Compose project with a fresh home/network, checks the unconfigured Agent,
-opens real Files/Terminal/settings windows, loads a local page in GNOME Web,
-launches the managed Go Desktop against the same Agent, captures each native state, restarts
+opens real Files/Terminal/settings windows, probes a local page in GNOME Web
+and the managed Go Desktop against the same Agent, captures
+actual native states or capability failures, restarts
 the container and verifies a persisted file. It removes only its own test project
 and volume afterward. Both default viewer ports must be free before this check;
 it refuses to replace a running instance. Results are written to `artifacts/meadowos-smoke/` by
-default. Window-title checks establish mapping; review the captured pixels to determine
-that WebKit content actually rendered. Browser sandbox settings remain unchanged.
+default. `acceptance.json` distinguishes `core_passed`, restart persistence and each
+WebKit capability status. Only the exact observed namespace/dbus-proxy restriction
+is recorded as unsupported; unknown launch failures still fail the smoke.
+Window-title checks establish mapping; review the captured pixels before claiming
+that WebKit content rendered. Browser sandbox settings remain unchanged.
 The smoke sends no model requests and does not establish model quality
 or VM boot acceptance.

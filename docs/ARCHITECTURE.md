@@ -94,3 +94,14 @@ Native builds carry source/binary provenance and verify the actual archive sourc
 inventory. CI desktop screenshots and restart checks are native container evidence;
 they do not prove a bootable VM, universal third-party app styling, GPU performance,
 real-provider task completion or working Linux speech.
+
+Core container acceptance covers Shell, Files, Terminal, Settings, authenticated
+Agent transport and persistent home. Native provider setup is exercised with a
+mock provider contract; no maintainer key is needed.
+WebKit-based GNOME Web and optional Wails Desktop are separate capability probes.
+Docker host restrictions on nested namespaces can block WebKit's bubblewrap
+sandbox. A recognized sandbox denial is recorded as unavailable, not successful
+browser rendering; unexpected failures still fail the smoke test. The release
+does not disable the sandbox, add SYS_ADMIN or use privileged containers.
+The GTK chat supports reconnecting and opening a new independent conversation,
+so API onboarding and key rotation do not require the optional Wails app.

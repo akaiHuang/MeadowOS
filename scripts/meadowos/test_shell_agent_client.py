@@ -186,6 +186,43 @@ class AgentClientTests(unittest.TestCase):
         self.assertEqual(self.fixture.calls[0][1], "/transport/identity")
         self.assertTrue(all(call[3]["Authorization"] == "Bearer " + TOKEN for call in self.fixture.calls))
 
+    def test_explicit_new_chat_bypasses_saved_resume_and_keeps_old_agent_work(self):
+        first = self.connected()
+        first.send("Keep this submitted old conversation and its background work")
+        old_preference = json.loads(first.persistence_path.read_text())
+        self.assertFalse(old_preference["initialEmpty"])
+        old_history = self.root / "agent-history-fixture.json"
+        old_history.write_text(json.dumps({"chatId": "live-a", "messages": ["submitted old message"]}))
+        history_before = old_history.read_bytes()
+        self.fixture.responses[("GET", "/session/live-a/queue")] = (200, {"items": [{"id": "old-background-job", "status": "running"}]})
+        self.fixture.responses[("POST", "/session")] = (200, {"sessionId": "explicit-new", "modelId": "mercury-3", "connectionId": "inception-new"})
+        second = self.client()
+        second.connect()
+        boundary = len(self.fixture.calls)
+        session = second.open_conversation(new_chat=True)
+        self.assertEqual(session["sessionId"], "explicit-new")
+        self.assertEqual(session["modelId"], "mercury-3")
+        self.assertEqual([(method, path) for method, path, _, _ in self.fixture.calls[boundary:]], [("POST", "/session")])
+        saved = json.loads(second.persistence_path.read_text())
+        self.assertEqual(saved["chatId"], "explicit-new")
+        self.assertTrue(saved["initialEmpty"])
+        self.assertNotIn("previousEmptyChatId", saved)
+        self.assertEqual(old_history.read_bytes(), history_before)
+        self.assertEqual(first._request("GET", "/session/live-a/queue")["items"][0]["id"], "old-background-job")
+        self.assertFalse(any(method == "DELETE" or (method == "POST" and path.endswith(("/cancel", "/end")))
+                             for method, path, _, _ in self.fixture.calls))
+
+    def test_explicit_new_chat_ignores_invalid_saved_preference_and_validates_arguments(self):
+        client = self.client()
+        client.connect()
+        client.persistence_path.parent.mkdir(mode=0o700, parents=True)
+        client.persistence_path.write_text("invalid previous presentation preference")
+        client.persistence_path.chmod(0o600)
+        with self.assertRaises(AgentError):
+            client.open_conversation("existing-chat", new_chat=True)
+        self.assertFalse(any(call[1] == "/session" for call in self.fixture.calls))
+        self.assertEqual(client.open_conversation(new_chat=True)["sessionId"], "live-a")
+
     def test_ordinary_send_uses_queue_preserving_exact_text_and_never_implies_completion(self):
         client = self.connected()
         for text in ["write a file", "停止", " /cancel literal text \n"]:

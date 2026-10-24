@@ -34,7 +34,7 @@ docker compose exec -it meadowos python3 /usr/local/share/meadow-os/configure_in
 
 回到 [MeadowOS 桌面](http://127.0.0.1:60511/vnc.html?autoconnect=1&resize=scale)，在聊天室點右上角的聊天選單（⋮），選擇「重新連線」。第一次設定前尚未送出訊息的空白聊天室，會接上 Mercury 3，接著就能輸入訊息。不需要重建或重啟容器。
 
-若聊天室已經有內容，例如之後更換金鑰，原對話會保留原來的模型連線。請從桌面左上角的「應用程式」開啟「Meadow Code」，再點左側「新聊天」，使用剛設定的連線。舊對話與工作檔案會保留。
+若聊天室已經有內容，例如之後更換金鑰，原對話會保留原來的模型連線。請在同一個聊天選單（⋮）選擇「新對話」，使用剛設定的連線。舊對話、背景工作與工作檔案會保留，尚未送出的文字草稿也會留在輸入框。
 
 你可以先輸入「請在工作區建立 hello.txt，內容是 Hello from MeadowOS」，確認首次模型回答與工具操作。模型清單驗證與設定完成後，實際回答仍取決於當時的 Inception 服務和帳戶額度。
 
@@ -69,4 +69,4 @@ Create your own key in the [Inception API Keys dashboard](https://platform.incep
 docker compose exec -it meadowos python3 /usr/local/share/meadow-os/configure_inception.py
 ```
 
-Paste the key only at the hidden prompt. The helper checks the official model listing, uses the authenticated local Agent API, saves private credentials in the persistent home volume, and selects Mercury 3 with tools enabled. In the desktop chat, open its three-dot menu and select “重新連線” (Reconnect). A first, unsubmitted empty chat then uses the new connection. For an existing conversation after key rotation, open “Meadow Code” from Applications and click “新聊天” (New chat) in its sidebar; existing chats retain their original binding. Busy Agents reject configuration changes until work finishes. Re-run the command to rotate your key; no image rebuild is needed. Keep the `meadow-home` volume to retain settings and work.
+Paste the key only at the hidden prompt. The helper checks the official model listing, uses the authenticated local Agent API, saves private credentials in the persistent home volume, and selects Mercury 3 with tools enabled. In the desktop chat, open its three-dot menu and select “重新連線” (Reconnect). A first, unsubmitted empty chat then uses the new connection. For an existing conversation after key rotation, choose “新對話” (New conversation) from that same menu. Existing chats retain their original binding; background work and your typed draft remain intact. Busy Agents reject configuration changes until work finishes. Re-run the command to rotate your key; no image rebuild is needed. Keep the `meadow-home` volume to retain settings and work.

@@ -47,4 +47,19 @@ if [ "$task_ready" != 1 ]; then
   exit 1
 fi
 "${task_compose[@]}" exec -T meadowos python3 -c 'from pathlib import Path; assert (Path.home()/"MeadowWork/MeadowOS smoke/persistence.txt").read_text()=="MeadowOS named home volume\n"'
-echo "Fresh native desktop and restart smoke passed; evidence: $task_artifacts"
+python3 - "$task_artifacts" <<'PYRESULT'
+from pathlib import Path
+import json,sys
+root=Path(sys.argv[1])
+smoke=json.loads((root/"smoke.json").read_text())
+initial=json.loads((root/"health.json").read_text())
+restart=json.loads((root/"restart-health.json").read_text())
+core=bool(smoke.get("core_passed") and initial.get("desktop_ready") and restart.get("desktop_ready"))
+if not core: raise SystemExit("Core native acceptance receipt is incomplete")
+(root/"acceptance.json").write_text(json.dumps({
+    "core_passed":core,"restart_persistence_verified":True,"agent_authenticated":True,
+    "capabilities":smoke["capabilities"],"container_security":"unchanged",
+    "onboarding":"separate native Linux CI job","model_task":"not_run",
+    "screenshots_require_visual_review":True,"vm_boot_verified":False},indent=2)+"\n")
+PYRESULT
+echo "Fresh native core and restart smoke passed; WebKit capability outcomes: $task_artifacts/acceptance.json"

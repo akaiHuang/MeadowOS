@@ -180,7 +180,7 @@ def main(argv=None):
             key = None
         print("已驗證 Inception 模型清單，並儲存、套用 Mercury 3（工具已啟用）。")
         print("回到 MeadowOS 聊天室，點聊天選單（⋮）→「重新連線」；首次空白對話即可開始。")
-        print("已有內容的對話保留原連線；請從「應用程式」開啟 Meadow Code，點左側「新聊天」。")
+        print("已有內容的對話保留原連線；從同一個聊天選單選「新對話」，即可使用剛設定的金鑰。")
         return 0
     except SetupError as exc:
         print("設定未完成：" + str(exc), file=sys.stderr)

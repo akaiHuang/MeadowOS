@@ -331,14 +331,18 @@ class AgentClient:
             if os.path.exists(temporary):
                 os.unlink(temporary)
 
-    def open_conversation(self, chat_id=None, *, allow_empty_replacement=False):
-        """Restore passively; replace only a proven unsubmitted initial chat.
+    def open_conversation(self, chat_id=None, *, allow_empty_replacement=False, new_chat=False):
+        """Restore passively, or explicitly open another independent chat.
 
         Legacy v1 has no submission provenance. Its replacement requires an
         explicit caller decision after independently verifying that it is empty.
         A v2 submitted chat or a chat in the Agent's history is never replaced.
+        new_chat changes this presentation's active preference only. Existing
+        Agent sessions, history, queued work and jobs are never cancelled.
         """
-        saved = self._saved() if chat_id is None else None
+        if new_chat and chat_id is not None:
+            raise AgentError("Choose a new chat or an existing chat identity", code="invalid_conversation_request")
+        saved = self._saved() if chat_id is None and not new_chat else None
         wanted = chat_id or (saved and saved["chatId"])
         initial_empty = False
         self._previous_empty_chat_id = saved.get("previousEmptyChatId") if saved else None
@@ -386,7 +390,7 @@ class AgentClient:
                     if stale:
                         if (saved.get("version") != 2 or saved.get("initialEmpty") is not True
                                 or queue.get("items") != [] or context.get("running") is not False):
-                            raise AgentError("Existing chat retains its original model connection; open a new chat in Meadow Code", status=409, code="session_connection_mismatch")
+                            raise AgentError("原對話保留原來的模型連線；請從聊天選單選擇「新對話」", status=409, code="session_connection_mismatch")
                         harness = self._request("GET", self._session_path("harness-controls"))
                         if harness.get("running") is not False:
                             raise AgentError("Existing chat still has native work; retry after it finishes", status=409, code="session_connection_mismatch")

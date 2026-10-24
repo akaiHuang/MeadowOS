@@ -69,7 +69,14 @@ Agent 具有容器內桌面、檔案與指令的完整操作能力；自行新�
 [架構文件](docs/ARCHITECTURE.md) 說明 GTK Shell、單一持久 Agent、模型、工具、排程與資料的關係。
 模型負責判斷任務；harness 負責工具、狀態、權限與真實結果，不把工具呼叫成功當成任務完成。
 
-CI 會從乾淨來源建置，使用沒有金鑰的新資料卷驗證原生桌面與重啟保存；這與真實模型任務、VM 開機驗收是不同層次。
+CI 會從乾淨來源建置，使用沒有金鑰的新資料卷驗證桌面、檔案、終端機、設定與重啟保存；API 設定整合使用本機模擬服務測試，沒有呼叫真實帳戶。
+這與真實模型任務、VM 開機驗收是不同層次。
+
+容器限制：GNOME Web 與選用的 Wails Code Desktop 使用 WebKit。部分主機禁止容器建立巢狀命名空間，會讓 WebKit 沙箱無法啟動。
+CI 會另行記錄這兩個程式的可用性；預設不關閉沙箱或提高容器權限。原生 GTK 聊天室與 API 設定工具不依賴 Wails，
+金鑰更新後可由聊天選單「新對話」開始使用。[查看啟動與疑難排解](docs/QUICKSTART.md)。
 目前不宣稱 Wayland、可開機安裝器、GPU 效能保證或完整 Linux 語音體驗。
+
+![MeadowOS 系統設定](docs/images/settings.png)
 
 原始碼採 [Apache-2.0](LICENSE)，第三方元件保留各自授權，見 [NOTICE](NOTICE) 與 [第三方清單](docs/THIRD_PARTY.md)。

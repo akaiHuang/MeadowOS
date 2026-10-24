@@ -35,6 +35,16 @@ class FoundationTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def isolated_session_bus(self):
+        # Supervisor fixtures own fake process objects and do not run a real
+        # session bus. Linux runners may provide this optional activation
+        # utility even when macOS does not; keep that host discovery out of
+        # lifecycle tests while preserving every other command lookup.
+        host_which = runtime.shutil.which
+        return patch.object(runtime.shutil, "which", side_effect=lambda command, *args, **kwargs:
+                            None if command == "dbus-update-activation-environment"
+                            else host_which(command, *args, **kwargs))
+
     def elf(self, arch="arm64"):
         path = self.root / "fixture-elf"
         value = bytearray(64)
@@ -254,7 +264,8 @@ class FoundationTests(unittest.TestCase):
                 signals[signal.SIGTERM](signal.SIGTERM, None)
             return process
 
-        with patch.dict(os.environ, {"HOME": str(self.root), "DISPLAY": ":fixture"}, clear=True), \
+        with self.isolated_session_bus(), \
+             patch.dict(os.environ, {"HOME": str(self.root), "DISPLAY": ":fixture"}, clear=True), \
              patch.object(os_session, "configure_display", return_value={"applied": False}), \
              patch.object(os_session, "wm_owner", return_value="0x123"), \
              patch.object(os_session, "agent_service_state", return_value=None), \
@@ -291,7 +302,8 @@ class FoundationTests(unittest.TestCase):
                         signals[signal.SIGTERM](signal.SIGTERM, None)
                     return SimpleNamespace(poll=lambda: None)
 
-                with patch.dict(os.environ, {"HOME": str(self.root), "DISPLAY": ":fixture"}, clear=True), \
+                with self.isolated_session_bus(), \
+                     patch.dict(os.environ, {"HOME": str(self.root), "DISPLAY": ":fixture"}, clear=True), \
                      patch.object(os_session, "configure_display", return_value={"applied": False}), \
                      patch.object(os_session, "wm_owner", return_value="0x123"), \
                      patch.object(os_session, "agent_service_state", return_value=previous_state), \
@@ -324,7 +336,8 @@ class FoundationTests(unittest.TestCase):
             if argv[0] == "/usr/bin/python3":
                 signals[signal.SIGTERM](signal.SIGTERM, None)
             return SimpleNamespace(pid=100 + len(started), poll=lambda: None)
-        with patch.dict(os.environ, {"HOME": str(self.root), "DISPLAY": ":97"}, clear=True), \
+        with self.isolated_session_bus(), \
+             patch.dict(os.environ, {"HOME": str(self.root), "DISPLAY": ":97"}, clear=True), \
              patch.object(os_session, "configure_display", return_value={}), \
              patch.object(os_session, "wm_owner", return_value="0x123"), \
              patch.object(os_session, "agent_service_state", return_value="active"), \
@@ -372,7 +385,8 @@ class FoundationTests(unittest.TestCase):
                 def start_blur(*_args):
                     signals[signal.SIGTERM](signal.SIGTERM, None)
                     return None
-                with patch.dict(os.environ, {"HOME": str(self.root), "DISPLAY": ":97", "MEADOW_EXPERIMENTAL_GLASS": "1"}, clear=True), \
+                with self.isolated_session_bus(), \
+                     patch.dict(os.environ, {"HOME": str(self.root), "DISPLAY": ":97", "MEADOW_EXPERIMENTAL_GLASS": "1"}, clear=True), \
                      patch.object(os_session, "configure_display", return_value={}), \
                      patch.object(os_session, "wm_owner", return_value="0x123"), \
                      patch.object(os_session, "agent_service_state", return_value="active"), \
@@ -419,7 +433,8 @@ class FoundationTests(unittest.TestCase):
             return SimpleNamespace(pid=200, poll=lambda: None)
         def stop(process):
             events.append("stop:" + str(process.pid))
-        with patch.dict(os.environ, {"HOME": str(self.root), "DISPLAY": ":97", "MEADOW_EXPERIMENTAL_GLASS": "1"}, clear=True), \
+        with self.isolated_session_bus(), \
+             patch.dict(os.environ, {"HOME": str(self.root), "DISPLAY": ":97", "MEADOW_EXPERIMENTAL_GLASS": "1"}, clear=True), \
              patch.object(os_session, "configure_display", return_value={}), \
              patch.object(os_session, "wm_owner", return_value="0x123"), \
              patch.object(os_session, "agent_service_state", return_value="active"), \

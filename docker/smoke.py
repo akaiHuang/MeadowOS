@@ -7,6 +7,13 @@ import subprocess
 import time
 
 
+def known_namespace_restriction(log):
+    # Admit only the exact restriction observed in the native Linux CI.
+    # Other crashes, blank UI, timeouts and launch failures remain failures.
+    return ("bwrap: No permissions to create a new namespace" in log
+            and "Failed to fully launch dbus-proxy: Child process exited with code 1" in log)
+
+
 def main():
     from run_in_session import session_environment
     env = session_environment()
@@ -51,13 +58,13 @@ def main():
                 result.append({"xid": xid, "title": title.stdout.strip()})
         return result
 
-    def wait_windows(required, seconds=30):
+    def wait_windows(required, seconds=30, watched=None):
         deadline = time.monotonic() + seconds
         while time.monotonic() < deadline:
             current = windows()
             if all(any(title in window["title"] for window in current) for title in required):
                 return current
-            failed = [(name, child.returncode) for name, child in children
+            failed = [(name, child.returncode) for name, child in (watched or children)
                       if child.poll() not in (None, 0)]
             if failed:
                 raise RuntimeError(f"Native app exited before mapping: {failed}")
@@ -113,6 +120,43 @@ def main():
                 continue
         return sorted(result)
 
+    def probe_webkit(name, command, title, geometry, screenshot):
+        child = start(name, command)
+        try:
+            wait_windows([title], watched=[(name, child)])
+            arrange(title, *geometry)
+            capture(screenshot)
+            if child.poll() not in (None, 0):
+                raise RuntimeError(f"{name} exited after mapping: {child.returncode}")
+            log = (output / (name + ".log")).read_text(errors="replace")
+            if known_namespace_restriction(log):
+                raise RuntimeError(f"{name} reported the known namespace restriction")
+            minimize(title)
+            return {"status": "mapped_requires_visual_review", "window_mapped": True,
+                    "screenshot": screenshot}
+        except (RuntimeError, StopIteration, subprocess.SubprocessError) as error:
+            log = (output / (name + ".log")).read_text(errors="replace")
+            if not known_namespace_restriction(log):
+                raise
+            capture(name + "-unsupported.png")
+            return {"status": "unsupported_container_namespace", "window_mapped": False,
+                    "reason": "bwrap namespace/dbus-proxy denied by unchanged container policy",
+                    "log": name + ".log"}
+
+    sandbox_runtime = {}
+    for name, filename in {"apparmor": "/proc/self/attr/current",
+                           "unprivileged_userns_clone": "/proc/sys/kernel/unprivileged_userns_clone",
+                           "apparmor_restrict_unprivileged_userns": "/proc/sys/kernel/apparmor_restrict_unprivileged_userns"}.items():
+        try:
+            sandbox_runtime[name] = Path(filename).read_text()[:4096].strip()
+        except OSError:
+            sandbox_runtime[name] = "unavailable"
+    sandbox_runtime["process_filters"] = [line for line in Path("/proc/self/status").read_text().splitlines()
+                                           if line.startswith(("NoNewPrivs:", "Seccomp:"))]
+    sandbox_runtime["proc_mount_targets"] = [line.split()[4] for line in Path("/proc/self/mountinfo").read_text().splitlines()
+                                              if len(line.split()) > 4 and line.split()[4].startswith("/proc")]
+    (output / "sandbox-runtime.json").write_text(json.dumps(sandbox_runtime, indent=2) + "\n")
+
     result = {"native_x11": True, "geometry": [1920, 1080], "agent_connected": status["agent_connected"],
               "model_configured": False, "model_task": "not_run", "vm_boot_verified": False,
               "persistence_file": str(folder / "persistence.txt"), "sandbox_configuration": "unchanged"}
@@ -137,6 +181,19 @@ def main():
         capture("native-settings.png")
         minimize("Meadow 設定")
 
+        # Optional public screenshot of the existing empty GTK Chat. The only
+        # action is its real accessible topbar button; no text or model request.
+        try:
+            subprocess.run(["/usr/local/bin/meadowos-run", "python3", "/usr/local/lib/meadowos/open_chat.py"],
+                           env=env, check=True, timeout=12, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            wait_windows(["Meadow · AI 工作夥伴"], seconds=8)
+            arrange("Meadow · AI 工作夥伴", 670, 110, 580, 780)
+            capture("native-chat.png")
+            minimize("Meadow · AI 工作夥伴")
+            result["chat_capture"] = "existing GTK Chat; empty and unconfigured; no model request"
+        except (RuntimeError, StopIteration, subprocess.SubprocessError) as error:
+            result["chat_capture"] = "not_captured; bounded accessibility discovery unavailable"
+
         page = folder / "browser-smoke.html"
         page.write_text("""<!doctype html><html lang="en"><meta charset="utf-8">
 <title>MeadowOS browser smoke</title><style>
@@ -144,26 +201,31 @@ body{margin:64px;background:#f3f6f2;color:#153b31;font:22px system-ui}
 h1{font-size:52px;letter-spacing:-2px}p{max-width:650px;line-height:1.6}
 </style><h1>MeadowOS browser smoke</h1><p>This local page is rendered by GNOME Web.
 No model, remote page or API credentials are used for this check.</p></html>""")
-        browser_profile = output / "browser-profile"
-        browser_profile.mkdir(mode=0o700)
-        start("browser", ["epiphany", "--profile=" + str(browser_profile), page.as_uri()])
-        visible = wait_windows(["MeadowOS browser smoke"])
-        arrange("MeadowOS browser smoke", 290, 110, 1280, 800)
-        capture("native-browser.png")
-        result["browser_window_mapped"] = True
-        minimize("MeadowOS browser smoke")
-
-        start("native-desktop", ["/opt/meadow/share/meadow-os/bin/meadow-session", "desktop"])
-        visible = wait_windows(["MeadowOS · 開發版"])
-        arrange("MeadowOS · 開發版", 370, 115, 1180, 780)
-        capture("native-api-desktop.png")
+        # These are real launch probes. Only the recorded namespace restriction
+        # is an unsupported container capability; unknown failures still fail.
+        capabilities = {}
+        result["capabilities"] = capabilities
+        capabilities["wails_desktop"] = probe_webkit("native-desktop",
+            ["/opt/meadow/share/meadow-os/bin/meadow-session", "desktop"],
+            "MeadowOS · 開發版", (370, 115, 1180, 780), "native-api-desktop.png")
         current_agents = agent_pids()
         if current_agents != original_agents:
             raise RuntimeError(f"Managed Desktop changed the sole Agent: {original_agents} -> {current_agents}")
-        result.update(native_desktop_window_mapped=True, agent_pids=current_agents,
-                      status="passed_window_mapping; screenshots_require_visual_review")
+        browser_profile = output / "browser-profile"
+        browser_profile.mkdir(mode=0o700)
+        capabilities["browser"] = probe_webkit("browser",
+            ["epiphany", "--profile=" + str(browser_profile), page.as_uri()],
+            "MeadowOS browser smoke", (290, 110, 1280, 800), "native-browser.png")
+        final_health = json.loads(subprocess.check_output(["/usr/local/bin/meadowos-healthcheck"], text=True))
+        if not final_health.get("desktop_ready") or not final_health.get("agent_connected"):
+            raise RuntimeError("Native core became unhealthy during WebKit capability probes")
+        if agent_pids() != original_agents:
+            raise RuntimeError("WebKit probes changed the sole native Agent")
+        result.update(core_passed=True, capabilities=capabilities, agent_pids=current_agents,
+                      status="core_passed; WebKit_capabilities_recorded_separately",
+                      screenshots_require_visual_review=True)
     except Exception as error:
-        result.update(status="failed", error=str(error))
+        result.update(core_passed=False, status="failed", error=str(error))
         try:
             capture("failure-desktop.png")
         except Exception as capture_error:
