@@ -4,8 +4,8 @@ __pycache__/
 *.py[cod]
 .venv/
 node_modules/
-dist/
-build/
+/dist/
+/build/
 artifacts/
 .cache/
 .qwen/
