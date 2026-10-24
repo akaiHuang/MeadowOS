@@ -40,12 +40,38 @@ def remove_stale_socket(path):
         path.unlink()
 
 
+
+def seed_terminal_defaults(home):
+    """First-run appearance only; retain every existing user terminal profile."""
+    directory = home / ".config/xfce4/terminal"
+    directory.mkdir(parents=True, mode=0o700, exist_ok=True)
+    target = directory / "terminalrc"
+    try:
+        fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0), 0o600)
+    except FileExistsError:
+        return
+    with os.fdopen(fd, "w") as stream:
+        stream.write("""[Configuration]
+MiscMenubarDefault=FALSE
+MiscToolbarDefault=FALSE
+MiscBordersDefault=TRUE
+BackgroundMode=TERMINAL_BACKGROUND_TRANSPARENT
+BackgroundDarkness=0.88
+ColorUseTheme=FALSE
+ColorBackground=#1f2c24
+ColorForeground=#e6eee7
+FontUseSystem=FALSE
+FontName=Monospace 12
+""")
+
+
 def main():
     if os.geteuid() == 0 or not Path("/.dockerenv").exists():
         raise RuntimeError("Run as the dedicated Meadow user inside its Docker container")
     if not os.environ.get("DBUS_SESSION_BUS_ADDRESS"):
         raise RuntimeError("A private D-Bus session is required")
     home = Path.home()
+    seed_terminal_defaults(home)
     state = home / ".local/state/meadow-os"
     data = home / ".local/share/meadow-os/agent"
     for path in (home / ".local/state", home / ".local/share", state, data, data / "run"):

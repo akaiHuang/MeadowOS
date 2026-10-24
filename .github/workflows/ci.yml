@@ -31,6 +31,26 @@ jobs:
           tar -xzf gitleaks_8.30.1_linux_x64.tar.gz gitleaks
       - name: Scan full public history with redacted output
         run: /tmp/gitleaks/gitleaks git . --redact=100 --no-banner --log-opts="--all"
+  onboarding:
+    needs: credentials
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Execute native API setup and conversation integration
+        working-directory: go
+        env:
+          CGO_ENABLED: "0"
+        run: go test -tags meadow_vm_lab ./core/runtimecontrol ./core/agentdaemon
+      - name: Offline build, transport and hidden-input contracts
+        env:
+          PYTHONPATH: scripts/meadowos:docker
+        run: |
+          python3 -m unittest scripts/meadowos/test_foundation.py \
+            scripts/meadowos/test_archive_provenance.py docker/test_companion_proxy.py \
+            scripts/meadowos/test_shell_agent_client.py scripts/meadowos/test_configure_inception.py
   desktop:
     needs: credentials
     strategy:
@@ -52,16 +72,6 @@ jobs:
           SOURCE_COMMIT: ${{ github.sha }}
           MEADOW_SMOKE_ARTIFACTS: ${{ github.workspace }}/artifacts/native-${{ matrix.arch }}
         run: bash docker/smoke.sh
-      - name: Native API onboarding and offline contracts
-        run: |
-          docker build --target native-build --build-arg SOURCE_COMMIT="$GITHUB_SHA" \
-            --tag meadowos-native-tests:ci .
-          docker run --rm --entrypoint sh meadowos-native-tests:ci -c '
-            cd /src/go && CGO_ENABLED=0 go test -tags meadow_vm_lab ./core/runtimecontrol ./core/agentdaemon &&
-            cd /src && PYTHONPATH=scripts/meadowos:docker python3 -m unittest scripts/meadowos/test_foundation.py \
-              scripts/meadowos/test_archive_provenance.py docker/test_companion_proxy.py \
-              scripts/meadowos/test_shell_agent_client.py scripts/meadowos/test_configure_inception.py
-          '
       - name: Upload clean native screenshots and receipts
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

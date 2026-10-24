@@ -21,6 +21,13 @@ def main():
     folder = home / "MeadowWork/MeadowOS smoke"
     folder.mkdir(mode=0o700, parents=True, exist_ok=True)
     (folder / "persistence.txt").write_text("MeadowOS named home volume\n")
+    showcase = home / "MeadowWork/Welcome-to-MeadowOS"
+    for name in ("Notes", "Documents", "Design"):
+        (showcase / name).mkdir(mode=0o700, parents=True, exist_ok=True)
+    (showcase / "README.txt").write_text("Welcome to MeadowOS.\nThese are local demonstration files for the native desktop smoke.\nNo model reply or credential is present.\n")
+    (showcase / "Notes/Welcome.txt").write_text("Welcome to MeadowOS.\nThis is a real local example document.\n")
+    (showcase / "Documents/Project-notes.txt").write_text("Project notes\nDraft ideas and documents belong in this folder.\n")
+    (showcase / "Design/Palette.txt").write_text("Meadow green / warm white / soft graphite\n")
     output = home / ".local/state/meadow-os/smoke"
     output.mkdir(mode=0o700, parents=True, exist_ok=True)
     children, logs, visible, captures = [], [], [], []
@@ -57,9 +64,26 @@ def main():
             time.sleep(.25)
         raise RuntimeError(f"Native windows did not map: {required}; visible={windows()}")
 
+    def window_id(title):
+        return next(window["xid"] for window in windows() if title in window["title"])
+
     def focus(title):
-        current = windows()
-        xid = next(window["xid"] for window in current if title in window["title"])
+        xid = window_id(title)
+        subprocess.run(["xdotool", "windowactivate", "--sync", xid], env=env, check=True, timeout=5)
+        return xid
+
+    def arrange(title, x, y, width, height):
+        xid = focus(title)
+        subprocess.run(["xdotool", "windowsize", "--sync", xid, str(width), str(height)], env=env, check=True, timeout=5)
+        subprocess.run(["xdotool", "windowmove", "--sync", xid, str(x), str(y)], env=env, check=True, timeout=5)
+        return xid
+
+    def minimize(title):
+        xid = window_id(title)
+        subprocess.run(["xdotool", "windowminimize", "--sync", xid], env=env, check=True, timeout=5)
+        return xid
+
+    def restore(xid):
         subprocess.run(["xdotool", "windowactivate", "--sync", xid], env=env, check=True, timeout=5)
 
     def capture(name):
@@ -96,12 +120,22 @@ def main():
         original_agents = agent_pids()
         if len(original_agents) != 1:
             raise RuntimeError(f"Fresh desktop must have one native Agent; found {original_agents}")
-        start("files", ["thunar", str(folder)])
+        start("files", ["thunar", str(showcase)])
         start("terminal", ["xfce4-terminal", "--disable-server", "--title=MeadowOS terminal"])
         start("settings", ["/opt/meadow/bin/meadow-settings"])
-        visible = wait_windows(["MeadowOS terminal", "MeadowOS smoke", "Meadow 設定"])
+        visible = wait_windows(["MeadowOS terminal", "Welcome-to-MeadowOS", "Meadow 設定"])
+        arrange("Welcome-to-MeadowOS", 100, 95, 1060, 690)
+        arrange("MeadowOS terminal", 760, 640, 940, 285)
+        settings_xid = minimize("Meadow 設定")
         focus("MeadowOS terminal")
         capture("native-desktop.png")
+        result["desktop_windows"] = windows()
+        files_xid = minimize("Welcome-to-MeadowOS")
+        terminal_xid = minimize("MeadowOS terminal")
+        restore(settings_xid)
+        arrange("Meadow 設定", 450, 120, 1020, 760)
+        capture("native-settings.png")
+        minimize("Meadow 設定")
 
         page = folder / "browser-smoke.html"
         page.write_text("""<!doctype html><html lang="en"><meta charset="utf-8">
@@ -112,15 +146,16 @@ h1{font-size:52px;letter-spacing:-2px}p{max-width:650px;line-height:1.6}
 No model, remote page or API credentials are used for this check.</p></html>""")
         browser_profile = output / "browser-profile"
         browser_profile.mkdir(mode=0o700)
-        start("browser", ["epiphany", "--private-instance", "--profile=" + str(browser_profile), page.as_uri()])
+        start("browser", ["epiphany", "--profile=" + str(browser_profile), page.as_uri()])
         visible = wait_windows(["MeadowOS browser smoke"])
-        focus("MeadowOS browser smoke")
+        arrange("MeadowOS browser smoke", 290, 110, 1280, 800)
         capture("native-browser.png")
         result["browser_window_mapped"] = True
+        minimize("MeadowOS browser smoke")
 
         start("native-desktop", ["/opt/meadow/share/meadow-os/bin/meadow-session", "desktop"])
         visible = wait_windows(["MeadowOS · 開發版"])
-        focus("MeadowOS · 開發版")
+        arrange("MeadowOS · 開發版", 370, 115, 1180, 780)
         capture("native-api-desktop.png")
         current_agents = agent_pids()
         if current_agents != original_agents:
