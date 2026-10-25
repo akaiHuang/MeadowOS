@@ -2,17 +2,14 @@
 
 ## 0.1.0-alpha.1 — 2026-10-25
 
-First standalone source release of the native MeadowOS container desktop.
+The first MeadowOS Alpha brings a Linux desktop and an AI coworker into one workspace.
 
-- Glass desktop bar/Dock and shared native window/folder resources.
-- Addable/closable desktop tabs with window preservation.
-- Compact floating chat composer, durable conversations and background work records.
-- Native Agent, external provider integration and secure Inception Mercury3 onboarding.
-- Dedicated non-root Docker recipe with persistent home and loopback-only viewing.
-- Fresh-home/restart native smoke checks, source provenance and redacted history scanning.
+- Glass windows, light/dark themes and a compact Dock.
+- Desktop tabs that can be added and closed while keeping apps open.
+- Folder previews, thumbnails and Quick Look.
+- Compact chat with a floating composer and background work log.
+- Inception Mercury 3 connection and guided API setup.
+- Docker support for Linux amd64 and arm64.
+- Experimental VoiceOS visual interface.
 
-Known release boundaries: no bootable ISO, Wayland acceptance, GPU performance
-claim or complete Linux speech integration. Docker hosts can block WebKit's
-nested sandbox, making GNOME Web / optional Wails Desktop unavailable; the
-native GTK chat and API setup remain independent. Mercury 3 is text/tools-only;
-image recognition is explicitly unavailable in the default configuration.
+See [getting started](docs/QUICKSTART.md) for installation and current limitations.

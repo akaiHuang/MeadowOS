@@ -1,26 +1,17 @@
-# Security and private configuration
+# Security
 
-Please do not include API keys, private files, conversation histories or runtime
-profiles in public issues, pull requests, screenshots or diagnostic logs. Use
-synthetic reproducers and redact account-specific values.
+## Report a vulnerability
 
-The quick start does not ship a maintainer key. Users enter their own Inception
-key at a hidden terminal prompt. Native credential storage is outside the source
-checkout, in the persistent home volume. Build context rules exclude Git metadata,
-credentials and runtime state. Stopping containers retains the named volume;
-`docker compose down -v` deliberately removes it.
+Please use [private vulnerability reporting](https://github.com/akaiHuang/MeadowOS/security/advisories/new)
+for security issues. Include steps to reproduce, the affected version and the
+expected behavior. Keep API keys, personal files and private conversations out
+of reports and screenshots.
 
-The standalone release starts with fresh Git history and an explicit source
-closure. It does not import the private development repository's history or
-runtime profiles. CI scans the entire public history for secrets with redacted
-output. Please keep the same boundary when contributing changes or screenshots.
+## Local desktop access
 
-This early desktop grants the Agent full tool access inside its container. The
-default Compose file mounts neither your host home nor the Docker socket and
-publishes the viewer/companion on host loopback only. Keep those boundaries when
-customizing deployment. Public remote access/authenticated multi-user hosting is
-not provided by this local container recipe.
+Meadow can edit files and run programs in its desktop environment. The default
+Docker setup runs as a non-root user and makes the desktop available only on
+local ports. It does not mount your host home or Docker socket.
 
-For a suspected vulnerability, use GitHub's private vulnerability reporting when
-available on this repository. Public reports should contain only non-sensitive
-reproduction details. This experimental release has no formal support SLA.
+Review access carefully before adding host mounts or enabling remote access.
+The Alpha Docker setup is intended for local use, not multi-user hosting.
